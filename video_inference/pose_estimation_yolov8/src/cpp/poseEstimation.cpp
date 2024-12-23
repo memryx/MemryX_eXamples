@@ -21,8 +21,8 @@ std::atomic_bool runflag; // Atomic flag to control the processing loop
 bool window_created = false; // Flag to ensure window is only created once
 
 // Model file paths
-const fs::path modelPath = "yolov8m-pose.dfp"; // Path to DFP model
-const fs::path onnx_postprocessing_model_path = "model_0_yolov8m-pose_post.onnx"; // Path to post-processing ONNX model
+const fs::path modelPath = "YOLO_v8_medium_pose_640_640_3_onnx.dfp"; // Path to DFP model
+const fs::path onnx_postprocessing_model_path = "YOLO_v8_medium_pose_640_640_3_onnx_post.onnx"; // Path to post-processing ONNX model
 fs::path videoPath;
 
 // Model information containers

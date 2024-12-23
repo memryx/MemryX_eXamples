@@ -137,8 +137,8 @@ def cleanup_and_exit():
 if __name__ == "__main__":
     # Argument parser for specifying DFP path
     parser = argparse.ArgumentParser(description="Run the Chrome Dinosaur game controlled by hand gestures.")
-    parser.add_argument('-d', '--dfp', type=str, default="models/palm_detection_lite.dfp",
-                        help="Specify the path to the DFP model file. Default is 'models/assets/palm_detection_lite.dfp'.")
+    parser.add_argument('-d', '--dfp', type=str, default="models/MediaPipe_palm_Detection_192_192_3_tflite.dfp",
+                        help="Specify the path to the DFP model file. Default is 'models/MediaPipe_palm_Detection_192_192_3_tflite.dfp'.")
     
     args = parser.parse_args()
 

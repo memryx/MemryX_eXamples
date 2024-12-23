@@ -28,7 +28,7 @@ from memryx import AsyncAccl, NeuralCompiler
 
 # Parse command-line arguments for model path (-m) and DFP file (-d)
 parser = argparse.ArgumentParser(description="Run MX3 real-time inference with options for model path and DFP file.")
-parser.add_argument('-m', '--model', type=str, default="midas_2_small.tflite", help="Specify the path to the model. Default is 'midas_2_small.tflite'.")
+parser.add_argument('-m', '--model', type=str, default="models/midas_v2_small.tflite", help="Specify the path to the model. Default is 'models/midas_v2_small.tflite'.")
 parser.add_argument('-d', '--dfp', type=str, default="models/midas_v2_small.dfp", help="Specify the path to the compiled DFP file. Default is 'models/midas_v2_small.dfp'.")
 args = parser.parse_args()
 
@@ -56,6 +56,7 @@ else:
     
     # Rename the extracted file (1.tflite) to model_path
     if path.isfile('./1.tflite'):
+        system("mkdir -p models")
         system(f"mv ./1.tflite {model_path}")
         print("\033[93mModel extraction completed and renamed to {}.\033[0m".format(model_path))
     else:

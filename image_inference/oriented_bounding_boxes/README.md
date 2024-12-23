@@ -58,7 +58,6 @@ You can now use the MemryX Neural Compiler to compile the model and generate the
 
 ```bash
 mx_nc -v -m yolov8s-obb.onnx --autocrop 
-mv model_0_yolov8s-obb_post.onnx yolov8s-obb_post.onnx 
 ```
 </details>
 

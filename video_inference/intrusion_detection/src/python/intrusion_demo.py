@@ -2,7 +2,7 @@
 ============
 Information:
 ============
-Project: Intrusion Detection using ByteTrack and YOLOv8s example code on MXA
+Project: Intrusion Detection using ByteTrack and YOLOv8m example code on MXA
 File Name:  intrusion_demo.py
 """
 
@@ -31,8 +31,8 @@ INIT_NUM_FRAMES = 20
 def make_parser():
     parser = argparse.ArgumentParser("MX Intrusion Demo!")
     parser.add_argument('--roi_coordinates', nargs='+', type=int, help='space seperated ROI coordinates in x1y1x2y2 format')
-    parser.add_argument("--dfp", default="../../models/yolov8m.dfp", type=str, help="dfp path")
-    parser.add_argument("--post_model_path",default="../../models/yolov8m_post.tflite", type=str, help="postprocessing model path")
+    parser.add_argument("--dfp", default="../../models/YOLO_v8_medium_640_640_3_tflite.dfp", type=str, help="dfp path")
+    parser.add_argument("--post_model_path",default="../../models/YOLO_v8_medium_640_640_3_tflite_post.tflite", type=str, help="postprocessing model path")
     parser.add_argument(
         "--input_path", required=True, help="path to video"
     )
@@ -63,7 +63,7 @@ def inRoi(xywh,roi):
 
 class IntrusionMxa:
     """
-    A demo app to run YOLOv8s on the MemryX MXA.
+    A demo app to run YOLOv8m on the MemryX MXA.
     """
 
 ###################################################################################################
@@ -198,7 +198,7 @@ class IntrusionMxa:
             frame, online_tlwhs, online_ids, frame_id=self.frame_id, fps=1. / self.timer.average_time
         )
         # Show the frame in a unique window for each stream
-        window_name = "YOLOv8s Tracking"
+        window_name = "YOLOv8m Tracking"
         cv2.imshow(window_name, online_im)
         # Exit on key press (applies to all streams)
         if cv2.waitKey(20) == ord('q'):

@@ -15,18 +15,18 @@ std::atomic_bool runflag;
 
 //CenterNet application specific Onnx model files
 fs::path onnx_model_path = "models/centernet_onnx.dfp";
-fs::path onnx_preprocessing_model_path = "models/model_0_centernet_pre.onnx";
-fs::path onnx_postprocessing_model_path = "models/model_0_centernet_post.onnx";
+fs::path onnx_preprocessing_model_path = "models/centernet_pre.onnx";
+fs::path onnx_postprocessing_model_path = "models/centernet_post.onnx";
 
 //CenterNet application specific Tf model files
 fs::path tf_model_path = "models/centernet_tf.dfp";
-fs::path tf_preprocessing_model_path = "models/model_0_centernet_pre.pb";
-fs::path tf_postprocessing_model_path = "models/model_0_centernet_post.pb";
+fs::path tf_preprocessing_model_path = "models/centernet_pre.pb";
+fs::path tf_postprocessing_model_path = "models/centernet_post.pb";
 
 //CenterNet application specific Tflite model files
 fs::path tflite_model_path = "models/centernet_tflite.dfp";
-fs::path tflite_preprocessing_model_path = "models/model_0_centernet_pre.tflite";
-fs::path tflite_postprocessing_model_path = "models/model_0_centernet_post.tflite";
+fs::path tflite_preprocessing_model_path = "models/centernet_pre.tflite";
+fs::path tflite_postprocessing_model_path = "models/centernet_post.tflite";
 
 enum AppType{
     App_Onnx,
@@ -274,7 +274,7 @@ class CenterNet{
             //Assigning gui variable to class specifc variable
             gui_ = gui;
             //The output order is different for each type of pre-post processing. This is CenterNet specific.
-            //To verify the output order we can view the model_0_centernet_post model's outputs.
+            //To verify the output order we can view the centernet_post model's outputs.
             if(type_==App_Onnx){
                 outmap_ = {.confidence_idx=0,.class_idx=1,.box_idx=3,.num_boxes_idx=2};
             }

@@ -69,6 +69,7 @@ Leverage MemryX accelerators for **real-time video processing** tasks. These app
 | [**Face Detection & Emotion Classification**](video_inference/face_emotion_detection/README.md) [📝](https://developer.memryx.com/tutorials/realtime_inf/realtime_multimodel.html) | Detect faces and classify emotions       | Multiple Models | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |  <img src="video_inference/face_emotion_detection/assets/face_emotion.png" alt="Face Detection & Emotion Classification Preview" height="50"> |
 | [**Person Tracking using YOLOv7**](video_inference/singlestream_peopletracking_yolov7Tiny/README.md) | Track unique people across video frames | YOLOv7 (Tiny) | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/singlestream_peopletracking_yolov7Tiny/assets/people_counting.gif" alt="Person Tracking Preview" height="50"> |
 | [**Intrusion Detection**](video_inference/intrusion_detection/README.md) | Detect any intruding object in a ROI | Yolov8 and ByteTrack| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/intrusion_detection/assets/intrusion.gif" alt="Intrusion Preview" height="50"> |
+| [**Face Landmarks Detection**](video_inference/realtime_facelandmark_detection/README.md) | Detect presence of a face and it's landmarks | BlazeFace and FaceMesh | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/realtime_facelandmark_detection/assets/sample.gif" alt="Landmarks Preview" height="50"> |
 
 ### Image Inference 🖼️
 Explore models performing inference on static images and data. These examples demonstrate how to leverage the MXA to process large amounts of data.
@@ -109,6 +110,18 @@ Measure and evaluate the accuracy of various models using MemryX hardware.
 | [**Classification Accuracy**](accuracy_calculation/classification_resnet50/README.md) [📝](https://developer.memryx.com/accuracy/mlperf_accuracy/resnet50v1.5_mlperf_accuracy.html) | Calculate accuracy for classification models      | ResNet50         | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20">
 | [**Object Detection Accuracy**](accuracy_calculation/detect_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/accuracy/yolov8_accuracy/yolov8_accuracy.html) | Calculate accuracy for object detection models    | YOLOv8 (Medium)  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20">
 | [**Keras Classifiers Accuracy**](accuracy_calculation/keras_accuracy/README.md) [📝](https://developer.memryx.com/tutorials/accuracy/keras_classifiers_accuracy/keras_accuracy_rst.html) | Calculate Keras classifiers accuracy on the MXA    | Keras applications  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20">
+
+### Audio Inference 🔊
+
+Explore how the MemryX accelerators can be used for audio/speech processing tasks. The examples below demonstrate how to run models using MemryX hardware.
+
+<div style="width: 100%;">
+  
+| Task                           | Description                                | Models  | Code             | OS  |
+|--------------------------------|--------------------------------------------|---------|------------------|-----|
+| [**Audio Denoising using UNet**](audio_inference/audio_denoising_cmd/README.md) | Remove noise from speech audio using UNet | UNet    | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |
+| [**Audio Classification using YAMNet**](audio_inference/audio_classification_cmd/README.md) | Identify audio categories using YAMNet | YAMNet  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |
+| [**Audio Classification Web App**](audio_inference/audio_classification_web/README.md) | Classify audio using YAMNet in a web app | YAMNet  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | 
 
 
 ## Useful Links

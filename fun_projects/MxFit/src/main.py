@@ -448,7 +448,7 @@ def display_pose():
 def start_inference(exercise):
     global inference_process, frame_queue, poseapp, run_flag
     run_flag.value = True
-    poseapp = poseApp("../models/yolov8m-pose.dfp", "../models/model_0_yolov8m-pose_post.onnx", (640, 640), frame_queue, run_flag, exercise, mirror=False)
+    poseapp = poseApp("../models/YOLO_v8_medium_pose_640_640_3_onnx.dfp", "../models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx", (640, 640), frame_queue, run_flag, exercise, mirror=False)
     if inference_process is None or not inference_process.is_alive():
         inference_process = mp.Process(
             target=run_mxa,

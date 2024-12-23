@@ -1,14 +1,9 @@
-import os
 import queue
 import logging
-from typing import Union, Tuple, List
 from pathlib import Path
-from collections import defaultdict
 import cv2
 import memryx as mx
 import numpy as np
-import onnxruntime as ort
-import tf_keras as keras
 from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
@@ -53,12 +48,12 @@ class MXFace():
         self.static_output_q = queue.Queue(maxsize=1)
 
         self.accl = mx.AsyncAccl(str(Path(models_dir) / 'yolov8n_facenet.dfp'))
-        self.accl.set_postprocessing_model(str(Path(models_dir) / 'yolov8n-face_post.onnx'))
+        self.accl.set_postprocessing_model(str(Path(models_dir) / 'yolov8n-face_post.onnx'), model_idx=1)
 
-        self.accl.connect_input(self._detector_source, model_idx=0)
-        self.accl.connect_output(self._detector_sink, model_idx=0)
-        self.accl.connect_input(self._recognizer_source, model_idx=1)
-        self.accl.connect_output(self._recognizer_sink, model_idx=1)
+        self.accl.connect_input(self._detector_source, model_idx=1)
+        self.accl.connect_output(self._detector_sink, model_idx=1)
+        self.accl.connect_input(self._recognizer_source, model_idx=0)
+        self.accl.connect_output(self._recognizer_sink, model_idx=0)
 
     def __del__(self):
         if not self._stopped:
@@ -84,26 +79,6 @@ class MXFace():
         cosine_sim = dot_product / (magnitude1 * magnitude2)
         
         return cosine_sim
-
-    def verify(image_path_1, image_path_2, threshold=None):
-        image_1 = Image.open(image_path_1).convert('RGB')
-        image_2 = Image.open(image_path_2).convert('RGB')
-
-        self.put(np.array(image_1))
-        self.put(np.array(image_2))
-
-        annotated_frame_1 = self.get()
-        annotated_frame_2 = self.get()
-
-        embedding_1 = annotated_frame_1.faces[0].embedding
-        embedding_2 = annotated_frame_2.faces[0].embedding
-
-        distance = cosine_similarity(embedding_1, embedding_2)  
-
-        if threshold:
-            return distance > threshold
-        else:
-            return distance > self.cosine_threshold
 
     def infer(self, image):
         annotated_frame = AnnotatedFrame(np.array(image), _static=True)
@@ -214,9 +189,6 @@ class MXFace():
                 self.output_q.put(annotated_frame)
 
     ### Pre / Post Processing steps ###########################################
-    def _preprocess_detector(self, image):
-        return resized_image
-
     def _letterbox_image(self, image, target_size):
         original_size = image.shape[:2]
         ratio = min(target_size[0] / original_size[0], target_size[1] / original_size[1])
@@ -229,7 +201,6 @@ class MXFace():
         
         # Create a blank canvas with the target size
         canvas = np.full((target_size[1], target_size[0], 3), (128, 128, 128), dtype=np.uint8)  # Gray letterbox
-        #canvas = np.full((target_size[1], target_size[0], 3), (0, 0, 0), dtype=np.uint8)  # Black letterbox
         
         # Calculate padding for centering the resized image on the canvas
         top = (target_size[1] - new_size[1]) // 2
@@ -276,7 +247,7 @@ class MXFace():
 
         return bbox, new_kpts
 
-    def _extract_face(self, image: np.array, detected_face) -> np.array:
+    def _extract_face(self, image: np.ndarray, detected_face) -> np.ndarray:
         """
         """
         # Unpack the bounding box
@@ -373,10 +344,6 @@ class MXFace():
         Returns:
         - np.array: Indices of the boxes to keep after applying NMS.
         """
-        #x1 = boxes[:, 0] - boxes[:, 2] / 2
-        #y1 = boxes[:, 1] - boxes[:, 3] / 2
-        #x2 = x1 + boxes[:, 2] / 2
-        #y2 = y1 + boxes[:, 3] / 2
         x1 = boxes[0, :] - boxes[2, :] / 2
         y1 = boxes[1, :] - boxes[3, :] / 2
         x2 = x1 + boxes[2, :] / 2

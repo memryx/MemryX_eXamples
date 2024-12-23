@@ -3,7 +3,7 @@ import os
 import argparse
 os.environ["OMP_NUM_THREADS"] = "1"  # Set number of threads to 1 for performance control
 from pathlib import Path
-from queue import Queue
+from queue import Queue, Full
 import cv2 as cv
 import numpy as np
 from memryx import AsyncAccl
@@ -24,7 +24,7 @@ class App:
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
         self.model_input_shape = (640, 640)  # Model input size
-        self.capture_queue = Queue()  # Queue to store captured frames
+        self.capture_queue = Queue(maxsize=1)  # Queue to store captured frames
         self.mirror = mirror
         self.box_score = 0.25
         self.ratio = None
@@ -49,11 +49,15 @@ class App:
         if not ok:
             print('EOF')
             return None
-        if self.mirror:
-            frame = cv.flip(frame, 1)  # Flip frame if mirror is True
-        self.capture_queue.put(frame)  # Put the captured frame in the queue
-        out, self.ratio, (self.pad_w, self.pad_h) = self.preprocess_image(frame)
-        return out
+        try:
+            if self.mirror:
+                frame = cv.flip(frame, 1)  # Flip frame if mirror is True
+            self.capture_queue.put(frame, timeout=2)  # Put the captured frame in the queue
+            out, self.ratio, (self.pad_w, self.pad_h) = self.preprocess_image(frame)
+            return out
+        except Full:
+            print("No frames, Exiting")
+            return None
 
     def preprocess_image(self, image):
         # Preprocess the image (resize, pad, normalize) for the model input
@@ -249,8 +253,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="YOLOv8 Segmentation Inference")
     
     # Add arguments for the DFP file and post-processing model
-    parser.add_argument('-d', '--dfp', type=str, default='models/yolov8n-seg.dfp', help='Path to the compiled DFP file (default: models/yolov8n-seg.dfp)')
-    parser.add_argument('-p', '--post_model', type=str, default='models/model_0_yolov8n-seg_post.onnx', help='Path to the post-processing ONNX file (default: models/model_0_yolov8n-seg_post.onnx)')
+    parser.add_argument('-d', '--dfp', type=str, default='models/YOLO_v8_nano_seg_640_640_3_onnx.dfp', help='Path to the compiled DFP file (default: models/YOLO_v8_nano_seg_640_640_3_onnx.dfp)')
+    parser.add_argument('-p', '--post_model', type=str, default='models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx', help='Path to the post-processing ONNX file (default: models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)')
     
     args = parser.parse_args()
 

@@ -15,7 +15,7 @@ The **Object Detection** example demonstrates real-time object detection using t
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [onnx](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt) and [export](https://github.com/WongKinYiu/yolov7/blob/main/export.py) to onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/dmultistream_objectdetection_yolov7Tiny.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip)                                           |
 | **Dataset**          | [COCO](https://docs.ultralytics.com/datasets/detect/coco/) |
 | **Model Resolution**            | 416x416                                                    |
 | **Output**           | Bounding box coordinates with object probabilities |
@@ -45,9 +45,9 @@ sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/multistream_objectdetection_yolov7Tiny.zip
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip
 mkdir -p models
-unzip multistream_objectdetection_yolov7Tiny.zip -d models
+unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 ```
 
 <details> 
@@ -86,8 +86,8 @@ python run_yolov7_multistream_objectdetection.py
 ```
 You can specify the model path and DFP (Compiled Model) path with the following options:
 
-* `-m` or `--postmodel`: Path to the model file (default is models/yolov7-tiny_416.post.onnx)
-* `-d` or `--dfp`: Path to the compiled DFP file (default is models/yolov7-tiny_416.dfp)
+* `-m` or `--postmodel`: Path to the model file (default is models/YOLO_v7_tiny_416_416_3_onnx_post.onnx)
+* `-d` or `--dfp`: Path to the compiled DFP file (default is models/YOLO_v7_tiny_416_416_3_onnx.dfp)
 
 You can specify the input video path with the following option:
 

@@ -74,7 +74,7 @@ class YoloV7Tiny:
         sess_options.intra_op_num_threads = 1
         sess_options.inter_op_num_threads = 1
 
-        self.post_model = onnxruntime.InferenceSession('../../assets/yolov7-tiny_416.post.onnx', sess_options=sess_options)
+        self.post_model = onnxruntime.InferenceSession('../../models/YOLO_v7_tiny_416_416_3_onnx_post.onnx', sess_options=sess_options)
 
         self.stream_mode = False
         if stream_img_size:

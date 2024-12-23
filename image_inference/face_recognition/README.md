@@ -59,14 +59,14 @@ If you prefer, you can download and compile the models rather than using the pre
 
 ```bash
 wget https://developer.memryx.com/example_files/face_recognition_original.zip
-unzip face_recognition_uncompiled.zip -d models
+unzip face_recognition_original.zip -d models
 ```
 
 You can now use the MemryX Neural Compiler to compile the models and generate the DFP file required by the accelerator:
 
 ```bash
 cd models/ 
-mx_nc -v -m FaceNet.h5 yolov8n-face_crop.onnx --dfp_fname yolov8n_facenet.dfp 
+mx_nc -v -m Facenet.h5 yolov8n-face_crop.onnx --dfp_fname yolov8n_facenet.dfp 
 ```
 </details>
 

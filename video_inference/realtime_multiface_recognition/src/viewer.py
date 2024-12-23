@@ -64,7 +64,7 @@ class FaceDatabase:
         self.database[profile][file_name] = embedding
 
     def find(self, target_embedding):
-        person_id, max_distance = 'Unknown', float('-inf')
+        profile_name, max_distance = 'Unknown', float('-inf')
 
         all_distances = []
         all_hits = []
@@ -77,10 +77,9 @@ class FaceDatabase:
             for (file_name, db_embedding) in db_embeddings.items():
                 distance_dict[name].append(mx_face.cosine_similarity(db_embedding, target_embedding))
 
-        all_distances = [(name, np.average(dist)) for name, dist in distance_dict.items()]
+        all_distances = [(name, np.max(dist)) for name, dist in distance_dict.items()]
         all_distances = sorted(all_distances, key=lambda x: x[1], reverse=True)
 
-        profile_name = 'Unknown'
         if not all_distances:
             return 'Unknown', all_distances
 

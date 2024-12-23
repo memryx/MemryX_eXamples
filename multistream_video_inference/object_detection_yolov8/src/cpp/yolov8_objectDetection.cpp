@@ -13,8 +13,8 @@ namespace fs = std::filesystem;
 std::atomic_bool runflag;  // Atomic flag to control run state
 
 // YoloV8 application specific parameters
-fs::path model_path = "yolov8s.dfp";  // Default model path
-fs::path postprocessing_model_path = "model_0_yolov8s_post.tflite";  // Default post-processing model path
+fs::path model_path = "YOLO_v8_small_640_640_3_tflite.dfp";  // Default model path
+fs::path postprocessing_model_path = "YOLO_v8_small_640_640_3_tflite_post.tflite";  // Default post-processing model path
 #define AVG_FPS_CALC_FRAME_COUNT  50  // Number of frames used to calculate average FPS
 
 // Signal handler to gracefully stop the program on SIGINT (Ctrl+C)

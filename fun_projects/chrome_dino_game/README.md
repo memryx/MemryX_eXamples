@@ -14,7 +14,7 @@ The **Chrome Dinosaur Game** example demonstrates how to control the Google Chro
 | **Model Type**       | Chrome Dinosaur Game                                                        |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/)                                                       |
 | **Model Source**     | [Download from MediaPipe GitHub](https://storage.googleapis.com/mediapipe-assets/palm_detection_lite.tflite) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/chrome_dino_game.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/MediaPipe_palm_Detection_192_192_3_tflite.zip)                                           |
 | **Model Resolution** | 192x192 (default)                                                       |
 | **OS**               | Linux                                                       |
 | **License**          | [MIT](LICENSE.md)                                     |
@@ -35,10 +35,32 @@ You can install OpenCV and PyAutoGUI using the following commands:
 pip install opencv-python
 pip install pyautogui
 ```
+Install tkinter on Linux to use MouseInfo:
+
+```
+sudo apt-get install python3-tk
+```
+
 To install wmctrl, use:
 
 ```bash
 sudo apt-get install wmctrl
+```
+Follow these steps to install and launch Google Chrome:
+
+1. Download the latest stable version of Google Chrome:
+```
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+```
+
+2. Install the downloaded package:
+```
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+```
+
+3. Launch Google Chrome:
+```
+google-chrome-stable
 ```
 
 ## Running the Application
@@ -47,9 +69,9 @@ sudo apt-get install wmctrl
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/chrome_dino_game.zip
+wget wget https://developer.memryx.com/model_explorer/1p1/MediaPipe_palm_Detection_192_192_3_tflite.zip
 mkdir -p models
-unzip chrome_dino_game.zip -d models
+unzip MediaPipe_palm_Detection_192_192_3_tflite.zip -d models
 ```
 
 <details> 
@@ -83,7 +105,7 @@ python run_dino_game.py
 ```
 You can specify the model path and DFP (Compiled Model) path with the following option:
 
-* `-d` or `--dfp`: Path to the compiled DFP file (default is models/palm_detection_lite.dfp)
+* `-d` or `--dfp`: Path to the compiled DFP file (default is models/MediaPipe_palm_Detection_192_192_3_tflite.dfp)
 
 For example, to run with a specific DFP file, use:
 

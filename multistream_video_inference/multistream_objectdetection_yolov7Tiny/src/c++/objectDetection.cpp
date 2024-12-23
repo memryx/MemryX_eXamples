@@ -13,8 +13,8 @@ namespace fs = std::filesystem;
 std::atomic_bool runflag;
 
 //YoloV7 application specific parameters
-fs::path model_path = "yolov7-tiny_416.dfp";
-fs::path postprocessing_model_path = "yolov7-tiny_416.post.onnx";
+fs::path model_path = "YOLO_v7_tiny_416_416_3_onnx.dfp";
+fs::path postprocessing_model_path = "YOLO_v7_tiny_416_416_3_onnx_post.onnx";
 #define AVG_FPS_CALC_FRAME_COUNT  50
 
 //signal handler

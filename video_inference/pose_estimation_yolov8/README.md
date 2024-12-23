@@ -14,7 +14,7 @@ The **Pose Estimation** example demonstrates real-time pose estimation inference
 | **Model Type**       | Pose Estimation                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/pose_estimation_yolov8.zip)                                          |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_pose_640_640_3_onnx.zip)                                          |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Person bounding boxes and pose landmark coordinates |
 | **OS**               | Linux, Windows |
@@ -40,9 +40,9 @@ For C++ applications, ensure that all memx runtime plugins and utilities libs ar
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/pose_estimation_yolov8.zip
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_pose_640_640_3_onnx.zip
 mkdir -p models
-unzip pose_estimation_yolov8.zip -d models
+unzip YOLO_v8_medium_pose_640_640_3_onnx.zip -d models
 ```
 
 <details> 
@@ -95,8 +95,8 @@ python run_pose_estimation.py
 Command-line Options:
 You can specify the model path and DFP (Compiled Model) path using the following options:
 
-* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/yolov8m-pose.dfp)
-* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/model_0_yolov8m-pose_post.onnx)
+* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/YOLO_v8_medium_pose_640_640_3_onnx.dfp)
+* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx)
 
 Example:
 To run with a specific model and DFP file, use:

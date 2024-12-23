@@ -15,7 +15,7 @@ This example also showcases using Qt for the GUI and demonstrates how to integra
 | **Model Type**       | Line Segment Detection                                                       
 | **Framework**        | [TensorFlow Lite](https://www.tensorflow.org/) 🔗                                                   
 | **Model Source**     | [M-LSD GitHub Repository](https://github.com/navervision/mlsd) 🔗, [PINTO Model Zoo - M-LSD](https://github.com/PINTO0309/PINTO_model_zoo/tree/main/119_M-LSD) 🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/M_LSD_512_512_4_tflite.zip)                                           
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/M_LSD_512_512_4_tflite.zip)                                           
 | **Output**           | Wireframe coordinates and scores                
 | **OS**               | Linux
 | **License**          | [MIT](LICENSE.md)                                         
@@ -34,7 +34,7 @@ pip install opencv-python PySide6
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/M_LSD_512_512_4_tflite.zip
+wget https://developer.memryx.com/model_explorer/1p1/M_LSD_512_512_4_tflite.zip
 mkdir -p models
 unzip M_LSD_512_512_4_tflite.zip -d models
 ```
@@ -60,7 +60,7 @@ mx_nc -m mlsd_large_512.tflite --autocrop
 With the compiled model, you can now run real-time inference using the provided Python script. To run the Python example for real-time wireframe detection using MXA, simply execute the following command:
 
 ```bash
-cd scr
+cd src
 python run_wireframe.py
 ```
 

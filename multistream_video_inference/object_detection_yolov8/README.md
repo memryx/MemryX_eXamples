@@ -15,7 +15,7 @@ The **Object Detection** example demonstrates multi-stream real-time object dete
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/) and [onnx](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) and export to tflite or onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/object_detection_yolov8.zip)                                       |
+| **Pre-compiled DFP** | [Download here (TFLite)](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_tflite.zip) or [Download here (ONNX)](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_onnx.zip)   |
 | **Model Resolution** | 640x640                                                 |
 | **Output**           | Bounding box coordinates with objectness score, and class probabilities |
 | **OS**               | Linux |
@@ -37,7 +37,7 @@ pip install seaborn pyyaml pandas
 pip install ultralytics
 ```
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 
@@ -47,11 +47,15 @@ sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui
 
 ### Step 1: Download Pre-compiled DFP
 
-To download and unzip the precompiled DFPs, use the following commands:
+To download and unzip the precompiled DFPs, use the following commands: (Both tflite and ONNX is supported)
 ```bash
-wget https://developer.memryx.com/example_files/object_detection_yolov8.zip
-mkdir -p models
-unzip object_detection_yolov8.zip -d models
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_tflite.zip
+mkdir -p models/tflite
+unzip YOLO_v8_small_640_640_3_tflite.zip -d models/tflite
+
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_onnx.zip
+mkdir -p models/onnx
+unzip YOLO_v8_small_640_640_3_onnx.zip -d models/onnx
 ```
 
 <details> 
@@ -104,8 +108,8 @@ python run_objectiondetection.py
 ```
 You can specify the model path and the DFP (Compiled Model) path using the following options. Both TFLite and ONNX formats are supported.
 
-* `-m` or `--postmodel`: Path to the model file (default is models/tflite/model_0_yolov8s_post.onnx)
-* `-d` or `--dfp`: Path to the compiled DFP file (default is models/tflite/yolov8s.dfp)
+* `-m` or `--postmodel`: Path to the model file (default is models/tflite/YOLO_v8_small_640_640_3_tflite_post.tflite)
+* `-d` or `--dfp`: Path to the compiled DFP file (default is models/tflite/YOLO_v8_small_640_640_3_tflite.dfp)
 
 You can specify the input video path with the following option:
 

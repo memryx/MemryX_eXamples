@@ -347,7 +347,7 @@ class Yolo7Mxa:
         """
 
         # AsyncAccl
-        accl = AsyncAccl(dfp='../../assets/yolov7-tiny_416.dfp')
+        accl = AsyncAccl(dfp='../../models/YOLO_v7_tiny_416_416_3_onnx.dfp')
 
         # Start the Display/Save thread
         print("YOLOv7-Tiny inference on MX3 started")

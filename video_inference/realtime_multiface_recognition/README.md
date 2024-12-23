@@ -1,5 +1,5 @@
 # Realtime Multi-Face Detection and Recognition Application 
-This example demonstrates integrating the [Face Detection / Recognition](https://github.com/memryx/mx_examples/tree/face_recognition/image_inference/face_recognition)
+This example demonstrates integrating the [Face Detection / Recognition](https://github.com/memryx/memryx_examples/tree/face_recognition/image_inference/face_recognition)
 pipeline into a realtime application with an interactive GUI.  
 
 <p align="center">
@@ -41,15 +41,15 @@ unzip face_recognition.zip -d models
 If you prefer, you can download and compile the models rather than using the precompiled model. Download the pre-trained yolov8n and FaceNet models:
 
 ```bash
-wget https://developer.memryx.com/example_files/face_recognition_uncompiled.zip
-unzip face_recognition_uncompiled.zip -d models
+wget https://developer.memryx.com/example_files/face_recognition_original.zip
+unzip face_recognition_original.zip -d models
 ```
 
 You can now use the MemryX Neural Compiler to compile the models and generate the DFP file required by the accelerator:
 
 ```bash
 cd models/ 
-mx_nc -v -m FaceNet.h5 yolov8n-face_crop.onnx --dfp_fname yolov8n_facenet.dfp 
+mx_nc -v -m Facenet.h5 yolov8n-face_crop.onnx --dfp_fname yolov8n_facenet.dfp 
 ```
 
 </details>

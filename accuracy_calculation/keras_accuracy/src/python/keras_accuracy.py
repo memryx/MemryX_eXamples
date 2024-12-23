@@ -186,7 +186,7 @@ def load_images_and_labels():
 
 def get_expected_model_input_shape(model_name, module_name):
 
-    if module_name == 'regnet':
+    if module_name == 'regnet' or module_name == 'efficientnet':
 
         # Get the input shape expected of the model 
         model_class = getattr(tf_keras.applications, model_name)
@@ -221,7 +221,7 @@ def get_keras_module_name(model_name):
 def get_keras_module_and_model(module_name, model_name):
 
     # Note: Regnetx models are present in the older version of keras ie Keras 2
-    if module_name == 'regnet':
+    if module_name == 'regnet' or module_name == 'efficientnet':
         module = getattr(tf_keras.applications, module_name)
         model = getattr(module, model_name)(weights = 'imagenet')   
 

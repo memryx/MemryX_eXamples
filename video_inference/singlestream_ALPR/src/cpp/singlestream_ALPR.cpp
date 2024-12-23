@@ -30,7 +30,7 @@ std::atomic_bool runflag; // Atomic flag to control run state
 
 // ALPR application specific parameters
 fs::path model_path = "multi_lpd_yunet_lpr_crnn.dfp";               // Default model path
-fs::path postprocessing_model_path = "model_0_lpd_yunet_post.onnx"; // Default post-processing model path
+fs::path postprocessing_model_path = "lpd_yunet_post.onnx"; // Default post-processing model path
 #define AVG_FPS_CALC_FRAME_COUNT 50                                 // Number of frames used to calculate average FPS
 
 // Signal handler to gracefully stop the program on SIGINT (Ctrl+C)

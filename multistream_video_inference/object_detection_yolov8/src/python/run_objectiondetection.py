@@ -217,13 +217,13 @@ if __name__ == "__main__":
 
     # DFP model argument
     parser.add_argument('-d', '--dfp', type=str, 
-                        default='models/tflite/yolov8s.dfp', 
-                        help="Path to the compiled DFP file (default: 'models/tflite/yolov8s.dfp')")
+                        default='models/tflite/YOLO_v8_small_640_640_3_tflite.dfp', 
+                        help="Path to the compiled DFP file (default: 'models/tflite/YOLO_v8_small_640_640_3_tflite.dfp')")
 
     # Post-processing model argument
     parser.add_argument('-p', '--post_model', type=str, 
-                        default='models/tflite/model_0_yolov8s_post.tflite', 
-                        help="Path to the post-processing ONNX file (default: 'models/tflite/model_0_yolov8s_post.tflite')")
+                        default='models/tflite/YOLO_v8_small_640_640_3_tflite_post.tflite', 
+                        help="Path to the post-processing ONNX file (default: 'models/tflite/YOLO_v8_small_640_640_3_tflite_post.tflite')")
 
     args = parser.parse_args()
 

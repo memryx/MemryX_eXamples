@@ -137,11 +137,11 @@ def compile_model(model):
     nc.run()
     # Rename the exported ONNX files
     os.rename(
-        f"{os.getcwd()}/model_0_main_graph.onnx",
+        f"{os.getcwd()}/main_graph.onnx",
         weights_dir / f"{model_name}-crop.onnx",
     )
     os.rename(
-        f"{os.getcwd()}/model_0_main_graph_post.onnx",
+        f"{os.getcwd()}/main_graph_post.onnx",
         weights_dir / f"{model_name}-post.onnx",
     )
     # Print file paths

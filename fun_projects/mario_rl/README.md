@@ -18,7 +18,7 @@ This example uses the MemryX Accelerators (MXA) to run a deep reinforcement lear
 | **Input**      | Game state representation                                                                |
 | **Output**     | Action preference                                                                        |
 | **OS**         | Linux                                                                                    |
-| **License**    | [MIT](https://github.com/memryx/mx_examples/blob/mario/fun_projects/mario-rl/LICENSE.md) |
+| **License**    | [MIT](LICENSE.md) |
 
 ## Environment Setup
 

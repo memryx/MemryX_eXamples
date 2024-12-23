@@ -14,7 +14,7 @@ The **Segmentation** example demonstrates real-time Segmentation inference using
 | **Model Type**       | Segmentation                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/segmentation_yolov8.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_nano_seg_640_640_3_onnx.zip)                                           |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Bounding boxes for detected objects, confidence scores, class labels, and segmentation masks |
 | **OS**               | Linux |
@@ -38,9 +38,9 @@ pip install ultralytics
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/segmentation_yolov8.zip
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_nano_seg_640_640_3_onnx.zip
 mkdir -p models
-unzip segmentation_yolov8.zip -d models
+unzip YOLO_v8_nano_seg_640_640_3_onnx.zip -d models
 ```
 
 <details> 
@@ -95,19 +95,19 @@ To run the Python example for real-time Segmentation using MX3, follow these ste
 Simply execute the following command:
 
 ```bash
-python run_segmentation.py
+python src/python/run_segmentation.py
 ```
 Command-line Options:
 You can specify the model path and DFP (Compiled Model) path using the following options:
 
-* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/yolov8n-seg.dfp)
-* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/model_0_yolov8n-seg_post.onnx)
+* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/YOLO_v8_nano_seg_640_640_3_onnx.dfp)
+* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)
 
 Example:
 To run with a specific model and DFP file, use:
 
 ```bash
-python run_segmentation.py -d <dfp_path> -post <post_processing_onnx_path>
+python src/python/run_segmentation.py -d <dfp_path> -post <post_processing_onnx_path>
 ```
 
 If no arguments are provided, the script will use the default paths for the model and DFP.

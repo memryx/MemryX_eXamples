@@ -14,7 +14,7 @@ The **Cartoonizer** example demonstrates real-time "cartoonization" of a video s
 | **Model Type**       | Cartoonizer                                               |
 | **Framework**        | [ONNX](https://onnx.ai/)                                   |
 | **Model Source**     | [Download here](https://github.com/SystemErrorWang/FacialCartoonization/blob/master/weight.pth)       |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/cartoonizer.zip)         |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/Facial_cartoonizer_512_512_3_onnx.zip)         |
 | **Model Resolution** | 512x512                                                      |
 | **Output**           | cartoonized version of the input image |
 | **OS**               | Linux, Windows |
@@ -49,9 +49,9 @@ Then open the `src/python_windows/` folder and double-click on `setup_env.bat`. 
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/cartoonizer.zip
+wget wget https://developer.memryx.com/model_explorer/1p1/Facial_cartoonizer_512_512_3_onnx.zip
 mkdir -p models
-unzip cartoonizer.zip -d models
+unzip Facial_cartoonizer_512_512_3_onnx.zip -d models
 ```
 
 <details> 
@@ -95,7 +95,7 @@ python run_facial_cartoonizer.py
 Command-line Options:
 You can specify the model path and DFP (Compiled Model) path using the following options:
 
-* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/facial-cartoonizer_512.dfp) or the original model
+* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/Facial_cartoonizer_512_512_3_onnx.dfp) or the original model
 
 Example:
 To run with a specific model and DFP file, use:

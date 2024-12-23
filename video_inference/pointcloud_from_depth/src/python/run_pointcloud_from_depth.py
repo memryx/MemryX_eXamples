@@ -95,6 +95,7 @@ class PointCloudFromDepth:
 
             # Rename the extracted file (assuming it's named '1.tflite')
             if path.isfile(extracted_file):
+                system("mkdir -p models")
                 system(f"mv {extracted_file} {target_model_path}")
                 print(f"\033[93mModel extraction completed and renamed to '{target_model_path}'.\033[0m")
             else:
@@ -263,7 +264,7 @@ def main():
     """
     # Parse the command-line arguments
     parser = argparse.ArgumentParser(description="Run MX3 real-time inference with options for model path and DFP file.")
-    parser.add_argument('-m', '--model', type=str, default="midas_v2_small.tflite", help="Specify the path to the model. Default is 'midas_v2_small.tflite'.")
+    parser.add_argument('-m', '--model', type=str, default="models/midas_v2_small.tflite", help="Specify the path to the model. Default is 'midas_v2_small.tflite'.")
     parser.add_argument('-d', '--dfp', type=str, default="models/midas_v2_small.dfp", help="Specify the path to the compiled DFP file. Default is 'models/midas_v2_small.dfp'.")
     args = parser.parse_args()
 

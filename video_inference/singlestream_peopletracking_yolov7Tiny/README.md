@@ -14,7 +14,7 @@ The **People Tracking** example demonstrates real-time people tracking on a sing
 | **Model Type**       | Object Detection                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                |
 | **Model Source**     | [Download](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt) and [export](https://github.com/WongKinYiu/yolov7/blob/main/export.py) to onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/docs/model_explorer/YOLO-v7-tiny_416_416_3.zip) |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip) |
 | **Model Dataset**    | [COCO](https://docs.ultralytics.com/datasets/detect/coco/) |
 | **Model Resolution** | 416x416                                                    |
 | **Output**           | Bounding box coordinates & object probabilities            |
@@ -43,9 +43,9 @@ pip install seaborn pyyaml pandas
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/docs/model_explorer/YOLO-v7-tiny_416_416_3.zip
-mkdir -p assets
-unzip YOLO-v7-tiny_416_416_3.zip -d assets
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip
+mkdir -p models
+unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 ```
 
 <details> 
@@ -75,6 +75,7 @@ To run the Python example for people tracking with yolov7-tiny using MX3, simply
 
 ```bash
 # ensure a camera device is connected, as the default video input is a cam
+cd src/python
 python run_yolov7tiny_singlestream_peopletracking.py 
 ```
 

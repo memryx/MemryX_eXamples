@@ -23,11 +23,17 @@ The **CeneterNet** example demonstrates real-time object detection on a single i
 
 ## Requirements (Linux)
 
-Before running the application ensure that all MemryX runtime plugins and utilities libraries are installed. For more information on installation, please refer to DevHub pages such as [runtime installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [additional requirements for tutorial apps page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+Before running the application ensure that all MemryX runtime plugins and utilities libraries are installed. For more information on installation, please refer to DevHub pages such as [runtime installation page](https://developer.memryx.com/get_started/install_driver.html) , and [additional requirements for tutorial apps page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application (Linux)
 
-### Step 1: Download Pre-compiled DFP
+### Step 1: Download extra 3rd-party librarires
+
+```bash
+sudo apt install qtbase5-dev
+```
+
+### Step 2: Download Pre-compiled DFP
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
@@ -63,7 +69,7 @@ The compiler will generate the DFP, a pre-processing and a post-processing file 
 
 </details>
 
-### Step 2: Run the Script/Program
+### Step 3: Run the Script/Program
 
 With the compiled model, you can now run real-time inference. Below are the examples of how to do this using C++.
 

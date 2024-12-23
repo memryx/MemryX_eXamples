@@ -25,7 +25,7 @@ The **Face Detection & Emotion Classification** example demonstrates real-time F
 Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV using the following commands:
 
 ```bash
-pip install opencv-python libopencv-dev
+pip install opencv-python
 ```
 
 For C++ applications, download the supported version of PyTorch [PyTorch Get Started Page](https://pytorch.org/get-started/locally/)

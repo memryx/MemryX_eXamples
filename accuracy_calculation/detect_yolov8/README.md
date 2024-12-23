@@ -10,7 +10,6 @@ The **YOLOv8 Object Detection** example demonstrates how to validate the accurac
 | **Model Type**       | Object Detection                                                                     |
 | **Framework**        | [PyTorch](https://pytorch.org/)                                                      |
 | **Model Source**     | [Ultralytics](https://github.com/ultralytics/ultralytics) (Downloaded Automatically) |
-| **Pre-compiled DFP** | [Download here](assets/midas_v2_small.dfp)                                           |
 | **Input**            | 640x640x3 (default)                                                                  |
 | **Output**           | Bounding boxes and class probabilities                                               |
 | **OS**               | Linux                                                                                |

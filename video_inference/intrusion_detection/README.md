@@ -1,4 +1,4 @@
-# Vehicle Detection
+# Intrusion Detection
 
 The **intrusion detection** example demonstrates real-time detection of intruding objects for any desired Region of Interest in a video feed. This can be very useful in video surveillance. ByteTrack has been used for tracking and Yolov8m has been used of the detection of objects
 
@@ -37,9 +37,9 @@ pip3 install -r requirements.txt
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/intrusion_detection.zip
+wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_640_640_3_tflite.zip
 mkdir -p models
-unzip intrusion_detection.zip -d models
+unzip YOLO_v8_medium_640_640_3_tflite.zip -d models
 ```
 
 
