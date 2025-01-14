@@ -117,7 +117,7 @@ If no arguments are provided, the script will use the default DFP path.
 
 ## Tutorial
 
-A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/fun_projects/dino_game.html) 
+A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/fun_projects/dino_game.html) 
 
 
 ## Third-Party License

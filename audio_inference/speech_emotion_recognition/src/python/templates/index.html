@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speech Emotion Recognition</title>
+    <style>
+        body {                                                 /* Body style */
+            background-image: url("static/images/flower.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        h1 {                                                   /* Heading style */
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+        .button {
+            padding: 6px 9px;
+            margin: 4px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+        .file-upload-container {                               /* File upload container style */
+            width: 90%;
+            height: 160px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 8px;
+        }
+        .side-by-side-container-upload-or-record {              /* File upload or record container style */
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px; /* Space between boxes */
+            margin-top: 10px;
+        }
+        .record-controls {                                      
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Space between buttons */
+            margin-bottom: 10px; /* Space between buttons and status text */
+        }
+        .side-by-side-container {
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px; /* Space between boxes */
+            margin-top: 10px;
+        }
+        .extra-box {                                            /* Extra box to generate result style */
+            width: 120%;
+            height: 260px;
+            background-color: white;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        #intermediate-pie-chart {
+            max-width: 100%; /* Chart fits inside the box */
+            max-height: 240px; /* Adjust the height to control size */
+            margin: auto;
+        }
+        .box-title {
+            font-weight: bold;
+            font-size: 1.2em; /* Optional: Adjust the font size */
+            margin-bottom: 10px; /* Optional: Adds spacing below the title */
+        }
+        .upload-box-title {
+            font-weight: bold;
+        }
+        .emotion-image {
+            width: 160px; /* Set the desired width */
+            height: 160px; /* Set the desired height */
+            object-fit: cover; /* Ensures the image is scaled properly */
+            border-radius: 8px; /* Optional: Add rounded corners */
+            margin-top: 10px; /* Optional: Add space above the image */
+        }
+        .last-box {                                            /* Extra box to generate result style */
+            width: 70%;
+            height: 100px;
+            background-color: white;
+            padding: 2px;
+            border-radius: 2px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Title -->
+    <h1>Speech Emotion Recognition!</h1>
+
+    <!-- Upload file or Record audio container -->
+     <div class="side-by-side-container-upload-or-record">
+        <div class="file-upload-container">
+            <form action="/" method="post" enctype="multipart/form-data">
+                <div>
+                    <p class="upload-box-title">Choose File</p>
+                    <input type="file" name="file" accept=".wav">
+                </div>
+                <div style="margin-top: 20px;">
+                    <p class="upload-box-title">Upload and classify!</p>
+                    <input type="submit" value="Upload">
+                </div>
+            </form>
+        </div>
+        <div class="file-upload-container">
+            <p class="upload-box-title">Record Audio</p>
+            <div class="record-controls">
+                <button class="button" id="start-record-btn">Start Recording</button>
+                <button class="button" id="stop-record-btn" disabled>Stop Recording</button>
+                <form action="/" method="post" enctype="multipart/form-data" style="margin: 0;">
+                    <input type="hidden" id="audio-data" name="audio-data">
+                    <button class="button" id="upload-record-btn" disabled>Upload Recording</button>
+                </form>
+            </div>
+            <p id="recording-status">Press "Start Recording" to begin.</p>
+            <audio id="audio-playback" controls hidden></audio>
+        </div>        
+     </div>
+
+    
+    <!-- Script to record audio -->
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
+        const startRecordBtn = document.getElementById("start-record-btn");
+        const stopRecordBtn = document.getElementById("stop-record-btn");
+        const uploadRecordBtn = document.getElementById("upload-record-btn");
+        const recordingStatus = document.getElementById("recording-status");
+        const audioPlayback = document.getElementById("audio-playback");
+        const audioDataInput = document.getElementById("audio-data");
+
+        // Request user permission and initialize MediaRecorder
+        async function initRecorder() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (e) => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: "audio/wav" });
+                    audioChunks = [];
+
+                    // Play back the recorded audio
+                    const audioURL = URL.createObjectURL(blob);
+                    audioPlayback.src = audioURL;
+                    audioPlayback.hidden = false;
+
+                    // Convert Blob to Base64 for upload
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        audioDataInput.value = reader.result;
+                        uploadRecordBtn.disabled = false;
+                    };
+
+                    recordingStatus.innerText = "Recording stopped. Ready to upload.";
+                };
+            } catch (err) {
+                recordingStatus.innerText = "Error accessing microphone: " + err.message;
+            }
+        }
+
+        startRecordBtn.addEventListener("click", () => {
+            if (!mediaRecorder) {
+                initRecorder();
+                recordingStatus.innerText = "Initializing recorder...";
+                return;
+            }
+            mediaRecorder.start();
+            recordingStatus.innerText = "Recording in progress...";
+            startRecordBtn.disabled = true;
+            stopRecordBtn.disabled = false;
+        });
+
+        stopRecordBtn.addEventListener("click", () => {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                recordingStatus.innerText = "Stopping recording...";
+                startRecordBtn.disabled = false;
+                stopRecordBtn.disabled = true;
+            }
+        });
+
+        uploadRecordBtn.addEventListener("click", () => {
+            recordingStatus.innerText = "Uploading recording...";
+        });
+    </script>
+
+
+    <!-- Side-by-Side Boxes to display result of classification and generate pie chart -->
+    <div class="side-by-side-container">
+        <div class="extra-box">
+            <p class="box-title">Classification Result</p> <!-- Added class for bold style -->
+            <p>
+                {% if classification_result %}
+                And the emotion is ..... {{ classification_result }}
+                {% else %}
+                .
+                {% endif %}
+            </p>
+            {% if result_image_url %}
+            <img src="{{ result_image_url }}" alt="Emotion Image" class="emotion-image">
+            {% endif %}
+        </div>
+        <div class="extra-box">
+            <p class="box-title">Intermediate class predictions</p> <!-- Added class for bold style -->
+            <canvas id="intermediate-pie-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Include Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Get the intermediate predictions data from Flask
+        const intermediatePredictions = {{ intermediate_predictions | tojson }};
+        
+        if (intermediatePredictions) {
+            // Prepare data for the pie chart
+            const labels = Object.keys(intermediatePredictions);
+            const data = Object.values(intermediatePredictions);
+
+            // Create the pie chart
+            const ctx = document.getElementById('intermediate-pie-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allows customization of chart size
+                    plugins: {
+                        legend: {
+                            position: 'right', // Moves labels to the right side
+                            labels: {
+                                boxWidth: 10, // Reduces the size of the color box
+                                font: {
+                                    size: 12 // Adjusts the font size of the labels
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    
+    <div class="last-box">
+        <p class="box-title">What next?</p> <!-- Added class for bold style -->
+        <p>
+            {% if classification_result %}
+                {% if classification_result == 'happiness' %}
+                    You seem happy! <a href="https://developer.memryx.com/tutorials/tutorials.html" target="_blank">Here's something fun you can try.</a>
+
+                {% elif classification_result == 'sadness' %}
+                    It seems like you're feeling down. Wanna <a href="https://github.com/memryx/MemryX_eXamples/blob/release/fun_projects/mario_rl/README.md" target="_blank">play a cool game?</a>  
+
+                {% elif classification_result == 'anger' %}
+                    Take a moment to breathe and relax. Check out some easy <a href="https://github.com/memryx/MemryX_eXamples/blob/release/fun_projects/MxFit/README.md" target="_blank">exercises.</a>
+
+                {% elif classification_result == 'neutral' %}
+                    Staying neutral is great for balance. Wanna <a href="https://github.com/memryx/MemryX_eXamples/blob/release/fun_projects/virtual_painter/README.md" target="_blank">paint?</a>
+
+                {% elif classification_result == 'boredom' %}
+                    Feeling bored? You might wanna check <a href="https://github.com/memryx/MemryX_eXamples" target="_blank">this</a> out.
+
+                {% elif classification_result == 'disgust' %}
+                    Disgusted? You might wanna see your <a href="https://github.com/memryx/MemryX_eXamples/blob/release/fun_projects/cartoonizer/README.md" target="_blank">face here..</a>
+
+                {% elif classification_result == 'anxiety_fear' %}
+                    You need not be anxious anymore. We've got you <a href="https://github.com/memryx/MemryX_eXamples/blob/release/video_inference/intrusion_detection/README.md" target="_blank">covered.</a>   
+
+                {% else %}
+                    Your emotion is detected as "{{ classification_result }}". Stay mindful and enjoy the moment!
+
+                {% endif %}
+            {% else %}
+                No emotion detected yet.
+            {% endif %}
+        </p>
+    </div>
+</body>
+</html>

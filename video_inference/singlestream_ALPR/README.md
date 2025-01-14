@@ -18,7 +18,7 @@ The **ALPR** example demonstrates multi-stream real-time object detection using 
 
 ## Requirements
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 

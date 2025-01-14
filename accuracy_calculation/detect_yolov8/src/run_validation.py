@@ -1,20 +1,18 @@
-import torch
-import onnx
-import numpy as np
+import argparse
 import json
 import os
-import argparse
-from pathlib import Path
 from glob import glob
-
-from ultralytics import YOLO
-from ultralytics.models.yolo.detect.val import DetectionValidator
-from ultralytics.data.utils import check_det_dataset
-from ultralytics.utils import LOGGER, TQDM
+from pathlib import Path
 
 import memryx as mx
+import numpy as np
+import onnx
 import onnxruntime as ort
-
+import torch
+from ultralytics import YOLO
+from ultralytics.data.utils import check_det_dataset
+from ultralytics.models.yolo.detect.val import DetectionValidator
+from ultralytics.utils import LOGGER, TQDM
 
 weights_dir = os.getcwd() / Path("weights")
 
@@ -37,8 +35,8 @@ class MxaDetectionValidator(DetectionValidator):
         LOGGER.info(f"\033[32mRunning {model_name} inference on MXA\033[0m")
 
         # Ensure your paths/naming scheme matches
-        self.mxa = mx.SyncAccl(f"weights/{model_name}.dfp")
-        self.ort = ort.InferenceSession(f"weights/{model_name}-post.onnx")
+        self.mxa = mx.SyncAccl(weights_dir / f"{model_name}.dfp")
+        self.ort = ort.InferenceSession(weights_dir / f"{model_name}-post.onnx")
 
     def __call__(self, model):
         model.eval()
@@ -131,17 +129,17 @@ def compile_model(model):
         models=onnx_model,
         autocrop=True,
         no_sim_dfp=True,
-        dfp_fname=f"weights/{model_name}.dfp",
+        dfp_fname=weights_dir / f"{model_name}.dfp",
         verbose=1,
     )
     nc.run()
     # Rename the exported ONNX files
     os.rename(
-        f"{os.getcwd()}/main_graph.onnx",
+        weights_dir / "main_graph_crop.onnx",
         weights_dir / f"{model_name}-crop.onnx",
     )
     os.rename(
-        f"{os.getcwd()}/main_graph_post.onnx",
+        weights_dir / "main_graph_post.onnx",
         weights_dir / f"{model_name}-post.onnx",
     )
     # Print file paths

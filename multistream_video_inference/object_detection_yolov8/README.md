@@ -37,7 +37,7 @@ pip install seaborn pyyaml pandas
 pip install ultralytics
 ```
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 
@@ -108,7 +108,7 @@ python run_objectiondetection.py
 ```
 You can specify the model path and the DFP (Compiled Model) path using the following options. Both TFLite and ONNX formats are supported.
 
-* `-m` or `--postmodel`: Path to the model file (default is models/tflite/YOLO_v8_small_640_640_3_tflite_post.tflite)
+* `-p` or `--postmodel`: Path to the model file (default is models/tflite/YOLO_v8_small_640_640_3_tflite_post.tflite)
 * `-d` or `--dfp`: Path to the compiled DFP file (default is models/tflite/YOLO_v8_small_640_640_3_tflite.dfp)
 
 You can specify the input video path with the following option:
@@ -118,7 +118,7 @@ You can specify the input video path with the following option:
 For example, to run with a specific video, post-processing model and DFP file, use:
 
 ```bash
-python run_objectiondetection.py -m <postmodel_path> -d <dfp_path> --video_paths /dev/video0
+python run_objectiondetection.py -p <postmodel_path> -d <dfp_path> --video_paths /dev/video0
 ```
 
 You can specify multiple input video paths to run multiple stream with `--video_paths` option:
@@ -157,11 +157,11 @@ make
 ./multistream_objectdetection_yolov8s --video_paths vid:<path_to_video_file> 
 ```
 
-* To specify a custom DFP file, use the `-d` option:
+* To specify a custom DFP file, use the `-d` option, and `-m` for post_model:
 
 
 ```bash
-./multistream_objectdetection_yolov8s -d <path_to_dfp_file> 
+./multistream_objectdetection_yolov8s -d <path_to_dfp_file>  -m <path_to_post_model>
 ```
 
 * To specify multiple video inputs, use the `--video_paths` option with following format:
@@ -172,7 +172,7 @@ make
 
 ## Tutorial
 
-A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html)
+A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html)
 
 ## Third-Party License
 

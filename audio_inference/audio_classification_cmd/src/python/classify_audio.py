@@ -5,7 +5,6 @@ import tensorflow as tf
 import numpy as np
 import csv
 from scipy.io import wavfile
-import tensorflow_hub as hub
 import matplotlib.pyplot as plt
 import scipy
 from tensorflow.keras.models import load_model
@@ -270,9 +269,9 @@ def main():
     # Define paths to all required items
     class_map_csv_text = '../../assets/yamnet_class_map.csv'
 
-    preprocess_model_path = '../../models/audioclassifymodel_pre.tflite'
-    model_dfp_path = "../../models/audioclassifymodel.dfp"
-    postprocess_model_path = '../../models/audioclassifymodel_post.tflite'
+    preprocess_model_path = '../../models/audio_classification/audioclassifymodel_pre.tflite'
+    model_dfp_path = "../../models/audio_classification/audioclassifymodel.dfp"
+    postprocess_model_path = '../../models/audio_classification/audioclassifymodel_post.tflite'
 
     # Initialize class 
     audioclassify = AudioClassify(class_map_csv_text, preprocess_model_path, model_dfp_path, postprocess_model_path)

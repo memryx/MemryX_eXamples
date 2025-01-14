@@ -72,7 +72,7 @@ If your version is 3.12 or higher, follow the steps below to install Python 3.11
     source mxenv/bin/activate
     ```
 
-**Important Note**: Please ensure that the MemryX SDK is installed in the new Python installation or virtual environment. For instructions, refer to the [SDK tool installation](https://developer.memryx.com/docs/get_started/install_tools.html) page for guidance.
+**Important Note**: Please ensure that the MemryX SDK is installed in the new Python installation or virtual environment. For instructions, refer to the [SDK tool installation](https://developer.memryx.com/get_started/install_tools.html) page for guidance.
 
 
 ## Running the Application

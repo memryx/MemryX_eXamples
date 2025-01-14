@@ -52,7 +52,7 @@ python src/run_validation.py --size n       # Runs validation on the nano model
 
 ## Tutorial
 
-A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/accuracy/yolov8_accuracy/yolov8_accuracy.html)
+A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/accuracy/yolov8_accuracy/yolov8_accuracy.html)
 
 
 ## Third-Party License

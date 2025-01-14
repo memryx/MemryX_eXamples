@@ -101,13 +101,13 @@ Command-line Options:
 You can specify the model path and DFP (Compiled Model) path using the following options:
 
 * `-d` or `--dfp`:  Path to the compiled DFP file (default is models/YOLO_v8_nano_seg_640_640_3_onnx.dfp)
-* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)
+* `-p` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)
 
 Example:
 To run with a specific model and DFP file, use:
 
 ```bash
-python src/python/run_segmentation.py -d <dfp_path> -post <post_processing_onnx_path>
+python src/python/run_segmentation.py -d <dfp_path> -p <post_processing_onnx_path>
 ```
 
 If no arguments are provided, the script will use the default paths for the model and DFP.

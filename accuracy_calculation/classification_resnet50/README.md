@@ -82,19 +82,19 @@ The model (~98 MB) and ImageNet dataset (~6.8 GB) are downloaded automatically i
 To run the application:
 
 ```bash
-python src/python/run_validation.py   # Runs on MXA
+cd src/python && python run_validation.py  # Runs on MXA
 ```
 
 Other ways to run:
 ```bash
-python src/python/run_validation.py --device cpu   # Runs on cpu (establish baseline performance)
-python src/python/run_validation.py --count 10000  # Runs accuracy for 10000 images instead of 50000 images
+cd src/python && python run_validation.py --device cpu   # Runs on cpu (establish baseline performance)
+cd src/python && python run_validation.py --count 10000  # Runs accuracy for 10000 images instead of 50000 images
 ```
 
 
 ## Tutorial
 
-A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/accuracy/mlperf_accuracy/resnet50v1.5_mlperf_accuracy.html)
+A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/accuracy/mlperf_accuracy/resnet50v1.5_mlperf_accuracy.html)
 
 
 ## Third-Party License

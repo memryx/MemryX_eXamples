@@ -32,7 +32,7 @@ pip install opencv-python
 pip install ultralytics
 ```
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application (Linux)
 
@@ -148,7 +148,7 @@ Alternatively, you can use commandline arguments such as `--video` if launching 
 
 ## Tutorial
 
-A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/realtime_inf/realtime_pose.html)
+A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/realtime_inf/realtime_pose.html)
 
 ## Third-Party Licenses
 

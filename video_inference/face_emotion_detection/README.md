@@ -37,7 +37,7 @@ Download Instructions:
 
     Please download the supported version of PyTorch by following these steps at PyTorch Get Started Page
 
-    1. PyTorch Build: Select 'Stable (2.3.0)'
+    1. PyTorch Build: Select 'Stable (2.3.0 or later)'
 
     2. Your OS: Choose between Linux, Mac, or Windows
 
@@ -54,7 +54,7 @@ Download Instructions:
 Also, change the 'cxx11 ABI' version in the file CMakeLists.txt at lines 11 to match the downloaded version.
 ```
 
-Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application
 
@@ -162,7 +162,7 @@ You need to specify whether you want to use the camera or a video file as input.
 
 ## Tutorial
 
-A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/realtime_inf/realtime_multimodel.html)
+A more detailed tutorial with a complete code explanation is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/realtime_inf/realtime_multimodel.html)
 
 ## Third-Party Licenses
 

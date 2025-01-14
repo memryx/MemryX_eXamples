@@ -1,5 +1,5 @@
 # Realtime Multi-Face Detection and Recognition Application 
-This example demonstrates integrating the [Face Detection / Recognition](https://github.com/memryx/memryx_examples/tree/face_recognition/image_inference/face_recognition)
+This example demonstrates integrating the [Face Detection / Recognition](../../image_inference/face_recognition/README.md)
 pipeline into a realtime application with an interactive GUI.  
 
 <p align="center">

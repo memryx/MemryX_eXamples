@@ -90,7 +90,7 @@ This project uses third-party software, models, and libraries. Below are the det
   - License: [Apache-2.0](https://github.com/PINTO0309/PINTO_model_zoo/blob/main/119_M-LSD/LICENSE) 🔗
 
 - **Code Reuse**: Some code components, including pre/post-processing, were sourced from the M-LSD code provided on [PINTO Model Zoo - M-LSD](https://github.com/PINTO0309/PINTO_model_zoo/tree/main/119_M-LSD) 🔗  
-  - License: [Apache-2.0](https://github.com/navervision/mlsd/blob/main/LICENSE) 🔗
+  - License: [Apache-2.0](https://github.com/PINTO0309/PINTO_model_zoo/blob/main/119_M-LSD/LICENSE) 🔗
 
 ## Summary
 

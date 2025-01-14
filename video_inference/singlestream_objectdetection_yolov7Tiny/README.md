@@ -2,8 +2,6 @@
 
 The **Object Detection** example demonstrates real-time object detection on a single input stream using the pre-trained yolov7 tiny model on MemryX accelerators. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
 
-For a single-stream input example, please refer to [single-stream object detection using yolov7 tiny](video_inference/singlestream_objectdetection_yolov7Tiny/README.md)
-
 <p align="center">
   <img src="assets/objectDetection_yolov7tiny.png" alt="Object Detection Example" width="45%" />
 </p>
@@ -98,7 +96,7 @@ If no arguments are provided, the script will use the default post-processing mo
 
 ## Tutorial
 
-A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/realtime_inf/realtime_od.html)
+A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/realtime_inf/realtime_od.html)
 
 ## Third-Party Licenses
 

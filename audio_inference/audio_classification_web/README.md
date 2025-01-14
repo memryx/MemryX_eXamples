@@ -35,6 +35,12 @@ NOTE: The package **ai-edge-litert** is only supported in Python versions 3.9 - 
 
 NOTE: Depending on which OS you use, you would have to download the corresponding version of ffmpeg. Please refer to this [link](https://ffmpeg.org/download.html) for more details. The above command is for Linux systems.
 
+If the above command *sudo apt install ffmpeg* does not work, try the following command:
+
+```bash
+pip install ffmpeg-python
+```
+
 
 ## Running the Application
 

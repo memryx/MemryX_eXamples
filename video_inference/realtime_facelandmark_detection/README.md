@@ -30,7 +30,7 @@ To download and unzip the precompiled DFPs, use the following commands:
 ```bash
 wget https://developer.memryx.com/example_files/facelandmark.zip
 mkdir -p models
-unzip face_detection_face_landmark.zip -d models
+unzip facelandmark.zip -d models
 ```
 
 <details> 

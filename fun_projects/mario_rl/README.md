@@ -7,7 +7,6 @@ This example uses the MemryX Accelerators (MXA) to run a deep reinforcement lear
     <p align=center>The trained DDQN Mario agent in action.</p>
 </p>
 
-
 ## Overview
 
 | **Property**   | **Details**                                                                              |
@@ -18,7 +17,7 @@ This example uses the MemryX Accelerators (MXA) to run a deep reinforcement lear
 | **Input**      | Game state representation                                                                |
 | **Output**     | Action preference                                                                        |
 | **OS**         | Linux                                                                                    |
-| **License**    | [MIT](LICENSE.md) |
+| **License**    | [MIT](LICENSE.md)                                                                        |
 
 ## Environment Setup
 
@@ -26,12 +25,15 @@ This project is very sensitive to package versions. We recommend using `python==
 
 ```bash
 conda create -n mario-rl python==3.10.0
+conda activate mario-rl
 pip install --extra-index-url https://developer.memryx.com/pip memryx
 pip install gym-super-mario-bros==7.4.0 tensordict==0.3.0 torchrl==0.3.0 torchinfo==1.8 toml==0.10.2
 ```
+
 Depending on your system, you may also need to install some additional system libraries to enable `human` rendering of the game environment.
 
 ### References
+
 - [gym_super_mario_bros](https://github.com/Kautenja/gym-super-mario-bros/tree/master) 🔗
 - [gymnasium](https://github.com/Farama-Foundation/Gymnasium) 🔗
 - [mario-rl-tutorial.py](https://github.com/pytorch/tutorials/blob/main/intermediate_source/mario_rl_tutorial.py) 🔗
@@ -56,12 +58,13 @@ Depending on your system, you may also need to install some additional system li
 We have provided one example agent for you to get started with. Run the commands below to download the save directory which contains the model checkpoint, compiled DFP, as well as our training configurations and logs. This agent completes the `SuperMarioBros-1-1-v2` level when used with the `--deterministic` flag of `play.py`.
 
 ```bash
-cd src/runs
+cd src && mkdir runs && cd runs
 wget https://developer.memryx.com/example_files/mario_rl.zip
 unzip mario_rl.zip -d example
 cd ..
 python play.py --ckpt runs/example/mario_net_final.ckpt --deterministic
 ```
+
 This agent was trained for 70,000 games using three different phases.
 
 ## Training an Agent
@@ -71,6 +74,7 @@ The `train.py` script can be used to train an agent. The only required argument 
 ```bash
 python train.py --cfg cfg/custom.toml
 ```
+
 From our experiments, the training process is likely CPU bottle-necked due to the game simulation. Training on CPU vs GPU is not very different provided the model and batch size are small enough.
 
 ### Configuration
@@ -101,7 +105,8 @@ The configuration file has three tables corresponding to the agent, environment,
 [envs]: https://github.com/Kautenja/gym-super-mario-bros?tab=readme-ov-file#environments
 [actions]: https://github.com/Kautenja/gym-super-mario-bros/blob/master/gym_super_mario_bros/actions.py
 
-Note: 
+Note:
+
 - Use `exploration_rate` instead of `initial_exploration_rate` if you want to resume with a different exploration rate.
 - The `[env]` table and `model_name` should not be changed when resuming a run.
 
@@ -130,10 +135,11 @@ python play.py --ckpt runs/example/mario_net_final.ckpt --mxa
 This should open up a new window where you can see this agent playing the first level of Super Mario Bros. `KeyboardInterrupt` to stop playing. You can see the details of how we trained our example agent in `runs/example/`.
 
 ### Tips & Tricks
+
 - `--mxa`: Tries to load a pre-compiled dfp named `mario_net.dfp` from `save_dir`. If that doesn't exist, it exports the model to onnx and compiles it into a DFP during runtime. If the flag is not specified, then the model is run on cuda if available, else cpu.
 - `--deterministic`: Disables exploration for the model. Ideally, a well-trained model should not need to explore at runtime, but a bit of noise can help the model complete a level occasionally instead of never.
 - `--env_name`: A fun experiment is to run your model on the randomized version of the environment it was trained on!
-- `--render_mode`: Rendering in `human` mode uses `pyglet` to display the game. We recommend running `play.py` from a standard terminal (outside your IDE) to make it easier to debug display dependencies. 
+- `--render_mode`: Rendering in `human` mode uses `pyglet` to display the game. We recommend running `play.py` from a standard terminal (outside your IDE) to make it easier to debug display dependencies.
 
 ## Third-Party Licenses
 

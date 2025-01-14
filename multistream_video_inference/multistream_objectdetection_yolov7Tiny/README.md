@@ -6,6 +6,7 @@ The **Object Detection** example demonstrates real-time object detection using t
   <img src="assets/yolov7_objectDetection_multistream.png" alt="MultiStream Object Detection Example" width="45%" />
 </p>
 
+For a single-stream input example, please refer to [single-stream object detection using yolov7 tiny](../../video_inference/singlestream_objectdetection_yolov7Tiny/README.md).
 
 ## Overview
 
@@ -33,7 +34,7 @@ pip install opencv-python
 # For exporting source model to onnx
 pip install seaborn pyyaml pandas
 ```
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/docs_dev/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/docs_dev/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 
@@ -161,7 +162,7 @@ To use multiple streams, you must use commandline arguments by launching the exe
 
 ## Tutorial
 
-A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/multistream_realtime_inf/multistream_od.html)
+A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html)
 
 
 ## Third-Party License

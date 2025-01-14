@@ -14,7 +14,7 @@ The **CeneterNet** example demonstrates real-time object detection on a single i
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [onnx](https://onnx.ai/),[tensorflow, tflite](https://www.tensorflow.org/)                                                  |
 | **Model Source**     | [Download](http://download.tensorflow.org/models/object_detection/tf2/20210210/centernet_mobilenetv2fpn_512x512_coco17_kpts.tar.gz) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/docs/model_explorer/CenterNet-MobileNet-v2-kpts_320_320_3.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/centernet.zip)                                           |
 | **Dataset**          | [COCO](https://cocodataset.org/#home) |
 | **Model Resolution**            | 320x320                                                    |
 | **Output**           | Bounding box coordinates with object probabilities |
@@ -38,7 +38,7 @@ sudo apt install qtbase5-dev
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
 cd assets
-wget https://developer.memryx.com/example_files/centernet.zip
+wget https://developer.memryx.com/example_files/1p1/centernet.zip
 mkdir -p models
 unzip centernet.zip -d models
 ```
@@ -109,7 +109,7 @@ You need to specify whether you want to use the camera or a video file as input.
 
 ## Tutorial
 
-A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/docs/tutorials/realtime_inf/autocrop_inf/autocrop_centernet.html)
+A more detailed tutorial with complete code explanations is available on the [MemryX Developer Hub](https://developer.memryx.com). You can find it [here](https://developer.memryx.com/tutorials/realtime_inf/autocrop_inf/autocrop_centernet.html)
 
 
 ## Third-Party License

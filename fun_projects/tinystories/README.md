@@ -15,7 +15,7 @@ The TinyStories example showcases basic text generation on the MemryX MX3, by ge
 | **Framework**        | ONNX
 | **Model Source**     | [HuggingFace](https://huggingface.co/roneneldan/TinyStories-33M)
 | **Pre-compiled DFP** | [tinystories-33M.tar.xz](https://developer.memryx.com/example_files/tinystories-33M.tar.xz)
-| **DevHub Tutorial**  | [Link](https://developer.memryx.com/docs_dev/tutorials/text_generation/tinystories.html)
+| **DevHub Tutorial**  | [Link](https://developer.memryx.com/tutorials/text_generation/tinystories.html)
 | **Input**            | Text (up to 128 tokens long)
 | **Output**           | Text
 | **OS**               | Linux
@@ -55,7 +55,7 @@ The necessary files should now be in the `models/` directory.
 <summary>(Optional) Alternatively, Download & Compile Yourself</summary>
 <br>
 
-The following content is part of the [TinyStories DevHub Tutorial](https://developer.memryx.com/docs/tutorials/text_generation/tinystories.html). Please read that tutorial for deeper details and code explanations.
+The following content is part of the [TinyStories DevHub Tutorial](https://developer.memryx.com/tutorials/text_generation/tinystories.html). Please read that tutorial for deeper details and code explanations.
 
 Run the export script from the DevHub tutorial:
 
@@ -71,7 +71,7 @@ mx_nc -v -m tinystories33M.onnx --inputs /original_model/transformer/Add_output_
 cd -
 ```
 
-**IMPORTANT**: This commands uses the *"Graph Extensions"* feature coming in the [SDK 1.1 release](https://developer.memryx.com/docs_dev/support/roadmap.html). If you're on SDK 1.0, please download the precompiled version from above instead.
+**IMPORTANT**: This commands uses the *"Graph Extensions"* feature coming in the [SDK 1.1 release](https://developer.memryx.com/support/roadmap.html). If you're on SDK 1.0, please download the precompiled version from above instead.
 </details>
 
 
@@ -96,7 +96,7 @@ Also note that this is a very small model that writes simple children's stories,
 
 ## Tutorial
 
-See the complete tutorial [on the DevHub](https://developer.memryx.com/docs/tutorials/text_generation/tinystories.html).
+See the complete tutorial [on the DevHub](https://developer.memryx.com/tutorials/text_generation/tinystories.html).
 
 ## Third-Party License
 

@@ -9,7 +9,7 @@
 </picture>
 
 
-[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-1.0-brightgreen)](https://developer.memryx.com)
+[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-1.1-brightgreen)](https://developer.memryx.com)
 [![Python Versions](https://img.shields.io/badge/Python-3.9%20|%203.10%20|%203.11%20|%203.12-blue)](https://www.python.org)
 [![C++](https://img.shields.io/badge/C++-17-blue)](https://en.cppreference.com)
 [![ONNX](https://img.shields.io/badge/ONNX-gray)](https://onnx.ai)
@@ -36,7 +36,7 @@ To ensure a smooth experience with MemryX solutions, follow these steps before d
 ### Step 1: Prepare Your System and Install the MemryX SDK
 
 Before working with the examples, ensure your system is correctly set up by installing the MemryX SDK.
-Follow the detailed instructions here: [**MemryX SDK Get Started Guide**](https://developer.memryx.com/get_started/).
+Follow the detailed instructions here: [**MemryX SDK Get Started Guide**](https://developer.memryx.com/get_started/index.html).
 
 ### Step 2: Clone the MemryX eXamples Repository
 
@@ -122,7 +122,7 @@ Explore how the MemryX accelerators can be used for audio/speech processing task
 | [**Audio Denoising using UNet**](audio_inference/audio_denoising_cmd/README.md) | Remove noise from speech audio using UNet | UNet    | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |
 | [**Audio Classification using YAMNet**](audio_inference/audio_classification_cmd/README.md) | Identify audio categories using YAMNet | YAMNet  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |
 | [**Audio Classification Web App**](audio_inference/audio_classification_web/README.md) | Classify audio using YAMNet in a web app | YAMNet  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | 
-
+| [**Speech Emotion Recognition Web App**](audio_inference/speech_emotion_recognition/README.md) | Detect emotion from speech (web app) | Light-SERNet  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | 
 
 ## Useful Links
 
@@ -136,10 +136,6 @@ Explore how the MemryX accelerators can be used for audio/speech processing task
 
 We welcome contributions! If you'd like to contribute to this repository or examples, please refer to our [contribution guidelines](guidelines/CONTRIBUTING.md). Feel free to submit pull requests, suggest improvements, or ask questions in the issues section.
 
-## Support
-
-If you need assistance or have questions, feel free to reach out through our [support channels](...). You can also join the discussion on our forums for additional help and community-driven advice.
-
 ## Frequently Asked Questions (FAQ)
 
 **1. How do I install the MemryX SDK?**
@@ -148,7 +144,7 @@ Refer to the [SDK Installation Guide](https://developer.memryx.com/get_started/i
 
 **2. What do I do if an example isn't working?**
 
-Make sure you’ve followed all setup steps. You can also check the [Troubleshooting Guide](https://developer.memryx.com/troubleshooting/index.html) for more help, or open an issue in the repository.
+Make sure you’ve followed all setup steps. You can also check the [Troubleshooting Guide](https://developer.memryx.com/support/troubleshooting/index.html) for more help, or open an issue in the repository.
 
 **3. Can I contribute to this repository?**
 

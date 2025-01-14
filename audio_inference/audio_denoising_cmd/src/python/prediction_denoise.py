@@ -237,7 +237,7 @@ def main():
     path_to_audio_file = args.path_to_noisy_audio_file
     path_to_save_denoised_audio = args.path_to_save_denoised_audio_file
 
-    model_dfp_path = '../../models/audio_denoise.dfp'
+    model_dfp_path = '../../models/audio_denoise/audio_denoise.dfp'
 
     # Using the values from https://github.com/vbelz/Speech-enhancement/tree/master
     sample_rate = 8000

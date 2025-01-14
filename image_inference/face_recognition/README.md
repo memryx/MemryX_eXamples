@@ -76,13 +76,13 @@ With the compiled model, you can now use the MXA to perform face recognition. Ru
 
 ```bash
 cd src/
-python run.py 
+python3 run.py 
 ```
 
 By default, the script will download a sample dataset of images from hit comedy T.V. series Friends and compare two sample images. Additionally, you can specify two images to distinguish:
 
 ```bash
-python run.py --image1_path path1 --image2_path path2
+python3 run.py --image_path path1 path2
 ```
 
 ## Third-Party Licenses

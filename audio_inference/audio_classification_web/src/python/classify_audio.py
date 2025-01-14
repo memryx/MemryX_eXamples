@@ -5,7 +5,6 @@ import tensorflow as tf
 import numpy as np
 import csv
 from scipy.io import wavfile
-import tensorflow_hub as hub
 import matplotlib.pyplot as plt
 import scipy
 from tensorflow.keras.models import load_model

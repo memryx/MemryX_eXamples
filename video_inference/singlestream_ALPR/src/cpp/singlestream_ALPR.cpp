@@ -7,7 +7,6 @@
 #include <chrono>
 #include "memx/accl/MxAccl.h"
 #include <memx/mxutils/gui_view.h>
-#include <curses.h>
 
 
 #define LPD_INPUT_TENSOR_WIDTH 320
