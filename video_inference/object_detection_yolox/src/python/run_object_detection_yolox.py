@@ -20,30 +20,37 @@ from yolox import YoloXM
 from memryx import AsyncAccl
 
 class YoloApp:
-    def __init__(self, model, cap, show=False, mirror=False):
+    def __init__(self, model, cap, show=False, mirror=False, src_is_cam=True):
         self.model = model
         self.cap = cap
         self.show = show
         self.mirror = mirror
+        self.src_is_cam = src_is_cam
 
         self.input_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
         fps = int(cap.get(cv.CAP_PROP_FPS))
 
-        self.capture_queue = queue.Queue()
+        self.capture_queue = queue.Queue(maxsize=5)
         self.frame_count = 0
 
         self.color_wheel = np.array(np.random.random([20,3])*255).astype(np.int32)
 
     def generate_frame(self):
-        ok, img = self.cap.read()
-        if not ok:
-            print('EOF')
-            return None
-        if self.mirror:
-            img = cv.flip(img, 1)
-        self.capture_queue.put(img)
-        return self.model.preprocess(img)
+        while True:
+            ok, img = self.cap.read()
+            if not ok:
+                print('EOF')
+                return None
+
+            if self.src_is_cam and self.capture_queue.full():
+                # drop frame
+                continue
+            else:
+                if self.mirror:
+                    img = cv.flip(img, 1)
+                self.capture_queue.put(img)
+                return self.model.preprocess(img)
 
     def process_model_output(self, *fmaps):
         frame = self.capture_queue.get()
@@ -74,9 +81,9 @@ class YoloApp:
                 if res is not None:
                     frame[crop_t:crop_b, crop_l:crop_r] = res
 
-        txt = '{}'.format(self.model.name)
-        frame = cv.putText(frame, txt, (50,50), cv.FONT_HERSHEY_SIMPLEX, 1,
-                (255,0,0), 2)
+        #txt = '{}'.format(self.model.name)
+        #frame = cv.putText(frame, txt, (50,50), cv.FONT_HERSHEY_SIMPLEX, 1,
+        #       (255,0,0), 2)
 
         if self.show:
             cv.imshow('dets', frame)
@@ -101,6 +108,10 @@ if __name__ == '__main__':
     args = parse_args()
 
     # Open the video capture device or file
+    if "/dev/video" in str(args.video_source):
+        src_is_cam = True
+    else:
+        src_is_cam = False
     cap = cv.VideoCapture(args.video_source)
     input_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     input_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
@@ -110,7 +121,7 @@ if __name__ == '__main__':
     model = YoloXM(img_size=(input_width, input_height), dfp_path=args.dfp_path)
 
     # Initialize the YoloApp and the AsyncAccl object
-    app = YoloApp(model, cap, show=True)
+    app = YoloApp(model, cap, show=True, src_is_cam=src_is_cam)
     accl = AsyncAccl(model.dfp_path)
 
     # Set the post-processing model from the arguments

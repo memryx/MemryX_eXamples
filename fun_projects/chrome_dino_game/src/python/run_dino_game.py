@@ -22,6 +22,7 @@ hand_detected = False  # To track the state of hand detection
 chrome_process = None  # To track the Chrome process
 display_frame = None  # Store frame for display in a separate thread
 stop_display = False  # To signal when to stop the display thread
+src_is_cam = True # Capture source is a webcam (need to drop frames if CPU is slow)
 
 # Function to handle Ctrl+C (SIGINT)
 def signal_handler(sig, frame):
@@ -48,20 +49,27 @@ def get_frame_and_preprocess():
     Captures a frame from the camera, preprocesses it for the model, and returns it.
     """
     global display_frame
-    got_frame, frame = cam.read()
+    global src_is_cam
 
-    if not got_frame:
-        print("Error: Could not capture frame from camera.")
-        return None
+    while True:
+        got_frame, frame = cam.read()
 
-    # Store the frame for the display thread
-    display_frame = frame.copy()
+        if not got_frame:
+            print("Error: Could not capture frame from camera.")
+            return None
 
-    # Put the frame in the queue to be used later
-    cap_queue.put(frame)
+        if src_is_cam and cap_queue.full():
+            # Drop frame
+            continue
+        else:
+            # Store the frame for the display thread
+            display_frame = frame.copy()
 
-    # Preprocess the frame for the model
-    return model._preprocess(frame)
+            # Put the frame in the queue to be used later
+            cap_queue.put(frame)
+
+            # Preprocess the frame for the model
+            return model._preprocess(frame)
 
 # Helper function for reshaping and concatenating outputs
 def reshape_and_concatenate(accl_output):
@@ -80,6 +88,7 @@ def postprocess(*accl_output):
     global cooldown_counter, hand_detected
     
     frame = cap_queue.get()
+    cap_queue.task_done()
 
     # Reshape and concatenate outputs from the accelerator
     accl_output_1, accl_output_2 = reshape_and_concatenate(accl_output)
@@ -135,10 +144,12 @@ def cleanup_and_exit():
 
 # Main script execution
 if __name__ == "__main__":
+    
     # Argument parser for specifying DFP path
     parser = argparse.ArgumentParser(description="Run the Chrome Dinosaur game controlled by hand gestures.")
     parser.add_argument('-d', '--dfp', type=str, default="models/MediaPipe_palm_Detection_192_192_3_tflite.dfp",
                         help="Specify the path to the DFP model file. Default is 'models/MediaPipe_palm_Detection_192_192_3_tflite.dfp'.")
+    parser.add_argument('-i', '--input_file', default="0", type=str, metavar="", help="Either an int (cam ID), devnode (/dev/video0), or filename (file.mp4)")
     
     args = parser.parse_args()
 
@@ -150,11 +161,18 @@ if __name__ == "__main__":
     start_dino_game()
 
     # Capture source (camera or video)
-    src = sys.argv[1] if len(sys.argv) > 1 else '/dev/video0'
-    cam = cv.VideoCapture(src)
+    if str(args.input_file).isdigit():
+        cam = cv.VideoCapture(int(args.input_file))
+        src_is_cam = True
+    else:
+        cam = cv.VideoCapture(str(args.input_file))
+        if "/dev/video" in str(args.input_file):
+            src_is_cam = True
+        else:
+            src_is_cam = False
 
     if not cam.isOpened():
-        print(f"Error: Could not open video source {src}.")
+        print(f"Error: Could not open video source {args.input_file}.")
         sys.exit(1)
 
     # Use the DFP file specified by the user or the default value
@@ -162,7 +180,7 @@ if __name__ == "__main__":
 
     # Initialize model and queue
     model = MPPalmDet()
-    cap_queue = Queue(maxsize=10)
+    cap_queue = Queue(maxsize=5)
 
     # Initialize the accelerator with the model
     accl = AsyncAccl(dfp=dfp)

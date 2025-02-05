@@ -49,6 +49,7 @@ cv::VideoCapture vcap;
 
 // Queue to store frames for processing
 std::deque<cv::Mat> frames_queue;
+const int max_backlog = 5;
 std::mutex frameQueue_mutex; // Mutex for frame queue access
 
 #define AVG_FPS_CALC_FRAME_COUNT  50 // Number of frames to calculate FPS over
@@ -85,32 +86,41 @@ bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int st
     if(runflag.load()){
         cv::Mat inframe;
 
-        // Capture a frame from video/camera
-        bool got_frame = vcap.read(inframe);
 
-        if (!got_frame) {
-            std::cout << "\n\n No frame - End of cam? \n\n\n";
-            runflag.store(false);
-            return false; 
-        } else {
-            // Push the captured frame to the queue
-            {
-                std::lock_guard<std::mutex> flock(frameQueue_mutex);
-                frames_queue.push_back(inframe);
+	while(true){
+            // Capture a frame from video/camera
+            bool got_frame = vcap.read(inframe);
+
+            if (!got_frame) {
+                std::cout << "\n\n No frame - End of cam? \n\n\n";
+                runflag.store(false);
+                return false; 
+            } else {
+                // Push the captured frame to the queue
+                {
+                    std::lock_guard<std::mutex> flock(frameQueue_mutex);
+		            // only push this frame if there's space
+		            if(use_cam && (frames_queue.size() >= max_backlog)){
+			            // drop it and capture the next frame instead
+			            continue;
+		            } else {
+                        frames_queue.push_back(inframe);
+		            }
+                }
+
+                // Convert frame to RGB and preprocess for model input
+                cv::Mat rgbImage;
+                cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
+                cv::Mat preProcframe;
+                cv::resize(rgbImage, preProcframe, cv::Size(model_input_width, model_input_height), cv::INTER_LINEAR);
+                cv::Mat floatImage;
+                preProcframe.convertTo(floatImage, CV_32F,  1.0 / 255.0); // Normalize the frame
+
+                // Set preprocessed input data to accelerator
+                dst[0]->set_data((float*)floatImage.data, false);
+                return true;
             }
-
-            // Convert frame to RGB and preprocess for model input
-            cv::Mat rgbImage;
-            cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
-            cv::Mat preProcframe;
-            cv::resize(rgbImage, preProcframe, cv::Size(model_input_width, model_input_height), cv::INTER_LINEAR);
-            cv::Mat floatImage;
-            preProcframe.convertTo(floatImage, CV_32F,  1.0 / 255.0); // Normalize the frame
-
-            // Set preprocessed input data to accelerator
-            dst[0]->set_data((float*)floatImage.data, false);
-            return true;
-        }
+	}
     } else {
         vcap.release(); // Release video resources if runflag is false
         return false;
@@ -153,6 +163,7 @@ bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, i
     std::vector<cv::Rect> cv_boxes;
     
     // Loop through each detection
+    #pragma omp parallel for num_threads(2)
     for (int i = 0; i < dets_length; ++i) {
 
         // Extract bounding box coordinates and confidence score
@@ -193,9 +204,12 @@ bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, i
                 }
             }
 
-            all_boxes.push_back(box);
-            all_scores.push_back(confidence);
-            cv_boxes.push_back(cv::Rect(x1, y1, x2 - x1, y2 - y1));
+	    #pragma omp critical
+	    {
+            	all_boxes.push_back(box);
+            	all_scores.push_back(confidence);
+            	cv_boxes.push_back(cv::Rect(x1, y1, x2 - x1, y2 - y1));
+	    }
         }
     }
 

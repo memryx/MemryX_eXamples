@@ -16,12 +16,12 @@ import memryx
 from memryx import NeuralCompiler, AsyncAccl
 
 class App:
-    def __init__(self, cam, show=True, save=False, fake_cam_id=None, scale=1.0, time_code=True, mirror=True):
+    def __init__(self, cam, show=True, save=False, fake_cam_id=None, scale=1.0, time_code=True, mirror=True, src_is_cam=True):
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT)*scale)
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH)*scale)
         self.fps = int(cam.get(cv.CAP_PROP_FPS))
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=5)
         self.frame_times = deque(maxlen=30)
         self.show = show
         self.save = save
@@ -32,6 +32,7 @@ class App:
         self.frame_count = 0
         self.fake_cam_id = None
         self.fake_cam = None
+        self.src_is_cam = src_is_cam
         if save:
             self.writer = self.setup_writer(self.input_height, self.input_width, self.fps)
         if fake_cam_id is not None:
@@ -44,14 +45,19 @@ class App:
         time.sleep(0.5) # a small delay allows a clean exit
 
     def get_frame(self):
-        ok, frame = self.cam.read()
-        if not ok:
-            print("EOF")
-            return None
-        if self.mirror:
-            frame = cv.flip(frame, 1)
-        self.capture_queue.put(frame)
-        return self.preprocess(frame)
+        while True:
+            ok, frame = self.cam.read()
+            if not ok:
+                print("EOF")
+                return None
+            if self.src_is_cam and self.capture_queue.full():
+                # drop frame
+                continue
+            else:
+                if self.mirror:
+                    frame = cv.flip(frame, 1)
+                self.capture_queue.put(frame)
+                return self.preprocess(frame)
 
     def preprocess(self, img):
         arr = np.array(cv.resize(img, (512, 512))).astype(np.float32)
@@ -126,8 +132,10 @@ def main():
 
     if args.input_file is None:
         video_src = args.vid_cap_id
+        src_is_cam = True
     else:
         video_src = args.input_file
+        src_is_cam = False
 
     cap = setup_data(video_src)
 
@@ -135,7 +143,7 @@ def main():
         args.show = False
         warnings.warn("No display found")
 
-    app = App(cap, show=args.show, save=args.save, scale=args.scale, fake_cam_id=args.fake_cam)
+    app = App(cap, show=args.show, save=args.save, scale=args.scale, fake_cam_id=args.fake_cam, src_is_cam=src_is_cam)
     accl = AsyncAccl(dfp)
     accl.connect_input(app.get_frame)
     accl.connect_output(app.process_model_output)

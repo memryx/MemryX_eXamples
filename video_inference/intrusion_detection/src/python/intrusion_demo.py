@@ -77,7 +77,11 @@ class IntrusionMxa:
         self.show = show
         self.dfp = args.dfp
         self.post_model = args.post_model_path
-        self.cap_queue = Queue()
+        self.cap_queue = Queue(maxsize=5)
+        if "/dev/video" in str(args.input_path):
+            self.src_is_cam = True
+        else:
+            self.src_is_cam = False
         self.vcap = cv2.VideoCapture(args.input_path)
         self.tracker = BYTETracker(args, frame_rate=args.fps)
         self.timer = Timer()
@@ -119,22 +123,22 @@ class IntrusionMxa:
         """
         Captures a frame for the video device and pre-processes it.
         """
-        got_frame, frame = self.vcap.read()
+        while True:
+            got_frame, frame = self.vcap.read()
 
-        if not got_frame or self.done:
-            return None
+            if not got_frame or self.done:
+                return None
 
-        try:
-            # Put the frame in the cap_queue to be processed later
-            self.cap_queue.put(frame,2)
+            if self.src_is_cam and self.cap_queue.full():
+                # drop cam frame
+                continue
+            else:
+                # Put the frame in the cap_queue to be processed later
+                self.cap_queue.put(frame)
 
-            # Pre-process the frame using the corresponding model
-            frame = self.model.preprocess(frame)
-            return frame
-
-        except Full:
-            print('Dropped frame .. exiting')
-            return None
+                # Pre-process the frame using the corresponding model
+                frame = self.model.preprocess(frame)
+                return frame
 
 ###################################################################################################
     def postprocess(self, *mxa_output):
@@ -144,6 +148,7 @@ class IntrusionMxa:
         dets = self.model.postprocess(mxa_output)
         # Push the detection results to the queue
         frame = self.cap_queue.get()
+        self.cap_queue.task_done()
         if not dets:
             return
 

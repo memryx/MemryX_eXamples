@@ -6,8 +6,6 @@ import cv2
 import onnx, onnxruntime
 onnxruntime.set_default_logger_severity(3)
 
-from memryx import Benchmark
-
 COCO_CLASSES = ( "person", "bicycle", "car", "motorcycle", "airplane", "bus",
         "train", "truck", "boat", "traffic light", "fire hydrant", "stop sign",
         "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep",
@@ -48,11 +46,6 @@ class YoloX:
         self.input_size = None
         self.output_size = None
         self.output_order_map = None
-
-    def run(self, fmap):
-        with Benchmark(dfp=self.dfp_path) as bench:
-            ofmaps,_,_ = bench.run(fmap[None,:,:,:])
-        return [o[0,:,:,:] for o in ofmaps]
 
     ##  Pre-Processing  #######################################################
     def preprocess(self, img):

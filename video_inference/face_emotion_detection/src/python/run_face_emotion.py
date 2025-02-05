@@ -9,16 +9,6 @@ from collections import namedtuple
 import logging
 import signal
 
-# Try to import memryx SDK, if not found, add it to the path using MIX_HOME
-try:
-    import memryx
-except ImportError:
-    mix_home = os.getenv("MIX_HOME")
-    if not mix_home:
-        print("Install MemryX SDK or clone MIX and source setup_env.sh")
-        exit(1)
-    sys.path.append(mix_home)
-
 import cv2 as cv
 import numpy as np
 
@@ -164,7 +154,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    cam = cv.VideoCapture('/dev/video0')  # Open video capture (webcam)
+    cam = cv.VideoCapture(0)  # Open video capture (webcam)
     parent_path = Path(__file__).resolve().parent
 
     app = App(cam, mirror=True)  # Initialize the application

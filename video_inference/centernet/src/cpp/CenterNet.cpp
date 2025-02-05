@@ -12,6 +12,7 @@ namespace fs = std::filesystem;
 std::atomic_bool runflag;
 
 #define AVG_FPS_CALC_FRAME_COUNT  50
+#define FRAME_QUEUE_MAX_LENGTH     5
 
 //CenterNet application specific Onnx model files
 fs::path onnx_model_path = "models/centernet_onnx.dfp";
@@ -133,6 +134,7 @@ class CenterNet{
         float fps_number =.0;
         std::chrono::milliseconds start_ms;
         cv::VideoCapture vcap;
+        bool src_is_cam = false;
         MX::Types::MxModelInfo model_info;
         MX::Types::MxModelInfo post_model_info;
         cv::Mat displayImage;
@@ -213,9 +215,9 @@ class CenterNet{
                     std::cout << "No frame \n\n\n";
                     return false;  // return false if frame retrieval fails
                 }
-                cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
                 {
                     std::lock_guard<std::mutex> ilock(frame_queue_mutex);
+                    cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
                     frames_queue.push_back(rgbImage);
                 }
                 // Preprocess frame
@@ -286,6 +288,7 @@ class CenterNet{
             }
             // If the input is a camera, try to use optimal settings
             if(video_src.substr(0,3) == "cam"){
+                src_is_cam = true;
                 #ifdef __linux__
                     if (!openCamera(vcap, video_src[4]-'0', cv::CAP_V4L2)) {
                         throw(std::runtime_error("Failed to open: "+video_src));
@@ -299,6 +302,7 @@ class CenterNet{
             }
             else if(video_src.substr(0,3) == "vid"){
                 vcap.open(video_src.substr(4),cv::CAP_ANY);
+                src_is_cam = false;
             }
             else{
                 throw(std::runtime_error("Given video src: "+video_src+" is invalid"+

@@ -57,8 +57,8 @@ class Yolo7Mxa:
         self.streams = []
         self.streams_idx = [True] * self.num_streams
         self.stream_window = [False] * self.num_streams
-        self.cap_queue = {i: Queue(maxsize=10) for i in range(self.num_streams)}
-        self.dets_queue = {i: Queue(maxsize=10) for i in range(self.num_streams)}
+        self.cap_queue = {i: Queue(maxsize=4) for i in range(self.num_streams)}
+        self.dets_queue = {i: Queue(maxsize=5) for i in range(self.num_streams)}
         self.outputs = {i: [] for i in range(self.num_streams)}
         self.dims = {}
         self.color_wheel = {}
@@ -70,9 +70,15 @@ class Yolo7Mxa:
         self.fps = {i: 0 for i in range(self.num_streams)}
         self.dt_array = {i: np.zeros(30) for i in range(self.num_streams)}
         self.writer = {i: None for i in range(self.num_streams)}
+        self.srcs_are_cams = {i: True for i in range(self.num_streams)}
 
         # Initialize video captures, models, and dimensions for each streams
         for i, video_path in enumerate(video_paths):
+            if "/dev/video" in video_path:
+                self.srcs_are_cams[i] = True
+            else:
+                self.srcs_are_cams[i] = False
+
             vidcap = cv2.VideoCapture(video_path)
             self.streams.append(vidcap)
 
@@ -119,23 +125,29 @@ class Yolo7Mxa:
         """
         Captures a frame for the video device and pre-processes it.
         """
-        got_frame, frame = self.streams[stream_idx].read()
+        # if self.srcs_are_cams[stream_idx]:
+        while True:
+            got_frame, frame = self.streams[stream_idx].read()
 
-        if not got_frame:
-            self.streams_idx[stream_idx] = False
-            return None
+            if not got_frame:
+                self.streams_idx[stream_idx] = False
+                return None
 
-        try:
-            # Put the frame in the cap_queue to be processed later
-            self.cap_queue[stream_idx].put(frame, timeout=2)
+            if self.srcs_are_cams[stream_idx] and self.cap_queue[stream_idx].full():
+                # drop frame
+                continue
+            else:
+                try:
+                    # Put the frame in the cap_queue to be processed later
+                    self.cap_queue[stream_idx].put(frame, timeout=2)
 
-            # Pre-process the frame using the corresponding model
-            frame = self.model[stream_idx].preprocess(frame)
-            return frame
+                    # Pre-process the frame using the corresponding model
+                    frame = self.model[stream_idx].preprocess(frame)
+                    return frame
 
-        except Full:
-            print('Dropped frame .. exiting')
-            return None
+                except Full:
+                    print('Dropped frame .. exiting')
+                    return None
 
     ###############################################################################
     # Post process the output from MXA
@@ -173,6 +185,9 @@ class Yolo7Mxa:
                 if not self.cap_queue[stream_idx].empty() and not self.dets_queue[stream_idx].empty():
                     frame = self.cap_queue[stream_idx].get()
                     dets = self.dets_queue[stream_idx].get()
+
+                    self.cap_queue[stream_idx].task_done()
+                    self.dets_queue[stream_idx].task_done()
 
                     # Draw detection boxes on the frame
                     for d in dets:

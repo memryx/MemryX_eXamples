@@ -77,7 +77,7 @@ class poseApp:
         self.input_width = int(self.cam.get(cv.CAP_PROP_FRAME_WIDTH))
         print("CAM Height and Width ", self.input_height, self.input_width)
         self.model_input_shape = model_input_shape
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=5)
         # self.pose_output_queue = deque(maxlen=2)
         self.mirror = mirror
         self.box_score = 0.25
@@ -120,20 +120,24 @@ class poseApp:
         cal_image_center()
 
     def generate_frame(self):
-        ok, frame = self.cam.read()
-        # print(frame.shape)
-        if not self.running.value:
-            
-            print('EOF')
-            # self.cam.release() 
-            self.stop()
-            return None
-        else:
-            if self.mirror:
-                frame = cv.flip(frame, 1)
-            self.capture_queue.put(frame)
-            out, self.ratio = self.preprocess_image(frame)
-            return out
+        while True:
+            ok, frame = self.cam.read()
+            # print(frame.shape)
+            if not self.running.value:
+                print('EOF')
+                # self.cam.release() 
+                self.stop()
+                return None
+            else:
+                if self.capture_queue.full():
+                    # drop frame
+                    continue
+                else:
+                    if self.mirror:
+                        frame = cv.flip(frame, 1)
+                    self.capture_queue.put(frame)
+                    out, self.ratio = self.preprocess_image(frame)
+                    return out
 
     def preprocess_image(self, image):
         h, w = image.shape[:2]
@@ -191,6 +195,7 @@ class poseApp:
             img = self.capture_queue.get()
         except Empty:
             return None
+        self.capture_queue.task_done()
 
         # Process model output (keypoints and bounding boxes)
         predict = ofmaps[0].squeeze(0).T  # Shape: [8400, 56]

@@ -16,6 +16,7 @@ std::atomic_bool runflag;  // Atomic flag to control run state
 fs::path model_path = "YOLO_v8_small_640_640_3_tflite.dfp";  // Default model path
 fs::path postprocessing_model_path = "YOLO_v8_small_640_640_3_tflite_post.tflite";  // Default post-processing model path
 #define AVG_FPS_CALC_FRAME_COUNT  50  // Number of frames used to calculate average FPS
+#define FRAME_QUEUE_MAX_LENGTH     5
 
 // Signal handler to gracefully stop the program on SIGINT (Ctrl+C)
 void signal_handler(int p_signal) {
@@ -111,6 +112,7 @@ class YoloV8 {
         float fps_number = .0;  // FPS counter
         std::chrono::milliseconds start_ms;
         cv::VideoCapture vcap;  // Video capture object
+        bool src_is_cam = false;
         std::vector<size_t> in_tensor_sizes;
         std::vector<size_t> out_tensor_sizes;
         MX::Types::MxModelInfo model_info;  // Model info structure
@@ -211,25 +213,34 @@ class YoloV8 {
             if (runflag.load()) {
                 cv::Mat inframe;
                 cv::Mat rgbImage;
-                bool got_frame = vcap.read(inframe);  // Capture frame
 
-                if (!got_frame) {  // If no frame, stop the stream
-                    std::cout << "No frame \n\n\n";
-                    vcap.release();
-                    return false;
+                while(true){
+                    bool got_frame = vcap.read(inframe);  // Capture frame
+
+                    if (!got_frame) {  // If no frame, stop the stream
+                        std::cout << "No frame \n\n\n";
+                        vcap.release();
+                        return false;
+                    }
+
+                    if(src_is_cam && (frames_queue.size() >= FRAME_QUEUE_MAX_LENGTH)){
+                        // drop the frame and try again if we've hit the limit
+                        continue;
+                    }
+                    else{
+                        // Convert frame to RGB and store in queue
+                        cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
+                        {
+                            std::lock_guard<std::mutex> ilock(frame_queue_mutex);
+                            frames_queue.push_back(rgbImage);
+                        }
+                    }
+
+                    // Preprocess frame and set data for inference
+                    cv::Mat preProcframe = preprocess(rgbImage);
+                    dst[0]->set_data((float*)preProcframe.data, false);
+                    return true;
                 }
-
-                // Convert frame to RGB and store in queue
-                cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
-                {
-                    std::lock_guard<std::mutex> ilock(frame_queue_mutex);
-                    frames_queue.push_back(rgbImage);
-                }
-
-                // Preprocess frame and set data for inference
-                cv::Mat preProcframe = preprocess(rgbImage);
-                dst[0]->set_data((float*)preProcframe.data, false);
-                return true;
             }
             else {
                 vcap.release();

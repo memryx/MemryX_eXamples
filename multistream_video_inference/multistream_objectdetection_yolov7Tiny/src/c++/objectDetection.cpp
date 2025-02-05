@@ -16,7 +16,7 @@ std::atomic_bool runflag;
 fs::path model_path = "YOLO_v7_tiny_416_416_3_onnx.dfp";
 fs::path postprocessing_model_path = "YOLO_v7_tiny_416_416_3_onnx_post.onnx";
 #define AVG_FPS_CALC_FRAME_COUNT  50
-
+#define FRAME_QUEUE_MAX_LENGTH     5
 //signal handler
 void signal_handler(int p_signal){
     runflag.store(false);
@@ -128,6 +128,7 @@ class YoloV7{
         float fps_number =.0;
         std::chrono::milliseconds start_ms;
         cv::VideoCapture vcap;
+        bool src_is_cam = false;
         std::vector<size_t> in_tensor_sizes;
         std::vector<size_t> out_tensor_sizes;
         MX::Types::MxModelInfo model_info;
@@ -194,24 +195,34 @@ class YoloV7{
             if(runflag.load()){
                 cv::Mat inframe;
                 cv::Mat rgbImage;
-                bool got_frame = vcap.read(inframe);
 
-                if (!got_frame) {
-                    std::cout << "No frame \n\n\n";
-                    vcap.release();
-                    return false;  // return false if frame retrieval fails/stream is done sending input
-                }
-                cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
-                {
-                    std::lock_guard<std::mutex> ilock(frame_queue_mutex);
-                    frames_queue.push_back(rgbImage);
-                }
-                // Preprocess frame
-                cv::Mat preProcframe = preprocess(rgbImage);
-                // Set preprocessed input data to be sent to accelarator
-                dst[0]->set_data((float*)preProcframe.data, false);
+                while(true){
+                    bool got_frame = vcap.read(inframe);
 
-                return true;
+                    if (!got_frame) {
+                        std::cout << "No frame \n\n\n";
+                        vcap.release();
+                        return false;  // return false if frame retrieval fails/stream is done sending input
+                    }
+                    if(src_is_cam && (frames_queue.size() >= FRAME_QUEUE_MAX_LENGTH)){
+                        // drop the frame and try again if we've hit the limit
+                        continue;
+                    }
+                    else{
+                        cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
+                        {
+                            std::lock_guard<std::mutex> ilock(frame_queue_mutex);
+                            frames_queue.push_back(rgbImage);
+                        }
+                    }
+                    
+                    // Preprocess frame
+                    cv::Mat preProcframe = preprocess(rgbImage);
+                    // Set preprocessed input data to be sent to accelarator
+                    dst[0]->set_data((float*)preProcframe.data, false);
+
+                    return true;
+                }
             }
             else{
                 vcap.release();
@@ -219,6 +230,7 @@ class YoloV7{
             }    
         }
 
+        // Input callback function to fetch frames and preprocess them
         bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
             
             //Ouput from the post-processing model is a vector of size 1
@@ -264,6 +276,7 @@ class YoloV7{
             // If the input is a camera, try to use optimal settings
             if(video_src.substr(0,3) == "cam"){
                 int device = std::stoi(video_src.substr(4));
+                src_is_cam = true;
                 #ifdef __linux__
                     if (!openCamera(vcap, device, cv::CAP_V4L2)) {
                         throw(std::runtime_error("Failed to open: "+video_src));
@@ -278,6 +291,7 @@ class YoloV7{
             else if(video_src.substr(0,3) == "vid"){
                 std::cout<<"Video source given = "<<video_src.substr(4) << "\n\n";
                 vcap.open(video_src.substr(4), cv::CAP_ANY);
+                src_is_cam = false;
             }
             else{
                 throw(std::runtime_error("Given video src: "+video_src+" is invalid"+

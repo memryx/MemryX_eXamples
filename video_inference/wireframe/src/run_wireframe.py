@@ -47,8 +47,8 @@ class WireframeMxa(QtWidgets.QApplication):
         self.done = False
         
         # Queues
-        self.cap_queue = Queue(maxsize=10)
-        self.dets_queue = Queue(maxsize=10)
+        self.cap_queue = Queue(maxsize=5)
+        self.dets_queue = Queue(maxsize=5)
         
         # Video Capture
         self.vidcap = cv.VideoCapture(0)
@@ -106,23 +106,27 @@ class WireframeMxa(QtWidgets.QApplication):
             batch_image (np.ndarray): Preprocessed image ready for inference.
         """
 
-        got_frame, frame = self.vidcap.read()
-        if not got_frame:
-            return None
-        try:
-            # Put the frame in the queue
-            self.cap_queue.put(frame, timeout=2)
-            self.frame_count += 1
+        while True:
+            got_frame, frame = self.vidcap.read()
+            if not got_frame:
+                print("Failed to read() from cv2 capture!")
+                return None
 
-            # Preprocess the frame
-            resized_image = cv.resize(frame, (self.input_shape[0], self.input_shape[1]), interpolation=cv.INTER_AREA)
-            resized_image = resized_image * 0.007843137718737125 - 1
-            resized_image = np.concatenate([resized_image, np.ones([self.input_shape[0], self.input_shape[1], 1])], axis=-1)
-            expanded_image = np.expand_dims(resized_image, axis=2).astype('float32')
-            expanded_image = np.transpose(expanded_image, (0, 1, 2, 3))
-            return expanded_image
-        except Full:
-            return None
+            # Put the frame in the queue
+            if self.cap_queue.full():
+                # drop the frame and try again
+                continue
+            else:
+                self.cap_queue.put(frame)
+                self.frame_count += 1
+
+                # Preprocess the frame
+                resized_image = cv.resize(frame, (self.input_shape[0], self.input_shape[1]), interpolation=cv.INTER_AREA)
+                resized_image = resized_image * 0.007843137718737125 - 1
+                resized_image = np.concatenate([resized_image, np.ones([self.input_shape[0], self.input_shape[1], 1])], axis=-1)
+                expanded_image = np.expand_dims(resized_image, axis=2).astype('float32')
+                expanded_image = np.transpose(expanded_image, (0, 1, 2, 3))
+                return expanded_image
 
 ###############################################################################
 

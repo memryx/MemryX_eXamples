@@ -12,18 +12,22 @@ class FaceApp(FaceDetectionMXA):
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=4)
 
     def generate_frame(self):
         # Get frame
-        ok, frame = self.cam.read()
-        if not ok:
-            print("EOF")
-            return None
-
-        out, padding = self._preprocess(frame)
-        self.capture_queue.put((frame,padding))
-        return out
+        while True:
+            ok, frame = self.cam.read()
+            if not ok:
+                print("EOF")
+                return None
+            if self.capture_queue.full():
+                # drop frame
+                pass
+            else:
+                out, padding = self._preprocess(frame)
+                self.capture_queue.put((frame,padding))
+                return out
 
     def process_face(self, *ofmaps):
         (_, padding) = self.capture_queue.get()
@@ -36,7 +40,7 @@ class FaceApp(FaceDetectionMXA):
 class LandmarkApp(FaceLandmarkMXA):
     def __init__(self, cam_size):
         super().__init__()
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=4)
         self.canvas_size = cam_size
 
     def process_landmark(self, *ofmaps):
@@ -61,7 +65,7 @@ class App:
         self.face_app = FaceApp(cam)
         self.landmark_app = LandmarkApp(cam_size=(int(cam.get(cv.CAP_PROP_FRAME_WIDTH)), int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))))
         self.face_roi = None
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=4)
 
     def generate_frame_face(self):
         frame = self.face_app.generate_frame() # Pre-processed frame

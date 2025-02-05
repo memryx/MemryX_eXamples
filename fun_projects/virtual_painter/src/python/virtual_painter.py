@@ -9,7 +9,7 @@ class Virtual_Painter:
         self.frame_queue          = frame_queue
         self.settings             = settings
         
-        self.settings['fps']            = 10
+        self.settings['fps']            = 30
         self.settings['keypoints']      = [0,4,5,8,9,12,13,16,17,20]
         self.settings['confidence']     = 25
         self.settings['color_swatches'] = {
@@ -74,10 +74,10 @@ class Virtual_Painter:
         # Capture source ( camera or video)
 
         camera = cv2.VideoCapture(0)
+        camera.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'MJPG'))
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.settings['window_height'])
         camera.set(cv2.CAP_PROP_FRAME_WIDTH,  self.settings['window_width'])
         camera.set(cv2.CAP_PROP_FPS,  self.settings['fps'])
-        camera.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc(*'MJPG'))
 
         return camera
 
@@ -103,12 +103,20 @@ class Virtual_Painter:
                 break
 
             # Put the frame into the input queue
-            if not self.frame_queue.full():
+            # frame_queue is actually a MxHandPose object and
+            # the .put (and .full) operate on the input queue
+            if self.frame_queue.full():
+                # drop frame
+                pass
+            else:
                 self.frame_queue.put(frame)
+            
 
             canvas          = self.prevcanvas
             frame           = self.prevframe
-            if not self.frame_queue.empty():           
+            if not self.frame_queue.empty():
+                # frame_queue is actually a MxHandPose object
+                # and the .get() pulls from the output queue
                 annotated_frame = self.frame_queue.get()           
                 
                 if annotated_frame.num_detections:

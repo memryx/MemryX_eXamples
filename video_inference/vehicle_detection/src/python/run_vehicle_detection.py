@@ -34,7 +34,7 @@ class App:
         self.model_dfp = 'models/Vehicle_Detection_0200_256_256_3_tflite.dfp'
         self.pre_model = 'models/Vehicle_Detection_0200_256_256_3_tflite_pre.tflite'
         self.post_model = 'models/Vehicle_Detection_0200_256_256_3_tflite_post.tflite'
-        self.capture_queue = Queue()
+        self.capture_queue = Queue(maxsize=10)
         self.fps = fps
         self.fourcc = cv.VideoWriter_fourcc(*'mp4v')  
         self.frame_height = int(self.cam.get(cv.CAP_PROP_FRAME_HEIGHT))
@@ -56,7 +56,7 @@ class App:
 
         if not ret:
             return None
-        self.capture_queue.put(copy.deepcopy(frame))
+        self.capture_queue.put(copy.deepcopy(frame),block=True)
         input_image = cv.resize(frame, dsize=(self.input_size, self.input_size))
         input_image = np.expand_dims(input_image, axis=0)
         input_image = input_image.astype('float32')
@@ -131,16 +131,14 @@ class App:
     def draw(self,debug_image,nms_bbox_list, nms_score_list):
         # Draw bbox and score
         for bbox, score in zip(nms_bbox_list, nms_score_list):
-            cv.putText(debug_image, '{:.3f}'.format(score), (bbox[0], bbox[1]),cv.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 1,cv.LINE_AA)
-            cv.rectangle(debug_image, (bbox[0], bbox[1]), (bbox[2], bbox[3]),(255, 0, 0))
+            cv.putText(debug_image, '{:.3f}'.format(score), (bbox[0], bbox[1]), cv.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 2, cv.LINE_AA)
+            cv.rectangle(debug_image, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 255), 2)
 
-        cv.putText(debug_image, "", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 1, cv.LINE_AA)
+        cv.putText(debug_image, "", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 2, cv.LINE_AA)
         cv.imshow('vehicle detection', debug_image)
         self.out_video.write(debug_image)
         if cv.waitKey(1) == 27: 
             self.cam.release()
-
-
 
 
 if __name__ == '__main__':

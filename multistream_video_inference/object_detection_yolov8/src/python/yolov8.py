@@ -18,7 +18,6 @@ on MX3 using YOLOv8 model.
 
 import numpy as np
 import cv2
-from memryx import Benchmark,Simulator
 
 ###################################################################################################
 

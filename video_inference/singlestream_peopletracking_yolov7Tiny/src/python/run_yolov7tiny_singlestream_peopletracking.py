@@ -308,8 +308,12 @@ class Yolo7Mxa:
 
         # CV and Queues
         self.num_frames = 0
-        self.cap_queue = Queue(maxsize=10)
-        self.dets_queue = Queue(maxsize=10)
+        self.cap_queue = Queue(maxsize=5)
+        self.dets_queue = Queue(maxsize=5)
+        if "/dev/video" in str(video_path):
+            self.src_is_cam = True
+        else:
+            self.src_is_cam = False
         self.vidcap = cv2.VideoCapture(video_path, cv2.CAP_V4L2) 
 
         self.dims = ( int(self.vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
@@ -374,25 +378,25 @@ class Yolo7Mxa:
         """
         Captures a frame for the video device and pre-processes it.
         """
-        
-        got_frame, frame = self.vidcap.read()
+       
+        while True:
+            got_frame, frame = self.vidcap.read()
 
-        if not got_frame:
-            return None
+            if not got_frame:
+                return None
 
-        try:
-            self.num_frames += 1
-            
-            # Put the frame in the cap_queue to be overlayed later
-            self.cap_queue.put(frame,timeout=2)
-            
-            # Preporcess frame
-            frame = self.model.preprocess(frame)
-            return frame
-        
-        except queue.Full:
-            print('Dropped frame .. exiting')
-            return None
+            if self.src_is_cam and self.cap_queue.full():
+                # drop frame and try again
+                continue
+            else:
+                self.num_frames += 1
+                
+                # Put the frame in the cap_queue to be overlayed later
+                self.cap_queue.put(frame)
+                
+                # Preprocess frame
+                frame = self.model.preprocess(frame)
+                return frame
         
 ###################################################################################################
     def postprocess(self, *mxa_output):
@@ -430,6 +434,8 @@ class Yolo7Mxa:
             # Get the frame from and the dets from the relevant queues
             frame = self.cap_queue.get()
             dets = self.dets_queue.get()
+            self.cap_queue.task_done()
+            self.dets_queue.task_done()
 
 #-----------------------------------------------------------Tracking Code Start-----------------------------------------------------------------
             if len(dets):

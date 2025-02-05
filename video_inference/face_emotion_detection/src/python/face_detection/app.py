@@ -16,16 +16,6 @@ import cv2 as cv
 sys.path.append(str(Path(__file__).resolve().parent))
 import model  # Import custom model module
 
-# Try to import MemryX SDK, if not found, add it to the path using MIX_HOME
-try:
-    import memryx
-except ImportError:
-    mix_home = os.getenv("MIX_HOME")
-    if not mix_home:
-        print("Install MemryX SDK or clone MIX and source setup_env.sh")
-        exit(1)
-    sys.path.append(mix_home)
-
 from memryx import AsyncAccl  # Import AsyncAccl class from MemryX SDK
 
 # App class to handle camera feed, model processing, and output display
@@ -35,21 +25,27 @@ class App:
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))  # Get camera frame height
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))  # Get camera frame width
         self.model_input_shape = model_input_shape
-        self.capture_queue = Queue()  # Queue to store captured frames
+        self.capture_queue = Queue(maxsize=5)  # Queue to store captured frames
         self.mirror = mirror  # Flag for mirroring the camera feed
         self.model = model.MPFaceDetector(model_input_shape)  # Initialize face detection model
 
     # Function to capture a frame from the camera, preprocess it, and return it
     def generate_frame(self):
-        ok, frame = self.cam.read()  # Read frame from camera
-        if not ok:
-            print('EOF')  # Handle end of stream
-            return None
-        if self.mirror:
-            frame = cv.flip(frame, 1)  # Mirror the frame if required
-        self.capture_queue.put(frame)  # Put the original frame in the queue
-        out = self.model.preprocess(frame)  # Preprocess frame for the model
-        return out
+        while True:
+            ok, frame = self.cam.read()  # Read frame from camera
+            if not ok:
+                print('EOF')  # Handle end of stream
+                return None
+            if self.capture_queue.full():
+                # drop frame (and ONLY in this first model!)
+                # dependent models shouldn't drop anything
+                continue
+            else:
+                if self.mirror:
+                    frame = cv.flip(frame, 1)  # Mirror the frame if required
+                self.capture_queue.put(frame)  # Put the original frame in the queue
+                out = self.model.preprocess(frame)  # Preprocess frame for the model
+                return out
 
     # Process model output and draw detected faces on the frame
     def process_model_output(self, *ofmaps):

@@ -18,13 +18,13 @@ from ultralytics.utils.plotting import Colors
 import time
 
 class App:
-    def __init__(self, cam, display=True, mirror=False, **kwargs):
+    def __init__(self, cam, display=True, mirror=False, src_is_cam=True, **kwargs):
         # Initialize camera, display settings, input resolution, and other variables
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
         self.model_input_shape = (640, 640)  # Model input size
-        self.capture_queue = Queue(maxsize=1)  # Queue to store captured frames
+        self.capture_queue = Queue(maxsize=5)  # Queue to store captured frames
         self.mirror = mirror
         self.box_score = 0.25
         self.ratio = None
@@ -33,6 +33,7 @@ class App:
         self.iou_threshold = 0.45
         self.conf_threshold = 0.25
         self.display = display
+        self.src_is_cam = src_is_cam
 
         self.color_palette = Colors()  # Set color palette for drawing
         # Load COCO class names from a yaml file
@@ -45,19 +46,20 @@ class App:
 
     def generate_frame(self):
         # Capture a frame from the camera, preprocess and add to queue
-        ok, frame = self.cam.read()
-        if not ok:
-            print('EOF')
-            return None
-        try:
-            if self.mirror:
-                frame = cv.flip(frame, 1)  # Flip frame if mirror is True
-            self.capture_queue.put(frame, timeout=2)  # Put the captured frame in the queue
-            out, self.ratio, (self.pad_w, self.pad_h) = self.preprocess_image(frame)
-            return out
-        except Full:
-            print("No frames, Exiting")
-            return None
+        while True:
+            ok, frame = self.cam.read()
+            if not ok:
+                print('EOF')
+                return None
+            if self.src_is_cam and self.capture_queue.full():
+                # drop frame and move on
+                continue
+            else:
+                if self.mirror:
+                    frame = cv.flip(frame, 1)  # Flip frame if mirror is True
+                self.capture_queue.put(frame)  # Put the captured frame in the queue
+                out, self.ratio, (self.pad_w, self.pad_h) = self.preprocess_image(frame)
+                return out
 
     def preprocess_image(self, image):
         # Preprocess the image (resize, pad, normalize) for the model input
@@ -87,6 +89,7 @@ class App:
 
         # Retrieve the image from the queue
         img = self.capture_queue.get()
+        self.capture_queue.task_done()
 
         # Post-process the outputs to obtain boxes, segments, and masks
         boxes, segments, masks = self.postprocess(protos, out, img, self.ratio, self.pad_w, self.pad_h, self.conf_threshold, self.iou_threshold)
@@ -243,7 +246,6 @@ class App:
 def run_mxa(dfp, post_model, app):
     # Run the model inference using the Memryx AsyncAccl
     accl = AsyncAccl(dfp)
-    print("Hello...\n")
     accl.set_postprocessing_model(post_model, model_idx=0)  # Set the post-processing model
     accl.connect_input(app.generate_frame)  # Connect the input generator (frames)
     accl.connect_output(app.process_model_output)  # Connect the output processing
@@ -258,13 +260,12 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    cam = cv.VideoCapture('/dev/video0')  # Open video capture (webcam)
+    cam = cv.VideoCapture(0)  # Open video capture (webcam)
     parent_path = Path(__file__).resolve().parent
 
-    app = App(cam, mirror=False)  # Initialize the application
+    app = App(cam, mirror=False, src_is_cam=True)  # Initialize the application
     dfp = Path(args.dfp)  # Get DFP path from argument
     post_model = str(Path(args.post_model))  # Get post-processing model path from argument
 
     run_mxa(dfp, post_model, app)  # Run the application
     cv.destroyAllWindows()  # Clean up windows
-    print("Done.......")

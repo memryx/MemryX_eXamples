@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Path to Libtorch
-set(LIBTORCH_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libtorch-cxx11-abi-shared-with-deps-2.3.0+cpu/libtorch")
+set(LIBTORCH_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libtorch")
 
 # Check if libtorch exists
 if(NOT EXISTS ${LIBTORCH_PATH})

@@ -33,7 +33,6 @@ onnxruntime.set_default_logger_severity(3)
 
 import numpy as np
 import cv2
-from memryx import Benchmark
 
 ###################################################################################################
 

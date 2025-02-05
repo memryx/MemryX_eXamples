@@ -6,16 +6,6 @@ import time
 from collections import Counter, deque
 import logging
 
-# Try to import MemryX SDK, if not found, add it to the path using MIX_HOME
-try:
-    import memryx
-except ImportError:
-    mix_home = os.getenv("MIX_HOME")
-    if not mix_home:
-        print("Install MemryX SDK or clone MIX and source setup_env.sh")
-        exit(1)
-    sys.path.append(mix_home)
-
 import cv2 as cv
 import numpy as np
 

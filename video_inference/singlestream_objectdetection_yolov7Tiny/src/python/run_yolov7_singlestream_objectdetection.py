@@ -54,8 +54,12 @@ class Yolo7Mxa:
         # Stream-related containers
         # CV and Queues
         self.num_frames = 0
-        self.cap_queue = Queue(maxsize=10)
-        self.dets_queue = Queue(maxsize=10)
+        self.cap_queue = Queue(maxsize=4)
+        self.dets_queue = Queue(maxsize=5)
+        if "/dev/video" in str(video_path):
+            self.src_is_cam = True
+        else:
+            self.src_is_cam = False
         self.vidcap = cv2.VideoCapture(video_path) 
         self.dims = ( int(self.vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)), 
                 int(self.vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT)) )
@@ -111,25 +115,28 @@ class Yolo7Mxa:
         """
         Captures a frame for the video device and pre-processes it.
         """
-        got_frame, frame = self.vidcap.read()
 
-        if not got_frame:
-            return None
+        while True:
 
-        try:
-            self.num_frames += 1
-            
-            # Put the frame in the cap_queue to be overlayed later
-            self.cap_queue.put(frame,timeout=2)
-            
-            # Preporcess frame
-            frame = self.model.preprocess(frame)
-            return frame
+            got_frame, frame = self.vidcap.read()
+
+            if not got_frame:
+                return None
+
+
+            if self.src_is_cam and self.cap_queue.full():
+                # drop the frame and try again
+                continue
+            else:
+                self.num_frames += 1
+                
+                # Put the frame in the cap_queue to be overlayed later
+                self.cap_queue.put(frame)
+                
+                # Preporcess frame
+                frame = self.model.preprocess(frame)
+                return frame
         
-        except queue.Full:
-            print('Dropped frame .. exiting')
-            return None
-
     ###############################################################################
     # Post process the output from MXA
     def postprocess(self, *mxa_output):
@@ -165,6 +172,8 @@ class Yolo7Mxa:
             # Get the frame from and the dets from the relevant queues
             frame = self.cap_queue.get()
             dets = self.dets_queue.get()
+            self.cap_queue.task_done()
+            self.dets_queue.task_done()
 
             # Draw the OD boxes
             for d in dets:
@@ -175,11 +184,11 @@ class Yolo7Mxa:
                 frame = cv2.putText(frame, d['class'], (l+2,t-5),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
-            if self.fps > 1:
-                txt = f"{self.model.name} - {self.fps:.1f} FPS"
-            else:
-                txt = f"{self.model.name}"
-            frame = cv2.putText(frame, txt, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,0,0), 2) 
+            #if self.fps > 1:
+            #    txt = f"{self.fps:.1f} FPS"
+            #else:
+            #    txt = f""
+            #frame = cv2.putText(frame, txt, (50,50), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,0,0), 2) 
 
             # Show the frame
             if self.show:

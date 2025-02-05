@@ -211,18 +211,17 @@ class AimbotMXA:
         if win32api.GetAsyncKeyState(ord(self.aaQuitKey)) != 0:
             return None
 
-        frame = np.array(self.camera.get_latest_frame())
+        while True:
+            frame = np.array(self.camera.get_latest_frame())
 
-        try:
-            self.cap_queue.put(frame,timeout=2) # adds the original to a queue to display later
-            frame = self.model.preprocess(frame) # preprocessing
-            self.clicked_recently = False
-            return frame # this goes into the MXA
-
-        except queue.Full:
-            # something's going wrong if the queue has backed up!...
-            print('Dropped frame!... exiting')
-            return None
+            if self.cap_queue.full():
+                # drop frame
+                continue
+            else:
+                self.cap_queue.put(frame) # adds the original to a queue to display later
+                frame = self.model.preprocess(frame) # preprocessing
+                self.clicked_recently = False
+                return frame # this goes into the MXA
 
 
 ###################################################################################################
@@ -244,11 +243,13 @@ class AimbotMXA:
         while self.done is False:
 
             frame = self.cap_queue.get()
+            self.cap_queue.task_done()
 
             # opencv likes to use BGR, not RGB, so let's flip the colors around
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR) 
 
             dets = self.dets_queue.get()
+            self.dets_queue.task_done()
 
             # collect targets from dets
             targets = []

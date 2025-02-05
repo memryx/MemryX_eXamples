@@ -41,8 +41,8 @@ class MxHandPose:
         # queues
         self.input_q           = Queue(maxsize=2)  #(annotated_frame)
         self.stage0_q          = Queue(maxsize=2)  #(annotated_frame, pad_bias)
-        self.stage1_q          = Queue(maxsize=4)  #(annotated_frame) --> has detected palm info!
-        self.stage2_q          = Queue(maxsize=4)  #(annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias)
+        self.stage1_q          = Queue(maxsize=3)  #(annotated_frame) --> has detected palm info!
+        self.stage2_q          = Queue(maxsize=3)  #(annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias)
         self.output_q          = Queue(maxsize=4)  #(annotated_frame with results)
 
 
@@ -75,6 +75,7 @@ class MxHandPose:
     def get(self, block=True, timeout=None):
         self._outstanding_frames -= 1
         annotated_frame = self.output_q.get(block, timeout)
+        self.output_q.task_done()
         return annotated_frame
     
     def __del__(self):
@@ -106,6 +107,7 @@ class MxHandPose:
         annotated_frame = self.input_q.get()
         if annotated_frame is None:
             return None
+        self.input_q.task_done()
 
         annotated_frame.image = cv2.flip(annotated_frame.image,1)
 
@@ -119,6 +121,7 @@ class MxHandPose:
     
     def _palmdetect_sink(self, *accl_outputs):
         annotated_frame, pad_bias = self.stage0_q.get()
+        self.stage0_q.task_done()
         h, w, _ = annotated_frame.image.shape
         palms    = self.palmdet_model._postprocess(accl_outputs,  np.array([w, h]), pad_bias)
     
@@ -138,6 +141,8 @@ class MxHandPose:
 
         if data is None:
             return None
+
+        self.stage1_q.task_done()
         
         annotated_frame, palm = data
 
@@ -151,6 +156,7 @@ class MxHandPose:
     def _handpose_sink(self, *accl_outputs):
 
         annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias  = self.stage2_q.get()
+        self.stage2_q.task_done()
         handpose = self.handpose_model._postprocess(accl_outputs, rotated_palm_bbox, angle, rotation_matrix, pad_bias) 
         
         if handpose is None:

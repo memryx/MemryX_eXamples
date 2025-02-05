@@ -11,18 +11,19 @@ from typing import List
 import argparse
 
 class App:
-    def __init__(self, cam, model_input_shape, mirror=False, **kwargs):
+    def __init__(self, cam, model_input_shape, mirror=False, src_is_cam=True, **kwargs):
         # Initialize camera and various configurations
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
         self.model_input_shape = model_input_shape
-        self.capture_queue = Queue()  # Queue to store frames for processing
+        self.capture_queue = Queue(maxsize=5)  # Queue to store frames for processing
         self.mirror = mirror  # Flag to mirror the video frame
         self.box_score = 0.25  # Threshold for object confidence
         self.ratio = None
         self.kpt_score = 0.5  # Threshold for keypoint confidence
         self.nms_thr = 0.2  # IoU threshold for non-max suppression
+        self.src_is_cam = src_is_cam
 
         # Predefined color list for drawing keypoints
         self.COLOR_LIST = list([[128, 255, 0], [255, 128, 50], [128, 0, 255], [255, 255, 0],
@@ -39,15 +40,20 @@ class App:
 
     def generate_frame(self):
         # Capture a frame from the camera
-        ok, frame = self.cam.read()
-        if not ok:
-            print('EOF')  # End of frame
-            return None
-        if self.mirror:
-            frame = cv.flip(frame, 1)  # Mirror the frame if needed
-        self.capture_queue.put(frame)  # Store the frame in the queue
-        out, self.ratio = self.preprocess_image(frame)  # Preprocess the frame
-        return out
+        while True:
+            ok, frame = self.cam.read()
+            if not ok:
+                print('EOF')  # End of frame
+                return None
+            if self.src_is_cam and self.capture_queue.full():
+                # drop frame
+                continue
+            else:
+                if self.mirror:
+                    frame = cv.flip(frame, 1)  # Mirror the frame if needed
+                self.capture_queue.put(frame)  # Store the frame in the queue
+                out, self.ratio = self.preprocess_image(frame)  # Preprocess the frame
+                return out
 
     def preprocess_image(self, image):
         # Resize and pad the image to fit the model input shape
@@ -131,6 +137,7 @@ class App:
                   'scores': scores[idxes].tolist()}
 
         img = self.capture_queue.get()  # Get the frame from the queue
+        self.capture_queue.task_done()
 
         # Draw keypoints and bounding boxes on the image
         color = (0,255,0)
@@ -156,8 +163,8 @@ class App:
         # Display the image in a window
         cv.imshow('Output', img)
         if cv.waitKey(1) == ord('q'):  # Exit on 'q' key press
-            cv.destroyAllWindows()
             self.cam.release()
+            cv.destroyAllWindows()
             exit(1)
 
 def run_mxa(dfp, post_model, app):
@@ -176,11 +183,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Connect to the camera and initialize the app
-    cam = cv.VideoCapture('/dev/video0')
+    cam = cv.VideoCapture(0)
     parent_path = Path(__file__).resolve().parent
     model_input_shape = (640, 640)
-    app = App(cam, model_input_shape, mirror=False)
+    app = App(cam, model_input_shape, mirror=False, src_is_cam=True)
     dfp = args.dfp
     post_model = args.post_model
     run_mxa(dfp, post_model, app)
-    print("Done.......")
