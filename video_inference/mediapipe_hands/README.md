@@ -39,7 +39,7 @@ On Windows, first make sure you have installed [Python 3.11](https://apps.micros
 Then open the `src/python_windows/` folder and double-click on `setup_env.bat`. The script will install all requirements automatically.
 
 
-## Running the Application
+## Running the Application (Linux)
 
 ### Step 1: Download or Compile DFP
 

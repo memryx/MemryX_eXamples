@@ -9,7 +9,7 @@
 </picture>
 
 
-[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-1.1-brightgreen)](https://developer.memryx.com)
+[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-1.2-brightgreen)](https://developer.memryx.com)
 [![Python Versions](https://img.shields.io/badge/Python-3.9%20|%203.10%20|%203.11%20|%203.12-blue)](https://www.python.org)
 [![C++](https://img.shields.io/badge/C++-17-blue)](https://en.cppreference.com)
 [![ONNX](https://img.shields.io/badge/ONNX-gray)](https://onnx.ai)

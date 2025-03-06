@@ -141,7 +141,7 @@ You need to specify whether you want to use the camera or a video file as input.
 
 [Download](https://developer.memryx.com/example_files/poseEstimation_windows.zip) the compiled C++ executable version, and extract the zip.
 
-Then just double-click `poseEstimation.exe` to launch using the first available webcam.
+Then just double-click `run.bat` to launch using the first available webcam.
 
 Alternatively, you can use commandline arguments such as `--video` if launching the exe within Command Prompt or PowerShell.
 

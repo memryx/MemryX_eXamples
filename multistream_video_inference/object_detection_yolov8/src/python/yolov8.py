@@ -71,25 +71,29 @@ class YoloV8:
         Returns:
             image_data: Preprocessed image data ready for inference.
         """
-        self.img = img
+        self.original_imgage = img
 
         # Get the height and width of the input image
-        self.img_height, self.img_width = self.img.shape[:2]
-
-        # Resize the image to match the input shape
-        img = cv2.resize(img, (self.input_width, self.input_height))
+        [self.img_height, self.img_width, _] = self.original_imgage.shape
         
-        img = img.astype(np.float32)
-        # Normalize the image data by dividing it by 255.0
-        image_data = np.array(img) / 255.0
+        # Prepare a square image for inference
+        self.length = max((self.img_height, self.img_width))
+        self.image = np.zeros((self.length, self.length, 3), np.uint8)
+        self.image[0:self.img_height, 0:self.img_width] = self.original_imgage
 
+        # Calculate scale factor
+        scale = self.length / 640
 
-        # Expand dimensions to add the batch size as the third axis
-        image_data = np.expand_dims(image_data, axis=2)  # Adds batch dimension after width and height
-        image_data = np.expand_dims(image_data, axis=0)  # Adds another dimension for batch size
+        # Preprocess the image and prepare blob for model
+        blob = cv2.dnn.blobFromImage(self.image, scalefactor=1 / 255, size=(640, 640), swapRB=True)
+
+        # Assume 'blob' is currently (1, 3, 640, 640)
+        blob = blob.squeeze(0)  # Removes the batch dimension -> (3, 640, 640)
+        blob = blob.transpose(1, 2, 0)  # Change to (640, 640, 3)
+        blob = np.expand_dims(blob, axis=2)  # Add new axis at index 2 -> (640, 640, 1, 3)
 
         # Return the preprocessed image data
-        return image_data
+        return blob
 
 ###################################################################################################
     def postprocess(self, output):
@@ -107,8 +111,8 @@ class YoloV8:
         outputs = np.transpose(np.squeeze(output[0]))
 
         # Calculate the scaling factors for the bounding box coordinates
-        x_factor = self.img_width / self.input_width
-        y_factor = self.img_height / self.input_height
+        x_factor = self.length / self.input_width
+        y_factor = self.length / self.input_height
 
         # Extract the bounding box information and class scores in a vectorized manner
         boxes = outputs[:, :4]  # (8400, 4) - x_center, y_center, width, height

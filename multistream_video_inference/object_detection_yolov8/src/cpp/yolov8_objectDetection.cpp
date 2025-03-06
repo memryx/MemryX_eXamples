@@ -119,6 +119,7 @@ class YoloV8 {
         float* mxa_output;  // Buffer for the output of the accelerator
         cv::Mat displayImage;
         MxQt* gui_;  // GUI for display
+        int length;
 
         std::vector<Box> all_boxes;
         std::vector<float> all_scores;
@@ -126,11 +127,33 @@ class YoloV8 {
 
         // Function to preprocess the input image (resize and normalize)
         cv::Mat preprocess(cv::Mat& image) {
+            // Get original image dimensions
+            int img_height = image.rows;
+            int img_width = image.cols;
+
+            // Determine the size of the square image (longest side)
+            length = std::max(img_height, img_width);
+
+            // Create a black square image with the same number of channels
+            cv::Mat squareImage = cv::Mat::zeros(cv::Size(length, length), image.type());
+
+            // Copy the original image into the square image
+            image.copyTo(squareImage(cv::Rect(0, 0, img_width, img_height)));
+
+            // Resize to 640x640 for the model input
             cv::Mat resizedImage;
-            cv::resize(image, resizedImage, cv::Size(model_input_height, model_input_width), cv::INTER_LINEAR);
-            cv::Mat floatImage;
-            resizedImage.convertTo(floatImage, CV_32F, 1.0 / 255.0);
-            return floatImage;
+            cv::resize(squareImage, resizedImage, cv::Size(640, 640), cv::INTER_LINEAR);
+
+            // Convert to float32 and normalize pixel values (0-1 range)
+            resizedImage.convertTo(resizedImage, CV_32F, 1.0 / 255.0);
+
+            // Convert HWC (Height, Width, Channels) to CHW (Channels, Height, Width)
+            std::vector<cv::Mat> channels(3);
+            cv::split(resizedImage, channels);
+            cv::Mat chwImage;
+            cv::merge(channels, chwImage);
+
+            return chwImage;
         }
 
         // Function to process model output and get bounding boxes
@@ -141,8 +164,8 @@ class YoloV8 {
             std::vector<Box> filtered_boxes;
 
             // Precompute scaling factors once
-            const float y_factor = static_cast<float>(inframe.rows) / model_input_height;
-            const float x_factor = static_cast<float>(inframe.cols) / model_input_width;
+            const float y_factor = static_cast<float>(length) / static_cast<float>(model_input_height);
+            const float x_factor = static_cast<float>(length) / static_cast<float>(model_input_width);
 
             // Iterate through the model outputs
             for (int i = 0; i < num_boxes; ++i) {
@@ -285,6 +308,7 @@ class YoloV8 {
 
             // Open the camera or video source
             if(video_src.substr(0,3) == "cam") {
+                src_is_cam = true;
                 int device = std::stoi(video_src.substr(4));
                 #ifdef __linux__
                     if (!openCamera(vcap, device, cv::CAP_V4L2)) {
@@ -296,6 +320,7 @@ class YoloV8 {
                     }
                 #endif
             } else if (video_src.substr(0,3) == "vid") {
+                src_is_cam = false;
                 std::cout << "Video source given = " << video_src.substr(4) << "\n\n";
                 vcap.open(video_src.substr(4), cv::CAP_ANY);
             } else {

@@ -155,9 +155,9 @@ make
 
 [Download](https://developer.memryx.com/example_files/yolov7_multistream_windows.zip) the compiled C++ executable version, and extract the zip.
 
-Then just double-click `yolov7_multistream.exe` to launch using a single stream with the first available webcam.
+Then just double-click `run.bat` to launch using a single stream with the first available webcam.
 
-To use multiple streams, you must use commandline arguments by launching the exe within Command Prompt or PowerShell.
+To use multiple streams, you must use commandline arguments by launching the .exe within Command Prompt or PowerShell.
 
 
 ## Tutorial

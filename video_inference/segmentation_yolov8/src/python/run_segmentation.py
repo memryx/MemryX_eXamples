@@ -16,9 +16,8 @@ from ultralytics.utils.checks import check_yaml
 from ultralytics.utils.plotting import Colors
 
 import time
-
 class App:
-    def __init__(self, cam, display=True, mirror=False, src_is_cam=True, **kwargs):
+    def __init__(self, cam, use_tflite, display=True, mirror=False, src_is_cam=True, **kwargs):
         # Initialize camera, display settings, input resolution, and other variables
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
@@ -34,6 +33,7 @@ class App:
         self.conf_threshold = 0.25
         self.display = display
         self.src_is_cam = src_is_cam
+        self.use_tflite = use_tflite
 
         self.color_palette = Colors()  # Set color palette for drawing
         # Load COCO class names from a yaml file
@@ -105,7 +105,7 @@ class App:
         # Post-process the model output to extract bounding boxes, segments, and masks
 
         x, protos = output0, output1   # Two outputs: predictions and protos
-
+            
         # Transpose the first output: (Batch_size, xywh_conf_cls_nm, Num_anchors) -> (Batch_size, Num_anchors, xywh_conf_cls_nm)
         x = np.einsum("bcn->bnc", x)
 
@@ -163,6 +163,11 @@ class App:
         return masks * ((r >= x1) * (r < x2) * (c >= y1) * (c < y2))
 
     def process_mask(self, protos, masks_in, bboxes, im0_shape):
+        
+        # align proto shape
+        if self.use_tflite: # use tflite
+            protos = np.einsum("hwc->chw", protos)
+        
         # Process the mask outputs from the model
         c, mh, mw = protos.shape
         masks = np.matmul(masks_in, protos.reshape((c, -1))).reshape((-1, mh, mw)).transpose(1, 2, 0)  # HWN
@@ -255,15 +260,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="YOLOv8 Segmentation Inference")
     
     # Add arguments for the DFP file and post-processing model
-    parser.add_argument('-d', '--dfp', type=str, default='models/YOLO_v8_nano_seg_640_640_3_onnx.dfp', help='Path to the compiled DFP file (default: models/YOLO_v8_nano_seg_640_640_3_onnx.dfp)')
-    parser.add_argument('-p', '--post_model', type=str, default='models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx', help='Path to the post-processing ONNX file (default: models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)')
+    parser.add_argument('-d', '--dfp', type=str, default='models/onnx/YOLO_v8_nano_seg_640_640_3_onnx.dfp', help='Path to the compiled DFP file (default: models/YOLO_v8_nano_seg_640_640_3_onnx.dfp)')
+    parser.add_argument('-p', '--post_model', type=str, default='models/onnx/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx', help='Path to the post-processing ONNX file (default: models/YOLO_v8_nano_seg_640_640_3_onnx_post.onnx)')
     
     args = parser.parse_args()
 
     cam = cv.VideoCapture(0)  # Open video capture (webcam)
     parent_path = Path(__file__).resolve().parent
 
-    app = App(cam, mirror=False, src_is_cam=True)  # Initialize the application
+    use_tflite = args.post_model.endswith('.tflite')  # Check if the post-processing model is a TFLite model
+    app = App(cam, use_tflite, mirror=False, src_is_cam=True)  # Initialize the application
     dfp = Path(args.dfp)  # Get DFP path from argument
     post_model = str(Path(args.post_model))  # Get post-processing model path from argument
 
