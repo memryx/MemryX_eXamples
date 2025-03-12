@@ -148,7 +148,7 @@ def load_model(data_dir, max_len=128):
     return model, tokenizer
 
 # Specify data directory
-data_dir = "models" if os.path.exists("models") else "."
+data_dir = "../models" if os.path.exists("../models") else "."
 model, tokenizer = load_model(data_dir)
 
 # Beam width input

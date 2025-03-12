@@ -223,12 +223,12 @@ if __name__=="__main__":
     
     parser.add_argument('-d', '--dfp', 
                         type=str, 
-                        default="models/YOLO_v7_tiny_416_416_3_onnx.dfp", 
+                        default="../../models/YOLO_v7_tiny_416_416_3_onnx.dfp", 
                         help="Specify the path to the compiled DFP file. Default is 'models/YOLO_v7_tiny_416_416_3_onnx.dfp'.")
     
     parser.add_argument('-m', '--postmodel', 
                         type=str, 
-                        default="models/YOLO_v7_tiny_416_416_3_onnx_post.onnx", 
+                        default="../../models/YOLO_v7_tiny_416_416_3_onnx_post.onnx", 
                         help="Specify the path to the post-processing model. Default is 'models/YOLO_v7_tiny_416_416_3_onnx_post.onnx'.")
 
     parser.add_argument('--video_path',  dest="video_path", 

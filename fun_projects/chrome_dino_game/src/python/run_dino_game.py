@@ -147,7 +147,7 @@ if __name__ == "__main__":
     
     # Argument parser for specifying DFP path
     parser = argparse.ArgumentParser(description="Run the Chrome Dinosaur game controlled by hand gestures.")
-    parser.add_argument('-d', '--dfp', type=str, default="models/MediaPipe_palm_Detection_192_192_3_tflite.dfp",
+    parser.add_argument('-d', '--dfp', type=str, default="../../models/MediaPipe_palm_Detection_192_192_3_tflite.dfp",
                         help="Specify the path to the DFP model file. Default is 'models/MediaPipe_palm_Detection_192_192_3_tflite.dfp'.")
     parser.add_argument('-i', '--input_file', default="0", type=str, metavar="", help="Either an int (cam ID), devnode (/dev/video0), or filename (file.mp4)")
     

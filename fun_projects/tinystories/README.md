@@ -80,6 +80,7 @@ cd -
 Simply run:
 
 ```bash
+cd src/
 streamlit run run_tinystories.py
 ```
 

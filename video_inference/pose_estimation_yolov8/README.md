@@ -90,6 +90,7 @@ To run the Python example for real-time Pose Estimation using MX3, follow these 
 Simply execute the following command:
 
 ```bash
+cd src/python/
 python run_pose_estimation.py
 ```
 Command-line Options:
@@ -114,6 +115,8 @@ To run the C++ example for real-time Pose Estimation using MX3, follow these ste
 1. Build the project using CMake. From the project directory, execute:
 
 ```bash
+cd src/cpp/
+
 mkdir build
 cd build
 cmake ..

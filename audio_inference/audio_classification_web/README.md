@@ -63,7 +63,7 @@ With the compiled model downloaded, you can now upload / record any audio and se
 To run the example on the MX3, simply execute the following command:
 
 ```bash
-cd audio_classification_web/src/python
+cd src/python
 python app.py 
 ```
 

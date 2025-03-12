@@ -75,6 +75,7 @@ To run the Python example for object detection with yolov7-tiny using MX3, simpl
 
 ```bash
 # ensure a camera device is connected as default video input is a cam
+cd src/python/
 python run_yolov7_singlestream_objectdetection.py 
 ```
 You can specify the model path and DFP (Compiled Model) path with the following options:

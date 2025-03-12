@@ -149,7 +149,7 @@ def run_mxa(dfp):
 if __name__ == '__main__':
     # Argument parsing for DFP file
     parser = argparse.ArgumentParser(description="Face & Emotion Detection")
-    parser.add_argument('-d', '--dfp', type=str, default='models/models.dfp', 
+    parser.add_argument('-d', '--dfp', type=str, default='../../models/models.dfp', 
                         help='Path to the compiled DFP file (default: models/models.dfp)')
     
     args = parser.parse_args()

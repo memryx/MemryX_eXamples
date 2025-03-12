@@ -104,6 +104,7 @@ To run the Python example for object detection with yolov8s using MX3, simply ex
 
 ```bash
 # ensure a camera device is connected as default video input is a cam
+cd src/python/
 python run_objectiondetection.py 
 ```
 You can specify the model path and the DFP (Compiled Model) path using the following options. Both TFLite and ONNX formats are supported.
@@ -136,6 +137,8 @@ To run the C++ example using MX3, follow these steps:
 1. Build the project using CMake. From the project directory, execute:
 
 ```bash
+cd src/cpp/
+
 mkdir build
 cd build
 cmake ..

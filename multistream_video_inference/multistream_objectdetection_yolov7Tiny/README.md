@@ -103,6 +103,7 @@ python run_yolov7_multistream_objectdetection.py -m <postmodel_path> -d <dfp_pat
 You can specify multiple input video paths to run multiple stream with `--video_paths` option:
 
 ```bash
+cd src/python/
 python run_yolov7_multistream_objectdetection.py --video_paths /dev/video0 <video_path1> <video_path2>
 ```
 
@@ -116,6 +117,8 @@ To run the C++ example using MX3, follow these steps:
 1. Build the project using CMake. From the project directory, execute:
 
 ```bash
+cd src/c++/
+
 mkdir build
 cd build
 cmake ..

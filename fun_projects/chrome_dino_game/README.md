@@ -101,6 +101,7 @@ With the compiled model, you can now play the game in real-time. Below are examp
 To run the Python example and play the real-time Chrome Dinosaur Game using MX3, simply execute the following command:
 
 ```bash
+cd src/python/
 python run_dino_game.py
 ```
 You can specify the model path and DFP (Compiled Model) path with the following option:

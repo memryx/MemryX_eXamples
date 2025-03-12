@@ -51,4 +51,4 @@ target_link_libraries(${app_name}
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 # Copy the assets directory to the binary directory
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/models/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/models)
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../../models/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/models)

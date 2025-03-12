@@ -109,6 +109,7 @@ To run the Python example for real-time Face Detection & Emotion Classification 
 Simply execute the following command:
 
 ```bash
+cd src/python/
 python run_face_emotion.py
 ```
 Command-line Options:
@@ -132,6 +133,8 @@ To run the C++ example for real-time Face Detection & Emotion Classification usi
 1. Build the project using CMake. From the project directory, execute:
 
 ```bash
+cd src/cpp/
+
 mkdir build
 cd build
 cmake ..

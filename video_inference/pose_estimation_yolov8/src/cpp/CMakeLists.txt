@@ -27,4 +27,4 @@ add_executable(${app_name} ${local_src})
 target_link_libraries(${app_name}  mx_accl  ${OpenCV_LIBS} ) 
 
 # Copy DFP file to the binary directory during the build
-file(COPY "models/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY "../../models/" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -54,7 +54,7 @@ With the compiled model, you can now choose to provide any audio file via the co
 To run the example on the MX3, simply execute the following command:
 
 ```bash
-cd audio_classification_cmd/src/python
+cd src/python
 python classify_audio.py --audio_file_path <path_to_the_audio_file>
 ```
 

@@ -178,8 +178,8 @@ def run_mxa(dfp, post_model, app):
 if __name__ == '__main__':
     # Parse command-line arguments for model path (-d) and post-processing ONNX file (-post)
     parser = argparse.ArgumentParser(description="Run MX3 real-time inference")
-    parser.add_argument('-d', '--dfp', type=str, default="models/YOLO_v8_medium_pose_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is 'models/YOLO_v8_medium_pose_640_640_3_onnx.dfp'.")
-    parser.add_argument('-post', '--post_model', type=str, default="models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx", help="Specify the path to the post model. Default is 'models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx.")
+    parser.add_argument('-d', '--dfp', type=str, default="../../models/YOLO_v8_medium_pose_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is 'models/YOLO_v8_medium_pose_640_640_3_onnx.dfp'.")
+    parser.add_argument('-post', '--post_model', type=str, default="../../models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx", help="Specify the path to the post model. Default is 'models/YOLO_v8_medium_pose_640_640_3_onnx_post.onnx.")
     args = parser.parse_args()
 
     # Connect to the camera and initialize the app

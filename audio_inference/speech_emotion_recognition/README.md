@@ -61,7 +61,7 @@ With the compiled model downloaded, you can now upload / record audio and infer 
 To run the example on the MX3, simply execute the following command:
 
 ```bash
-cd speech_emotion_recognition/src/python
+cd src/python
 python app.py 
 ```
 

@@ -90,6 +90,7 @@ To run the example for real-time Cartoonizer using MX3, follow these steps:
 Simply execute the following command:
 
 ```bash
+cd src/python/
 python run_facial_cartoonizer.py
 ```
 Command-line Options:
