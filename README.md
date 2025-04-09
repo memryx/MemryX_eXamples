@@ -88,6 +88,14 @@ Maximize performance by running multiple video streams concurrently on MemryX ac
 | [**Multi-Stream Object Detection using YOLOv8S**](multistream_video_inference/object_detection_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html) | Detect objects across multiple streams      | YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/object_detection_yolov8/assets/yolov8_objectDetection.png" alt="Yolov8 Object Detection Preview" height="50"> |
 | [**Multi-Stream Object Detection using YOLOv7Tiny**](multistream_video_inference/multistream_objectdetection_yolov7Tiny/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html) | Detect objects across multiple streams      | YOLOv7 (Tiny)  | ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="multistream_video_inference/multistream_objectdetection_yolov7Tiny/assets/yolov7_objectDetection_multistream.png" alt="Yolov7-Tiny Object Detection Preview" height="50"> |
 
+
+### Optimized Multi-Stream Apps 👀
+Configurable many-stream video applications with USB, RTSP, and video file support, using optimized C++ pre/post-processing.
+
+| Application                                         | Description                              | Models        | Code                   | OS  | Preview |
+|-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
+| [**Object Detection with YOLOv8**](optimized_video_monitor_apps/yolov8_object_detection/README.md) | High performance, configurable C++ object detection      | YOLOv8 (Nano) | ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="optimized_video_monitor_apps/yolov8_object_detection/assets/result.png" alt="Yolov8 Object Detection App Preview" height="50"> |
+
 ### Fun Projects 🤖
 Explore interactive and engaging AI-powered applications in our **fun projects** section.
 

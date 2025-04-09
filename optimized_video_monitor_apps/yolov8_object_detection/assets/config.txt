@@ -1,0 +1,12 @@
+num_chs=4
+dfp=models/YOLO_v8_nano_640_640_3_onnx.dfp
+model_name=YOLOv8n(640x640)
+inf_confidence=0.3
+inf_iou=0.45
+screen_idx=0
+group=0
+video_predecoded_frames=500
+video=assets/resource/video/people_in_conference.mp4
+video=assets/resource/video/stop_sign.mp4
+video=assets/resource/video/walking_luggage.mp4
+video=assets/resource/video/meeting_room.mp4
