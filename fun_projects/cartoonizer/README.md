@@ -14,7 +14,7 @@ The **Cartoonizer** example demonstrates real-time "cartoonization" of a video s
 | **Model Type**       | Cartoonizer                                               |
 | **Framework**        | [ONNX](https://onnx.ai/)                                   |
 | **Model Source**     | [Download here](https://github.com/SystemErrorWang/FacialCartoonization/blob/master/weight.pth)       |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/Facial_cartoonizer_512_512_3_onnx.zip)         |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/Facial_cartoonizer_512_512_3_onnx.zip)         |
 | **Model Resolution** | 512x512                                                      |
 | **Output**           | cartoonized version of the input image |
 | **OS**               | Linux, Windows |
@@ -27,7 +27,8 @@ The **Cartoonizer** example demonstrates real-time "cartoonization" of a video s
 Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV and the pyfakewebcam using the following commands:
 
 ```bash
-pip install opencv-python pyfakewebcam
+pip install opencv-python==4.11.0.86
+pip install pyfakewebcam==0.1.0
 ```
 
 ### Windows
@@ -49,7 +50,7 @@ Then open the `src/python_windows/` folder and double-click on `setup_env.bat`. 
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget wget https://developer.memryx.com/model_explorer/1p1/Facial_cartoonizer_512_512_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/Facial_cartoonizer_512_512_3_onnx.zip
 mkdir -p models
 unzip Facial_cartoonizer_512_512_3_onnx.zip -d models
 ```
@@ -62,12 +63,26 @@ If you prefer, you can download and compile the model rather than using the prec
 wget https://github.com/SystemErrorWang/FacialCartoonization/blob/master/weight.pth
 ```
 
-Export the model to ONNX format. To help with the export process, you can refer to the generate_onnx.py script available in the zip folder, which shows you how to convert the model to ONNX format.
+To export the model to ONNX format:
+
+1. Run the following command:
+
+  ```bash
+  python src/utils/generate_onnx.py
+  ```
+
+2. This will generate the ONNX model inside the `models/` directory.
+
+3. Change to the models directory:
+
+  ```bash
+  cd models
+  ```
 
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
-mx_nc -v -m facial-cartoonizer_512.onnx --autocrop -c 4
+mx_nc -v -m facial-cartoonizer_512.onnx --autocrop -c 4 --dfp_fname Facial_cartoonizer_512_512_3_onnx.dfp
 ```
 
 Output:

@@ -20,7 +20,7 @@ emotion_images = {
         }
 
 # Define paths to all required items
-model_dfp_path = "../../models/speech_emotion_recognition/ser_model.dfp"
+model_dfp_path = "../../models/ser_model.dfp"
 
 # Initialize class
 ser = SpeechEmotionRecognition(model_dfp_path)

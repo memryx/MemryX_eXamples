@@ -129,7 +129,7 @@ class Yolo7Mxa:
         while True:
             got_frame, frame = self.streams[stream_idx].read()
 
-            if not got_frame:
+            if not got_frame or self.done:
                 self.streams_idx[stream_idx] = False
                 return None
 
@@ -146,8 +146,8 @@ class Yolo7Mxa:
                     return frame
 
                 except Full:
-                    print('Dropped frame .. exiting')
-                    return None
+                    print('Dropped frame')
+                    continue
 
     ###############################################################################
     # Post process the output from MXA

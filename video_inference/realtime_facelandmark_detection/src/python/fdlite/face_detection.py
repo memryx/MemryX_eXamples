@@ -86,7 +86,7 @@ class FaceDetectionMXA:
             keep_aspect_ratio=True,
             output_range=(-1, 1))
         input_data = image_data.tensor_data[np.newaxis]
-        input_data = np.squeeze(input_data, axis=0)
+        #input_data = np.squeeze(input_data, axis=0)
         input_data = input_data.astype(np.float32)
         padding = image_data.padding
         return input_data, padding
@@ -103,7 +103,7 @@ class FaceDetectionMXA:
         regressor_16 = np.expand_dims(outputs[3], 0)
         
         # Run Post-Process Inference
-        post_model_path = "../../models/blaze_face_short_range_post.tflite"
+        post_model_path = "../../models/model_0_blaze_face_short_range_post.tflite"
         self.interpreter = tf.lite.Interpreter(model_path=post_model_path)
         self.interpreter.allocate_tensors()
         
@@ -114,11 +114,10 @@ class FaceDetectionMXA:
         
         classificators_index = self.interpreter.get_output_details()[0]['index']
         regressors_index = self.interpreter.get_output_details()[1]['index']
-        
-        self.interpreter.set_tensor(classificator_8_index, classificator_8)
-        self.interpreter.set_tensor(classificator_16_index, classificator_16)
-        self.interpreter.set_tensor(regressor_8_index, regressor_8)
-        self.interpreter.set_tensor(regressor_16_index, regressor_16)
+        self.interpreter.set_tensor(classificator_8_index, np.squeeze(classificator_8, axis=0))
+        self.interpreter.set_tensor(classificator_16_index, np.squeeze(classificator_16, axis=0))
+        self.interpreter.set_tensor(regressor_8_index, np.squeeze(regressor_8, axis=0))
+        self.interpreter.set_tensor(regressor_16_index, np.squeeze(regressor_16, axis=0))
         self.interpreter.invoke()
 
         raw_scores = self.interpreter.get_tensor(classificators_index)
@@ -136,8 +135,10 @@ class FaceDetectionMXA:
         detections = detection_letterbox_removal(pruned_detections, padding)
         
         # get ROI for the first face found
-        face_roi = face_detection_to_roi(detections[0], image_size)
-        return detections, face_roi
+        if len(detections) > 0:
+            face_roi = face_detection_to_roi(detections[0], image_size)
+            return detections, face_roi
+        else: return detections, None
     
     def _decode_boxes(self, raw_boxes: np.ndarray) -> np.ndarray:
         """Simplified version of

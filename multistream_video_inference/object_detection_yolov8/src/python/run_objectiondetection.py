@@ -32,7 +32,7 @@ class Yolo8sMxa:
     """
 
 ###################################################################################################
-    def __init__(self, video_paths, show=True):
+    def __init__(self, video_paths, model_type, show=True):
         """
         Initialization function.
         """
@@ -51,6 +51,7 @@ class Yolo8sMxa:
         self.dims = {}
         self.color_wheel = {}
         self.model = {}
+        self.model_type = model_type
 
         # Timing and FPS related
         self.dt_index = {i: 0 for i in range(self.num_streams)}
@@ -76,7 +77,8 @@ class Yolo8sMxa:
             self.color_wheel[i] = np.random.randint(0, 255, (20, 3)).astype(np.int32)
 
             # Initialize the YOLOv8 model
-            self.model[i] = YoloModel(stream_img_size=(self.dims[i][1], self.dims[i][0], 3))
+            self.model[i] = YoloModel(stream_img_size=(self.dims[i][1], self.dims[i][0], 3), model_type=self.model_type)
+
 
         # Start display thread
         self.display_thread = Thread(target=self.display)
@@ -112,7 +114,7 @@ class Yolo8sMxa:
         while True:
             got_frame, frame = self.streams[stream_idx].read()
 
-            if not got_frame:
+            if not got_frame or self.done:
                 self.streams_idx[stream_idx] = False
                 return None
 
@@ -129,8 +131,8 @@ class Yolo8sMxa:
                     return frame
 
                 except Full:
-                    print('Dropped frame .. exiting')
-                    return None
+                    print('Dropped frame')
+                    continue
 
 ###################################################################################################
     def postprocess(self, stream_idx, *mxa_output):
@@ -205,8 +207,15 @@ def main(args):
     """
     Main function to start YOLOv8s inference.
     """
+    if args.post_model.endswith('.onnx'):
+        model_type = 'onnx'
+    elif args.post_model.endswith('.tflite'):
+        model_type = 'tflite'
+    else:
+        raise ValueError(f"Unsupported post-processing model format: {args.post_model}")
+
     # Initialize the application with video paths and display settings
-    yolo8s_inf = Yolo8sMxa(video_paths=args.video_paths, show=args.show)
+    yolo8s_inf = Yolo8sMxa(video_paths=args.video_paths, model_type=model_type, show=args.show)
     yolo8s_inf.dfp = args.dfp  # Set the DFP path from arguments
     yolo8s_inf.post_model = args.post_model  # Set the post-processing model path from arguments
     yolo8s_inf.run()  # Start inference

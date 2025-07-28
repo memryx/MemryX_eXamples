@@ -19,7 +19,7 @@ This guide offers setup instructions, model details, and essential code snippets
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) and export to onnx |
-| **Pre-compiled DFP** | [Download here (ONNX)](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_nano_640_640_3_onnx.zip)   |
+| **Pre-compiled DFP** | [Download here (ONNX)](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_nano_640_640_3_onnx.zip)   |
 | **Model Resolution** | 640x640                                                 |
 | **Output**           | Bounding box coordinates with objectness score, and class probabilities |
 | **OS**               | Linux |
@@ -29,7 +29,7 @@ This guide offers setup instructions, model details, and essential code snippets
 
 Before running the application, make sure that the required packages are installed.
 
-1. [MemryX Installation Guide](https://developer.memryx.com/get_started/install_driver.html)
+1. [MemryX Installation Guide](https://developer.memryx.com/get_started/install_runtime.html)
 
 2. Installing Third-Party Packages
 ```bash
@@ -41,8 +41,8 @@ sudo apt install cmake libopencv-dev qtbase5-dev qt5-qmake
 ### Step 1: Download Pre-compiled DFP and resources
 
 ```bash
-cd mx_examples/performance_optimized_video_inference/yolov8_object_detection
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_nano_640_640_3_onnx.zip
+cd mx_examples/optimized_video_monitor_apps/yolov8_object_detection
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v8_nano_640_640_3_onnx.zip
 mkdir -p models
 unzip YOLO_v8_nano_640_640_3_onnx.zip -d models
 
@@ -54,7 +54,7 @@ tar -xzvf vms_resource.tar.gz -C assets/
 
 With the compiled model, you can now build the C++ application and run real-time inference.
 
-1. Build the project using CMake. From the project directory (mx_examples/performance_optimized_video_inference/yolov8_object_detection), execute:
+1. Build the project using CMake. From the project directory (mx_examples/optimized_video_monitor_apps/yolov8_object_detection), execute:
 
 ```bash
 mkdir build
@@ -82,7 +82,7 @@ This is equivalent to:
 You can customize the assets/config.txt file to suit your needs, including the following options:
 
 1. Number of channels to process.
-2. YOLOv8 DFP model (supports [YOLOv8n](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_nano_640_640_3_onnx.zip), [YOLOv8s](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_onnx.zip), [YOLOv8m](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_640_640_3_onnx.zip), etc.).
+2. YOLOv8 DFP model (supports [YOLOv8n](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_nano_640_640_3_onnx.zip), [YOLOv8s](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_small_640_640_3_onnx.zip), [YOLOv8m](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_medium_640_640_3_onnx.zip), etc.).
 3. MemryX accelerator to use (if multiple devices are available).
 4. Screen for display (if multiple screens are available).
 5. Input sources (video file, USB camera, or RTSP IP camera).

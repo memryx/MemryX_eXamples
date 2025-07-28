@@ -75,7 +75,7 @@ class App:
         if cv.waitKey(1) == ord('q'):  # Exit on 'q' key press
             self.cam.release()  # Release the camera resource
             cv.destroyAllWindows()  # Close all OpenCV windows
-            exit(1)
+            os._exit(0)
 
 # Function to run MemryX accelerator with the application
 def run_mxa(dfp):

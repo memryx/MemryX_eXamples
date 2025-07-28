@@ -260,8 +260,8 @@ def main():
     """
     # Parse the command-line arguments
     parser = argparse.ArgumentParser(description="Run MX3 real-time inference with options for model path and DFP file.")
-    parser.add_argument('-m', '--model', type=str, default="midas_v2_small.tflite", help="Specify the path to the model. Default is 'midas_v2_small.tflite'.")
-    parser.add_argument('-d', '--dfp', type=str, default="models/midas_v2_small.dfp", help="Specify the path to the compiled DFP file. Default is 'models/midas_v2_small.dfp'.")
+    parser.add_argument('-m', '--model', type=str, default="MiDaS_256_256_3_tflite.tflite", help="Specify the path to the model. Default is 'MiDaS_256_256_3_tflite.tflite'.")
+    parser.add_argument('-d', '--dfp', type=str, default="models/MiDaS_256_256_3_tflite.dfp", help="Specify the path to the compiled DFP file. Default is 'models/MiDaS_256_256_3_tflite.dfp'.")
     args = parser.parse_args()
 
     # Initialize the PointCloudFromDepth object with the provided arguments

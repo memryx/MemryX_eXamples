@@ -104,6 +104,10 @@ class YoloV7Tiny:
             self.ratio = r
             self.pad = dwdh
 
+        # Update input shape to what the original ONNX model expects ie B,C,H,W
+        img = np.transpose(img, (2,0,1))
+        img = np.expand_dims(img, axis=0)
+
         return img
     
 ###################################################################################################
@@ -150,9 +154,9 @@ class YoloV7Tiny:
             _fmap = fmap
 
         post_input = {
-            self.post_model.get_inputs()[0].name: np.moveaxis(_fmap[0],-1,1),
-            self.post_model.get_inputs()[1].name: np.moveaxis(_fmap[1],-1,1),
-            self.post_model.get_inputs()[2].name: np.moveaxis(_fmap[2],-1,1)
+            self.post_model.get_inputs()[0].name: _fmap[0],
+            self.post_model.get_inputs()[1].name: _fmap[1],
+            self.post_model.get_inputs()[2].name: _fmap[2]
         }
         post_output = self.post_model.run(None, post_input)[0]
 

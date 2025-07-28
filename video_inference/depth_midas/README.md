@@ -14,7 +14,7 @@ The **Depth Estimation** example demonstrates real-time depth inference using th
 | **Model Type**       | Depth Estimation                                                        |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/) 🔗
 | **Model Source**     | [Download from TensorFlow Hub](https://www.kaggle.com/models/intel/midas) 🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/depth_estimation_using_midas.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/depth_estimation_using_midas.zip)
 | **Input**            | 256x256 (default)
 | **Output**           | Depth map (matches input resolution)
 | **OS**               | Linux, Windows
@@ -25,7 +25,7 @@ The **Depth Estimation** example demonstrates real-time depth inference using th
 Before running the application, ensure that **OpenCV** and **curl** are installed, especially for the Python implementation. You can install OpenCV and curl using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 sudo apt install curl
 ```
 
@@ -35,7 +35,7 @@ sudo apt install curl
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/1p1/depth_estimation_using_midas.zip
+wget https://developer.memryx.com/example_files/2p0/depth_estimation_using_midas.zip
 mkdir -p models
 unzip depth_estimation_using_midas.zip -d models
 ```
@@ -122,12 +122,62 @@ make
 
 ## Running the Application (Windows)
 
-[Download](https://developer.memryx.com/example_files/depthEstimation_windows.zip) the compiled C++ executable version, and extract the zip.
+### Running from compiled executable
+[Download](https://developer.memryx.com/example_files/2p0/depth_estimation_windows.zip) the compiled C++ executable version, and extract the zip.
 
 Then just double-click `depthestimation.exe` to launch using the first available webcam.
 
 Alternatively, you can use commandline arguments such as `--video` if launching the exe within Command Prompt or PowerShell.
 
+ 
+### Running from source code
+
+#### Step 1: OpenCV Installation
+
+Download and install the OpenCV Windows package:
+
+- Official download: https://github.com/opencv/opencv/releases
+
+- Recommended version: `opencv-4.x.x-windows.exe`
+
+- Install to `C:/OpenCV`
+
+#### Step 2: Microsoft Visual Studio 2022 Community (Free)
+
+Install Visual Studio 2022 and enable:
+
+- Official download: https://visualstudio.microsoft.com/vs/community/
+  
+- Recommended version: Visual Studio 17 2022
+
+- Install **Desktop development with C++**
+
+#### Step 3: CMake build steps
+
+- Open "x64 Native Tools Command Prompt for VS 2022"
+
+- Create Build Folder and Run CMake
+
+```bash
+mkdir build
+cd build
+cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release
+```
+
+- After build, an executable `Release\depthEstimation.exe` will be generated.
+
+- Finally, copy the relevant opencv `.dll` and `.dfp` file into the Release folder to run. The path to opencv `.dll` will depend on where your opencv is installed!
+
+```bash
+cp C:\opencv\build\x64\vc16\bin\opencv_world4110.dll .\Release\.
+cp .\midas_v2_small.dfp .\Release\
+```
+
+- Double click the `.exe` to run _or_ run the following command:
+```bash
+.\Release\depthEstimation.exe
+```
 
 ## Tutorial
 

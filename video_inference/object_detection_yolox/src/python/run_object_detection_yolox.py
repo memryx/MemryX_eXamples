@@ -96,8 +96,6 @@ def parse_args():
     parser = argparse.ArgumentParser(description="YOLOX video inference")
     parser.add_argument('-d','--dfp_path', type=str, default='models/yolox_m.dfp', 
                         help='Path to the DFP file')
-    parser.add_argument('--post-model', type=str, default='models/yolox_m_post.onnx', 
-                        help='Path to the post-processing ONNX model')
     parser.add_argument('--video-source', type=str, default='/dev/video0', 
                         help='Path to video source or camera device (default is /dev/video0)')
     return parser.parse_args()
@@ -123,9 +121,6 @@ if __name__ == '__main__':
     # Initialize the YoloApp and the AsyncAccl object
     app = YoloApp(model, cap, show=True, src_is_cam=src_is_cam)
     accl = AsyncAccl(model.dfp_path)
-
-    # Set the post-processing model from the arguments
-    accl.set_postprocessing_model(args.post_model)
 
     # Connect the input and output callbacks
     accl.connect_input(app.generate_frame)

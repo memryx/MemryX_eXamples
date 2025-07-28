@@ -18,7 +18,7 @@ The **vehicle detection** example demonstrates real-time vehicle detection using
 | **Model Type**       | Object Detection
 | **Framework**        | [Tflite](https://www.tensorflow.org/)
 | **Model Source**     | [Download from PINTO](https://s3.ap-northeast-2.wasabisys.com/pinto-model-zoo/178_vehicle-detection-0200/resources.tar.gz)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/Vehicle_Detection_0200_256_256_3_tflite.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/Vehicle_Detection_0200_256_256_3_tflite.zip)
 | **Input**            | 256x256x3
 | **Output**           | Bounding boxes, confidence scores.
 | **OS**               | Linux
@@ -29,7 +29,7 @@ The **vehicle detection** example demonstrates real-time vehicle detection using
 Before running the application, ensure that **OpenCV** and **numpy** are installed, especially for the Python implementation. You can install OpenCV and curl using the following commands:
 
 ```bash
-pip3 install opencv-python numpy
+pip3 install opencv-python==4.11.0.86 numpy
 ```
 
 ## Running the Application
@@ -38,11 +38,38 @@ pip3 install opencv-python numpy
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/Vehicle_Detection_0200_256_256_3_tflite.zip
+wget https://developer.memryx.com/model_explorer/2p0/Vehicle_Detection_0200_256_256_3_tflite.zip
 mkdir -p models
 unzip Vehicle_Detection_0200_256_256_3_tflite.zip -d models
 ```
 
+<details> 
+<summary> (Optional) Download and compile the model yourself </summary>
+If you prefer, you can download and compile the model rather than using the precompiled model. Download the model from github.
+
+```bash
+curl "https://s3.ap-northeast-2.wasabisys.com/pinto-model-zoo/178_vehicle-detection-0200/resources.tar.gz" -o resources.tar.gz
+tar -zxvf resources.tar.gz
+rm resources.tar.gz
+
+```
+This will create a folder containing multiple models. For this example, you should use the tflite model i.e. model_float32.tflite. Create the models folder using the commands below.
+
+```bash
+mkdir models 
+cd models 
+```
+
+Once you have created this folder, move the **model_float32.tflite** from the resources folder into the newely created models folder and rename it to **Vehicle_Detection_0200_256_256_3_tflite.tflite**. 
+
+You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
+
+```bash
+mx_nc -m Vehicle_Detection_0200_256_256_3_tflite.tflite -v --autocrop
+```
+The compiler will generate the DFP, pre-processing and post-processing files which can be passed as inputs to the application.
+
+</details>
 
 ### Step 2: Running the Script/Program
 

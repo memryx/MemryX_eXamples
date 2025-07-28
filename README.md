@@ -1,3 +1,8 @@
+<!-- Announcement Banner -->
+> **📢 Announcement:** **MemryX SDK 2.0** is now released!  
+> Please update to the [latest SDK version](https://developer.memryx.com/get_started/index.html) **before** proceeding with any of the examples.
+<!-- End Banner -->
+
 <!-- Define the reusable badges -->
 [python-badge]: https://img.shields.io/badge/Python-green "Python"
 [cpp-badge]: https://img.shields.io/badge/C++-blue "C++"
@@ -9,13 +14,14 @@
 </picture>
 
 
-[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-1.2-brightgreen)](https://developer.memryx.com)
+[![MemryX SDK](https://img.shields.io/badge/MemryX%20SDK-2.0-brightgreen)](https://developer.memryx.com)
 [![Python Versions](https://img.shields.io/badge/Python-3.9%20|%203.10%20|%203.11%20|%203.12-blue)](https://www.python.org)
 [![C++](https://img.shields.io/badge/C++-17-blue)](https://en.cppreference.com)
 [![ONNX](https://img.shields.io/badge/ONNX-gray)](https://onnx.ai)
 [![Keras](https://img.shields.io/badge/Keras-gray)](https://keras.io)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-gray)](https://www.tensorflow.org)
 [![TensorFlow Lite](https://img.shields.io/badge/TensorFlowLite-gray)](https://www.tensorflow.org/lite)
+
 
 
 # MemryX eXamples
@@ -61,10 +67,9 @@ Leverage MemryX accelerators for **real-time video processing** tasks. These app
 | [**Object Detection using YoloX**](video_inference/object_detection_yolox/README.md) | Detect objects in real time              | YoloX (Medium)| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/object_detection_yolox/assets/yolox.gif" alt="YoloX Object Detection Preview" height="50"> |
 | [**Vehicle Detection**](video_inference/vehicle_detection/README.md) | Detect vehicle in real time | Vehicle-Detection-0200 | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/vehicle_detection/assets/output.gif" alt="vehicle Detection Preview" height="50"> |
 | [**Segmentation using YOLOv8**](video_inference/segmentation_yolov8/README.md) | Perform instant segmentation on video in real time | YOLOv8 Nano Segmentation | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/segmentation_yolov8/assets/segmentation.png" alt="Yolov8n Segmentation Preview" height="50"> |
-| [**Pose Estimation using YOLOv8**](video_inference/pose_estimation_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/realtime_inf/realtime_pose.html) | Estimate human pose from video           | YOLOv8 (Medium)| ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="video_inference/pose_estimation_yolov8/assets/pose_estimation.gif" alt="Yolov8 Pose Estimation Preview" height="50"> |
+| [**Pose Estimation using YOLOv8**](video_inference/pose_estimation_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/realtime_inf/realtime_pose.html) | Estimate human pose from video           | YOLOv8 (Medium)| ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/pose_estimation_yolov8/assets/pose_estimation.gif" alt="Yolov8 Pose Estimation Preview" height="50"> |
 | [**Interactive Realtime Multi-Face Recognition**](video_inference/realtime_multiface_recognition/README.md) | Interactive app for face recognition | Multiple Models | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/realtime_multiface_recognition/assets/demo.gif" alt="Face Recognition App" height="50"> |
 | [**3D Point Cloud from Depth Estimation**](video_inference/pointcloud_from_depth/README.md) | Generate real-time point clouds from depth data | MiDaS | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="video_inference/pointcloud_from_depth/assets/point_cloud.gif" alt="Point-cloud Preview" height="50"> |
-| [**Automatic License Plate Recognition**](video_inference/singlestream_ALPR/README.md) | Recognize license plate in real time     | Multiple Models | ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/singlestream_ALPR/assets/alpr.png" alt="ALPR Preview" height="50"> |
 | [**Wireframe detection Using M-LSD and QT**](video_inference/wireframe/README.md) | Perform Line segment detection in real time | M-LSD (Large) | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/wireframe/assets/wireframe.png" alt="Wireframe Preview" height="50"> |
 | [**Face Detection & Emotion Classification**](video_inference/face_emotion_detection/README.md) [📝](https://developer.memryx.com/tutorials/realtime_inf/realtime_multimodel.html) | Detect faces and classify emotions       | Multiple Models | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> |  <img src="video_inference/face_emotion_detection/assets/face_emotion.png" alt="Face Detection & Emotion Classification Preview" height="50"> |
 | [**Person Tracking using YOLOv7**](video_inference/singlestream_peopletracking_yolov7Tiny/README.md) | Track unique people across video frames | YOLOv7 (Tiny) | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/singlestream_peopletracking_yolov7Tiny/assets/people_counting.gif" alt="Person Tracking Preview" height="50"> |
@@ -86,8 +91,14 @@ Maximize performance by running multiple video streams concurrently on MemryX ac
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |
 |-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
 | [**Multi-Stream Object Detection using YOLOv8S**](multistream_video_inference/object_detection_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html) | Detect objects across multiple streams      | YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/object_detection_yolov8/assets/yolov8_objectDetection.png" alt="Yolov8 Object Detection Preview" height="50"> |
-| [**Multi-Stream Object Detection using YOLOv7Tiny**](multistream_video_inference/multistream_objectdetection_yolov7Tiny/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html) | Detect objects across multiple streams      | YOLOv7 (Tiny)  | ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="multistream_video_inference/multistream_objectdetection_yolov7Tiny/assets/yolov7_objectDetection_multistream.png" alt="Yolov7-Tiny Object Detection Preview" height="50"> |
+| [**Multi-Stream Object Detection using YOLOv7Tiny**](multistream_video_inference/multistream_objectdetection_yolov7Tiny/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html) | Detect objects across multiple streams      | YOLOv7 (Tiny)  | ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/multistream_objectdetection_yolov7Tiny/assets/yolov7_objectDetection_multistream.png" alt="Yolov7-Tiny Object Detection Preview" height="50"> |
 
+### Multi-DFP(Data Flow Pipelines) Applications 🖥️
+Run multiple models simultaneously on separate DFPs within a single application.
+
+| Application                                         | Description                              | Models        | Code                   | OS  | Preview |
+|-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
+| [**Cartoonizer and Pose Estimation**](multi_dfp_application/cartoonizer_pose/README.md) | Real-time cartoon effects and pose detection simultaneously    | Facial-Cartoonizer & YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multi_dfp_application/cartoonizer_pose/assets/cartoon_pose.png" alt="Cartoon & PoseEstimation Preview" height="50"> |
 
 ### Optimized Multi-Stream Apps 👀
 Configurable many-stream video applications with USB, RTSP, and video file support, using optimized C++ pre/post-processing.
@@ -102,7 +113,6 @@ Explore interactive and engaging AI-powered applications in our **fun projects**
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |
 |-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
 | [**Chrome Dino Game**](fun_projects/chrome_dino_game/README.md) [📝](https://developer.memryx.com/tutorials/fun_projects/dino_game.html) | Control the Chrome Dino Game using palm detection | Palm Detection  | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="fun_projects/chrome_dino_game/assets/dino_game.gif" alt="Dino Game Preview" height="50"> |
-| [**Tiny Stories**](fun_projects/tinystories/README.md) [📝](https://developer.memryx.com/text_generation/tinystories.html) | Generate children's stories using a small language model | TinyStories | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="fun_projects/tinystories/assets/tiny_stories.gif" alt="Tiny Stories Preview" height="50"> | 
 | [**Deep Reinforcement Learning with Mario**](fun_projects/mario_rl/README.md) | Play Mario with a Reinforcement Learning Agent            | Custom    | ![python-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="fun_projects/mario_rl/assets/mario.gif" alt="Mario Game Preview" height="50"> |
 | [**Aimbot**](fun_projects/aimbot/README.md) | Automatic aim and click for Windows games            | YOLOv7 (Tiny)    | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="fun_projects/aimbot/assets/aimbot_demo.gif" alt="AimBot Preview" height="50"> 
 | [**Repcounting Web-application**](fun_projects/MxFit/README.md) | Workout repcounting web-application            | YOLOv8 Pose (medium)    | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="fun_projects/MxFit/assets/MxFit.gif" alt="MxFit Preview" height="50"> 

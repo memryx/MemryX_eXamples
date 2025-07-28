@@ -36,7 +36,7 @@ class MxaDetectionValidator(DetectionValidator):
 
         # Ensure your paths/naming scheme matches
         self.mxa = mx.SyncAccl(weights_dir / f"{model_name}.dfp")
-        self.ort = ort.InferenceSession(weights_dir / f"{model_name}-post.onnx")
+        self.ort = ort.InferenceSession(weights_dir / f"{model_name}_post.onnx")
 
     def __call__(self, model):
         model.eval()
@@ -53,6 +53,7 @@ class MxaDetectionValidator(DetectionValidator):
         progress_bar = TQDM(
             self.dataloader, desc=self.get_desc(), total=len(self.dataloader)
         )
+   
         for batch in progress_bar:
             batch = self.preprocess(batch)
             preds = self.mxa_detect(batch["img"])
@@ -61,7 +62,6 @@ class MxaDetectionValidator(DetectionValidator):
 
         # Compute and print stats
         stats = self.get_stats()
-        self.check_stats(stats)
         self.finalize_metrics()
         self.print_results()
 
@@ -88,18 +88,24 @@ class MxaDetectionValidator(DetectionValidator):
             Fj in (64, 80) and Fi in (80, 40, 20)
         """
         # Pass images through accelerator
-        images = batch.detach().cpu().numpy()  # (8, 3, 640, 640)
-        batch = [
-            np.transpose(img, (1, 2, 0))[..., np.newaxis, :] for img in images
-        ]  # (8, 640, 640, 1, 3)
+        batch = batch.detach().cpu().numpy()  # (8, 3, 640, 640)
+        batch = [img[np.newaxis, ...] for img in batch] # (8, 1, 3, 640, 640)
         accl_out = self.mxa.run(batch)  # (8, 6, Fi, Fi, Fj)
 
         # Process accl out for onnxruntime
+        if isinstance(accl_out[0], np.ndarray):
+            accl_out = [accl_out]
+
+        onnx_inps = []  
+        batch_size, num_inputs = len(accl_out), len(accl_out[0])  
+
+        for inp_idx in range(num_inputs):
+            inp = [
+                accl_out[batch_idx][inp_idx].squeeze(axis=0) for batch_idx in range(batch_size)
+            ]  
+            onnx_inps.append(inp)
+
         onnx_inp_names = [inp.name for inp in self.ort.get_inputs()]
-        onnx_inps = [
-            np.stack([np.transpose(o[i], (2, 0, 1)) for o in accl_out])
-            for i in range(len(onnx_inp_names))
-        ]  # (6, 8, Fj, Fi, Fi)
         input_feed = {k: v for k, v in zip(onnx_inp_names, onnx_inps)}
 
         # Pass fmaps through onnxruntime
@@ -114,7 +120,7 @@ def dfp_exists(model):
     """Checks that the DFP and post-processing ONNX model exists"""
     model_name = Path(model.ckpt_path).stem
     dfp = (weights_dir / f"{model_name}.dfp").exists()
-    post_onnx = (weights_dir / f"{model_name}-post.onnx").exists()
+    post_onnx = (weights_dir / f"{model_name}_post.onnx").exists()
     return dfp and post_onnx
 
 
@@ -136,11 +142,11 @@ def compile_model(model):
     # Rename the exported ONNX files
     os.rename(
         weights_dir / "main_graph_crop.onnx",
-        weights_dir / f"{model_name}-crop.onnx",
+        weights_dir / f"{model_name}_crop.onnx",
     )
     os.rename(
         weights_dir / "main_graph_post.onnx",
-        weights_dir / f"{model_name}-post.onnx",
+        weights_dir / f"{model_name}_post.onnx",
     )
     # Print file paths
     LOGGER.info(f'Files saved: {glob(f"{weights_dir.stem}/{model_name}*")}')

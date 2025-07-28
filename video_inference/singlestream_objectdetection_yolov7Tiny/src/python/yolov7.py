@@ -82,6 +82,10 @@ class YoloV7Tiny:
             self.ratio = r
             self.pad = dwdh
 
+        # Update input shape to what the original ONNX model expects ie B,C,H,W
+        img = np.transpose(img, (2,0,1))
+        img = np.expand_dims(img, axis=0)
+
         return img
     
 ###################################################################################################

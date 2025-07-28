@@ -52,7 +52,7 @@ class MxHandPose:
         self.handpose_model    = MPHandPose(confThreshold=0.5)
 
         dfp_path               = os.path.join(mx_modeldir, 'models.dfp')
-        self.accl = AsyncAccl(dfp_path, group_id=0)
+        self.accl = AsyncAccl(dfp_path, device_ids=0)
 
         # Connect input and output functions to the accelerator
         self.accl.connect_input(self._palmdetect_src, model_idx=1)
@@ -111,8 +111,6 @@ class MxHandPose:
 
         ifmap, pad_bias= self.palmdet_model._preprocess(annotated_frame.image)
         self.stage0_q.put((annotated_frame, pad_bias))
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
 
         return ifmap
 
@@ -137,6 +135,7 @@ class MxHandPose:
         m2 = accl_outputs[2]
         m3 = accl_outputs[3]
 
+
         r0a = np.reshape(m2, (1,1152,1))
         r0b = np.reshape(m0, (1,864,1))
         r0  = np.concatenate((r0a, r0b), axis=1)
@@ -151,7 +150,7 @@ class MxHandPose:
         annotated_frame, pad_bias = self.stage0_q.get()
         self.stage0_q.task_done()
         h, w, _ = annotated_frame.image.shape
-        palms    = self.palmdet_model._postprocess([r0, r1],  np.array([w, h]), pad_bias)
+        palms   = self.palmdet_model._postprocess([r0, r1],  np.array([w, h]), pad_bias)
 
         # Count number of detected hands
         annotated_frame.num_detections = len(palms)
@@ -177,8 +176,7 @@ class MxHandPose:
 
         ifmap, rotated_palm_bbox, angle, rotation_matrix, pad_bias = self.handpose_model._preprocess(annotated_frame.image, palm)
         self.stage2_q.put((annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias))
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
+
 
         return ifmap
 

@@ -11,9 +11,9 @@ import ffmpeg
 
 # Define paths to all required items
 class_map_csv_text = '../../assets/yamnet_class_map.csv'
-preprocess_model_path = '../../models/audio_classification/audioclassifymodel_pre.tflite'
-model_dfp_path = "../../models/audio_classification/audioclassifymodel.dfp"
-postprocess_model_path = '../../models/audio_classification/audioclassifymodel_post.tflite'
+preprocess_model_path = '../../models/Audio_classification_YamNet_96_64_1_tflite_pre.tflite'
+model_dfp_path = "../../models/Audio_classification_YamNet_96_64_1_tflite.dfp"
+postprocess_model_path = '../../models/Audio_classification_YamNet_96_64_1_tflite_post.tflite'
 
 # Initialize classification class
 audioclassify = AudioClassify(class_map_csv_text, preprocess_model_path, model_dfp_path, postprocess_model_path)

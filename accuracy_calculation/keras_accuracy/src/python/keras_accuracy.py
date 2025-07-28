@@ -313,6 +313,7 @@ def run_inference_mxa(image_paths, ground_truth, user_provided_model_name, modul
             image = tf.image.crop_to_bounding_box(image, top, left, size, size)
 
             # Additional preprocessing based on the model provided
+            image = tf.expand_dims(image, 0)
             image = module.preprocess_input(image)
     
             yield np.array(image)
@@ -336,7 +337,7 @@ def run_inference_mxa(image_paths, ground_truth, user_provided_model_name, modul
     accl.wait()
 
     # Postprocess the outputs
-    mxa_outputs = np.stack([np.squeeze(arr) for arr in mxa_outputs])
+    mxa_outputs = np.stack([arr for arr in mxa_outputs])
     mxa_inference_time = time.time() - start
     mxa_predictions = module.decode_predictions(mxa_outputs, top=5)
 

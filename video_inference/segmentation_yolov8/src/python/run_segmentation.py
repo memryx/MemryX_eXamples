@@ -11,7 +11,7 @@ from memryx import AsyncAccl
 from ultralytics.utils import ops
 import torchvision.ops as ops
 from typing import List, Tuple, Dict
-from ultralytics.utils import ASSETS, yaml_load
+from ultralytics.utils import ASSETS, YAML
 from ultralytics.utils.checks import check_yaml
 from ultralytics.utils.plotting import Colors
 
@@ -37,7 +37,7 @@ class App:
 
         self.color_palette = Colors()  # Set color palette for drawing
         # Load COCO class names from a yaml file
-        self.classes = yaml_load(check_yaml("coco8.yaml"))["names"]
+        self.classes = YAML.load(check_yaml("coco8.yaml") )["names"]
 
     def _free(self, cap):
         # Release the camera and allow a clean exit
@@ -75,9 +75,14 @@ class App:
         # Pad the image and normalize
         padded_img = np.ones((input_shape[0], input_shape[1], 3), dtype=np.uint8) * 114
         padded_img[int(pad_h):int(pad_h) + new_unpad[1], int(pad_w):int(pad_w) + new_unpad[0], :] = image
-
         padded_img = padded_img / 255.0  # Normalize to [0, 1]
-        padded_img = np.expand_dims(padded_img, axis=2)  # Add extra dimension
+
+        if not self.use_tflite:
+            padded_img = np.transpose(padded_img, (2,0,1))   # Transpose to bring it to the expected ONNX model shape 
+            padded_img = np.expand_dims(padded_img, axis=0)  # Add batch dimension
+        else:
+            padded_img = np.expand_dims(padded_img, axis=0)  # Add batch dimension
+
         img_process = padded_img.astype(np.float32)
 
         return img_process, (r, r), (pad_w, pad_h)

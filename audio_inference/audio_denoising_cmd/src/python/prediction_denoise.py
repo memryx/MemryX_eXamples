@@ -160,10 +160,11 @@ class AudioDenoise:
         # Global scaling to have distribution -1/1
         x_in = scaled_in(self.m_amp_db_audio)
 
-        # Reshape input for prediction
-        x_in = x_in.reshape(x_in.shape[0], x_in.shape[1], x_in.shape[2],1)
+        # Reshape input for prediction, adding batch dimension = 1, and channel dimension = 1
+        x_in = x_in.reshape(x_in.shape[0], 1, x_in.shape[1], x_in.shape[2],1)
 
         self.total_frames_in_x_in = x_in.shape[0]
+
 
         return x_in
 
@@ -210,7 +211,6 @@ class AudioDenoise:
         for i in range(x_in.shape[0]):
 
             x_in_frame = x_in[i]
-            x_in_frame = x_in_frame.reshape(x_in_frame.shape[0], x_in_frame.shape[1], x_in_frame.shape[2],1)
             x_in_frame = x_in_frame.astype(np.float32)
 
             # Perform inference on the SyncAccl
@@ -237,7 +237,7 @@ def main():
     path_to_audio_file = args.path_to_noisy_audio_file
     path_to_save_denoised_audio = args.path_to_save_denoised_audio_file
 
-    model_dfp_path = '../../models/audio_denoise/audio_denoise.dfp'
+    model_dfp_path = '../../models/Audio_Denoising_UNet_128_128_1_keras.dfp'
 
     # Using the values from https://github.com/vbelz/Speech-enhancement/tree/master
     sample_rate = 8000

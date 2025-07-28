@@ -81,7 +81,8 @@ class YoloV7Tiny:
         if not self.stream_mode:
             self.ratio = r
             self.pad = dwdh
-
+        img = np.expand_dims(img, 0)
+        img = np.transpose(img, (0,3,1,2))
         return img
     
 ###################################################################################################

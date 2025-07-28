@@ -20,7 +20,7 @@ The **YOLOv8 Object Detection** example demonstrates how to validate the accurac
 Before running the application, ensure that Python, and the `ultralytics` package are installed:
 
 ```bash
-pip install ultralytics
+pip install ultralytics==8.3.161
 ```
 
 ## Running the Application
@@ -34,7 +34,7 @@ The model (~50 MB) and COCO dataset (~20 GB) are downloaded automatically if not
 We have provided these files for `yolov8m` if you want to skip the compilation, other sizes will be compiled by the script and placed in the `weights/` directory:
 
 ```bash
-wget https://developer.memryx.com/example_files/detection_accuracy_yolov8.zip
+wget https://developer.memryx.com/example_files/2p0/detection_accuracy_yolov8.zip
 unzip detection_accuracy_yolov8.zip -d weights
 ```
 

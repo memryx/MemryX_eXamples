@@ -54,7 +54,7 @@ class MxHandPose:
         dfp_path               = os.path.join(mx_modeldir, 'models.dfp')
 
         # Initialize the accelerator with the model
-        self.accl = AsyncAccl(dfp_path, group_id=0)
+        self.accl = AsyncAccl(dfp_path, device_ids=0)
 
         # Connect input and output functions to the accelerator
         self.accl.connect_input(self._palmdetect_src, model_idx=1)
@@ -113,9 +113,6 @@ class MxHandPose:
 
         ifmap, pad_bias= self.palmdet_model._preprocess(annotated_frame.image)
         self.stage0_q.put((annotated_frame, pad_bias))
-
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
 
         return ifmap
 
@@ -180,8 +177,6 @@ class MxHandPose:
 
         ifmap, rotated_palm_bbox, angle, rotation_matrix, pad_bias = self.handpose_model._preprocess(annotated_frame.image, palm)
         self.stage2_q.put((annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias))
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
 
         return ifmap
 

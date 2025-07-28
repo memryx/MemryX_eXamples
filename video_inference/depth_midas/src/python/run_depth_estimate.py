@@ -106,7 +106,7 @@ def get_frame_and_preprocess():
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     frame = (frame - mean) / std
-
+    frame = np.expand_dims(frame, 0)
     return frame.astype("float32")
 
 # Output function to process and display the result
@@ -115,7 +115,7 @@ def postprocess_and_show_frame(*accl_output):
     An output function for the accelerator to use. This output function will
     post-process the accelerator output and display it on the screen.
     """
-    prediction = accl_output[0]
+    prediction = accl_output[0][0]
 
     # Post-processing steps
     prediction = cv.resize(prediction, (input_width, input_height))
@@ -145,7 +145,7 @@ def postprocess_and_show_frame(*accl_output):
 ###############################################################################
 
 print("\033[93mRunning Real-Time Depth Estimation\033[0m")
-accl = AsyncAccl(dfp)
+accl = AsyncAccl(dfp, local_mode=False)
 accl.connect_input(get_frame_and_preprocess)
 accl.connect_output(postprocess_and_show_frame)
 accl.wait()

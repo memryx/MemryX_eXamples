@@ -114,10 +114,7 @@ class MxHandPose:
         ifmap, pad_bias= self.palmdet_model._preprocess(annotated_frame.image)
         self.stage0_q.put((annotated_frame, pad_bias))
 
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
-
-        return ifmap
+        return np.reshape(ifmap, (192,192,1,3))
 
     # palm detect output callback & post-proc
     def _palmdetect_sink(self, *accl_outputs):
@@ -180,10 +177,8 @@ class MxHandPose:
 
         ifmap, rotated_palm_bbox, angle, rotation_matrix, pad_bias = self.handpose_model._preprocess(annotated_frame.image, palm)
         self.stage2_q.put((annotated_frame, rotated_palm_bbox, angle, rotation_matrix, pad_bias))
-        ifmap = np.squeeze(ifmap, 0)
-        ifmap = np.expand_dims(ifmap, 2)
 
-        return ifmap
+        return np.reshape(ifmap, (224,224,1,3))
 
     # hand model output callback & postproc
     def _handpose_sink(self, *accl_outputs):

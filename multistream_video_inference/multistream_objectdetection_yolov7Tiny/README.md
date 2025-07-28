@@ -16,37 +16,38 @@ For a single-stream input example, please refer to [single-stream object detecti
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [onnx](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt) and [export](https://github.com/WongKinYiu/yolov7/blob/main/export.py) to onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip)                                           |
 | **Dataset**          | [COCO](https://docs.ultralytics.com/datasets/detect/coco/) |
 | **Model Resolution**            | 416x416                                                    |
 | **Output**           | Bounding box coordinates with object probabilities |
-| **OS**               | Linux, Windows |
+| **OS**               | Linux |
 | **License**          | [GPL](LICENSE.md)                                      |
 
-## Requirements (Linux)
+## Requirements
 
 Before running the application, ensure that Python and OpenCV are installed, especially for the Python implementation. You can install OpenCV using the following command:
 
 ```bash
 # For application
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 
 # For exporting source model to onnx
-pip install seaborn pyyaml pandas
+pip install pyyaml==6.0.2
+pip install pandas==2.3.1
 ```
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 
 ```
 
-## Running the Application (Linux)
+## Running the Application
 
 ### Step 1: Download Pre-compiled DFP
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip
 mkdir -p models
 unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 ```
@@ -82,6 +83,7 @@ With the compiled model, you can now run real-time inference. Below are the exam
 To run the Python example for object detection with yolov7-tiny using MX3, simply execute the following command:
 
 ```bash
+cd src/python/
 # ensure a camera device is connected as default video input is a cam
 python run_yolov7_multistream_objectdetection.py 
 ```
@@ -152,16 +154,6 @@ make
 ```bash
 ./multistream_objectdetection --video_paths vid:<video_path1>,vid:<video_path2>,cam:0
 ```
-
-
-## Running the Application (Windows)
-
-[Download](https://developer.memryx.com/example_files/yolov7_multistream_windows.zip) the compiled C++ executable version, and extract the zip.
-
-Then just double-click `run.bat` to launch using a single stream with the first available webcam.
-
-To use multiple streams, you must use commandline arguments by launching the .exe within Command Prompt or PowerShell.
-
 
 ## Tutorial
 

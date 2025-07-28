@@ -17,8 +17,8 @@ class MPPalmDet:
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)  # Convert to RGB
         image = image.astype(np.float32) / 255.0  # Normalize to [0, 1]
 
-        # Add batch dimension and transpose to match expected model input shape [192, 192, 1, 3]
-        image = np.transpose(image[np.newaxis, :, :, :], (1, 2, 0, 3))
+        # Add batch dimension model input shape [1, 192, 192, 3]
+        image = image[np.newaxis, :, :, :]
 
         return image
 

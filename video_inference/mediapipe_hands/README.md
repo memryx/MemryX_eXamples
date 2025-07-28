@@ -14,7 +14,7 @@ This applications uses Mediapipe Palm and Hand models ('full' variants) to detec
 | **Model Type**       | Palm Detection & Hand Landmark Models
 | **Framework**        | TFLite
 | **Model Source**     | [Palm Detection (Full)](https://storage.googleapis.com/mediapipe-assets/palm_detection_full.tflite)🔗⬇️ ,  [Hand Landmark (Full)](https://storage.googleapis.com/mediapipe-assets/hand_landmark_full.tflite)🔗⬇️ from the [google-edge-ai/mediapipe repository](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/models.md#hands)🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/mediapipe_hands.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/mediapipe_hands.zip)
 | **Input**            | Input size for Palm Detection Model: (192,192,3), Input size for Hand Landmark model : (224,224,3)
 | **Output**           | Output from HandLandmark model: bounding boxes, landmarks, rotated landmarks, handedness, confidence 
 | **License**          | [MIT License](LICENSE.md)
@@ -29,7 +29,7 @@ Before running the application, ensure that **OpenCV** is installed
 You can install OpenCV using the following command:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ### Windows
@@ -48,8 +48,8 @@ Then open the `src/python_windows/` folder and double-click on `setup_env.bat`. 
 To download and unzip the precompiled DFPs, use the following commands:
 
 ```bash
-cd models
-wget https://developer.memryx.com/example_files/1p1/mediapipe_hands.zip
+mkdir models && cd models
+wget https://developer.memryx.com/example_files/2p0/mediapipe_hands.zip
 unzip mediapipe_hands.zip
 ```
 
@@ -78,7 +78,7 @@ mx_nc -m hand_landmark_full.tflite palm_detection_full.tflite --autocrop
 
 #### Windows
 
-[Download](https://developer.memryx.com/example_files/1p1/mediapipe_hands.zip) and open the zip, and place the .dfp file in the `models/` folder.
+[Download](https://developer.memryx.com/example_files/2p0/mediapipe_hands.zip) and open the zip, and place the .dfp file in the `models/` folder.
 
 ---
 

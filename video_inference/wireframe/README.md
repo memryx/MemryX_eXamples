@@ -15,7 +15,7 @@ This example also showcases using Qt for the GUI and demonstrates how to integra
 | **Model Type**       | Line Segment Detection                                                       
 | **Framework**        | [TensorFlow Lite](https://www.tensorflow.org/) 🔗                                                   
 | **Model Source**     | [M-LSD GitHub Repository](https://github.com/navervision/mlsd) 🔗, [PINTO Model Zoo - M-LSD](https://github.com/PINTO0309/PINTO_model_zoo/tree/main/119_M-LSD) 🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/M_LSD_512_512_4_tflite.zip)                                           
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/M_LSD_512_512_4_tflite.zip)                                           
 | **Output**           | Wireframe coordinates and scores                
 | **OS**               | Linux
 | **License**          | [MIT](LICENSE.md)                                         
@@ -25,7 +25,7 @@ This example also showcases using Qt for the GUI and demonstrates how to integra
 Before running the application, ensure that OpenCV and PySide6 are installed, especially for the Python implementation. You can install them using the following commands:
 
 ```bash
-pip install opencv-python PySide6
+pip install opencv-python==4.11.0.86 PySide6
 ```
 
 ## Running the Application
@@ -34,22 +34,37 @@ pip install opencv-python PySide6
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/M_LSD_512_512_4_tflite.zip
+wget https://developer.memryx.com/model_explorer/2p0/M_LSD_512_512_4_tflite.zip
 mkdir -p models
 unzip M_LSD_512_512_4_tflite.zip -d models
 ```
 
 <details> 
 <summary> (Optional) Download and compile the model yourself </summary>
-If you prefer, you can download the pre-trained M-LSD (Large) model from the following sources:
+
+First create the models folder using the steps below.
+
+```bash
+mkdir models 
+cd models 
+
+```
+
+You can download the pre-trained M-LSD (Large) model from the following sources:
 
 - [M-LSD GitHub Repository](https://github.com/navervision/mlsd) 🔗
 - [PINTO Model Zoo - M-LSD](https://github.com/PINTO0309/PINTO_model_zoo/tree/main/119_M-LSD) 🔗
 
+Ensure you download the **M-LSD_512_large_fp32.tflite** model, then run the command below to rename the file. 
+
+```bash
+mv M-LSD_512_large_fp32.tflite M_LSD_512_512_4_tflite.tflite
+```
+
 You can use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator. If you prefer, you can download the pre-compiled DFP and skip this step.
 
 ```bash
-mx_nc -m mlsd_large_512.tflite --autocrop
+mx_nc -m M_LSD_512_512_4_tflite.tflite --autocrop
 ```
 
 </details>
@@ -66,7 +81,7 @@ python run_wireframe.py
 
 You can specify the model path and DFP (Compiled Model) path with the following options:
 
-* `-d` or `--dfp`: Path to the compiled DFP file (default is `../assets/mlsd_large_512.dfp`)
+* `-d` or `--dfp`: Path to the compiled DFP file (default is `../assets/M_LSD_512_512_4_tflite.dfp`)
 * `--premodel`: Path to the pre-processing model file
 * `--postmodel`: Path to the post-processing model file
 

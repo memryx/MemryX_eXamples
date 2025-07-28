@@ -112,7 +112,7 @@ class PointCloudFromDepth:
         else:
             print("\033[93mCompiling the model for the first time.\033[0m")
             print(self.model_path)
-            nc = NeuralCompiler(num_chips=4, models=self.model_path, verbose=1, dfp_fname="midas_v2_small")
+            nc = NeuralCompiler(num_chips=4, models=self.model_path, verbose=1, dfp_fname="MiDaS_256_256_3_tflite")
             self.dfp = nc.run()
 
 ###############################################################################
@@ -131,6 +131,7 @@ class PointCloudFromDepth:
         # Preprocess the frame
         frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB) / 255.0
         frame = cv.resize(frame, (256, 256), interpolation=cv.INTER_CUBIC)
+        frame = np.expand_dims(frame, 0)
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
         frame = (frame - mean) / std
@@ -147,6 +148,7 @@ class PointCloudFromDepth:
             accl_output (tuple): Output from the model inference (depth map).
         """
         prediction = accl_output[0]
+        prediction = np.squeeze(prediction, axis=0)
         self.depth_map = cv.resize(prediction, (self.input_width, self.input_height))
 
 
@@ -264,8 +266,8 @@ def main():
     """
     # Parse the command-line arguments
     parser = argparse.ArgumentParser(description="Run MX3 real-time inference with options for model path and DFP file.")
-    parser.add_argument('-m', '--model', type=str, default="models/midas_v2_small.tflite", help="Specify the path to the model. Default is 'midas_v2_small.tflite'.")
-    parser.add_argument('-d', '--dfp', type=str, default="models/midas_v2_small.dfp", help="Specify the path to the compiled DFP file. Default is 'models/midas_v2_small.dfp'.")
+    parser.add_argument('-m', '--model', type=str, default="models/MiDaS_256_256_3_tflite.tflite", help="Specify the path to the model. Default is 'MiDaS_256_256_3_tflite.tflite'.")
+    parser.add_argument('-d', '--dfp', type=str, default="models/MiDaS_256_256_3_tflite.dfp", help="Specify the path to the compiled DFP file. Default is 'models/MiDaS_256_256_3_tflite.dfp'.")
     args = parser.parse_args()
 
     # Initialize the PointCloudFromDepth object with the provided arguments

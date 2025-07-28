@@ -51,11 +51,15 @@ class App:
                 if self.mirror:
                     frame = cv.flip(frame, 1)
                 self.capture_queue.put(frame)
-                return self.preprocess(frame)
+                return np.transpose(self.preprocess(frame), (2,3,0,1))
 
     def preprocess(self, img):
         arr = np.array(cv.resize(img, (512, 512))).astype(np.float32)
         arr = arr/127.5 - 1
+        # add batch dimension and change to channel first format 
+        # Ensure that the input shape to the accelerator matches the input shapes of the ONNX model.
+        arr = np.expand_dims(arr, 0)
+        arr = np.transpose(arr, (0,3,1,2))
         return arr
 
     def postprocess(self, frame, original_shape):
@@ -93,7 +97,7 @@ class App:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Facial cartoonizer demo")
-    parser.add_argument('-d', '--model_or_dfp', default='models/Facial_cartoonizer_512_512_3_onnx.dfp', help="Path to the model or the corresponding DFP")
+    parser.add_argument('-d', '--model_or_dfp', default='models/facial-cartoonizer_512.dfp', help="Path to the model or the corresponding DFP")
     parser.add_argument('-f', '--input_file', default=None, metavar="", help="Path to the video file to be cartoonized")
     parser.add_argument('-id', '--vid_cap_id', default=0, type=int, metavar="", help="Integer ID/index of the video capturing device to open and use")
     parser.add_argument('-s', '--save', default=False, action='store_true', help="Write cartoonized video to disk")
@@ -122,7 +126,7 @@ def main():
     cap = setup_data(video_src)
 
     app = App(cap, show=args.show, save=args.save, scale=args.scale, src_is_cam=src_is_cam)
-    accl = AsyncAccl(dfp)
+    accl = AsyncAccl(dfp=dfp)
     accl.connect_input(app.get_frame)
     accl.connect_output(app.process_model_output)
     accl.wait()

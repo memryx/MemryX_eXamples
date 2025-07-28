@@ -150,9 +150,10 @@ class poseApp:
 
         # Normalize to [0, 1]
         padded_img = (padded_img / 255.0).astype(np.float32)
-        
-        # Add batch dimension
-        padded_img = np.expand_dims(padded_img, axis=2)
+        # Add batch dimension, and move to channel first format as expected by onnx model
+        padded_img = np.expand_dims(padded_img, axis=0)
+        padded_img = np.transpose(padded_img, (0,3,1,2))
+
         return padded_img, r
 
     def xywh2xyxy(self, box: np.ndarray) -> np.ndarray:

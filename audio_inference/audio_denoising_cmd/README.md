@@ -14,7 +14,7 @@ The **Audio Denoising using UNet** example demonstrates how to denoise an audio 
 | **Model Type**       | Enhancement
 | **Framework**        | [Keras](https://www.tensorflow.org/)
 | **Model Source**     | [Download from Github](https://github.com/vbelz/Speech-enhancement/tree/master?tab=readme-ov-file)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/audio_denoise.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/Audio_Denoising_UNet_128_128_1_keras.zip)
 | **Input**            | Audio clips (.wav files)
 | **Output**           | Denoised audio file
 | **OS**               | Linux
@@ -27,7 +27,7 @@ The **Audio Denoising using UNet** example demonstrates how to denoise an audio 
 Before running the application, ensure that **numpy**, **librosa** and **soundfile** are installed. You can install using the following commands:
 
 ```bash
-pip install numpy librosa soundfile
+pip install numpy librosa==0.11.0 soundfile==0.13.1
 ```
 
 
@@ -37,10 +37,39 @@ pip install numpy librosa soundfile
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/1p1/audio_denoise.zip
+wget https://developer.memryx.com/model_explorer/2p0/Audio_Denoising_UNet_128_128_1_keras.zip
 mkdir -p models
-unzip audio_denoise.zip -d models
+unzip Audio_Denoising_UNet_128_128_1_keras.zip -d models
 ```
+
+
+<details> 
+<summary> (Optional) Download and compile model yourself </summary>
+
+Since the trained model is not directly available for download, the model was trained using the instructions given [here](https://github.com/vbelz/Speech-enhancement/tree/master?tab=readme-ov-file). 
+
+Once you have trained the model, navigate back to the project folder and follow the steps below:
+
+```bash
+cd audio_denoising_cmd
+
+mkdir models 
+cd models 
+
+```
+
+Move the model into this folder and rename it to **Audio_Denoising_UNet_128_128_1_keras.h5**.
+
+Now you may compile the model. Run the following command to generate the DFP. 
+
+
+```bash
+ mx_nc Audio_Denoising_UNet_128_128_1_keras.h5 -v 
+```
+
+This completes the process of download and compilation. 
+</details>
+
 
 
 ### Step 2: Running the Script/Program

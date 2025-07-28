@@ -10,7 +10,7 @@ The **Virtual Painter** enables the user to virtually paint in the air in real-t
 | **Model Type**       | Palm Detection & Hand Landmark Models
 | **Framework**        | TFLite
 | **Model Source**     | [Palm Detection Model Lite](https://storage.googleapis.com/mediapipe-assets/palm_detection_lite.tflite)🔗⬇️ ,  [Hand Landmark Model Lite](https://storage.googleapis.com/mediapipe-assets/hand_landmark_lite.tflite)🔗⬇️ from the [google-edge-ai/mediapipe repository](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/models.md#hands)🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/virtual_painter_using_palmdet_handlandmark.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/virtual_painter_using_palmdet_handlandmark.zip)
 | **Input**            | Input size for Palm Detection Model: (192,192,3), Input size for Hand Landmark model : (224,224,3)
 | **Output**           | Output from HandLandmark model: bounding boxes, landmarks, rotated landmarks, handedness, confidence 
 | **License**          | [MIT License](LICENSE.md)
@@ -31,7 +31,7 @@ Before running the application, ensure that **OpenCV** is installed
 You can install OpenCV using the following command:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ## Running the Application (Linux)
@@ -42,7 +42,7 @@ To download and unzip the precompiled DFPs, use the following commands:
 
 ```bash
 cd assets
-wget https://developer.memryx.com/example_files/virtual_painter_using_palmdet_handlandmark.zip
+wget https://developer.memryx.com/example_files/2p0/virtual_painter_using_palmdet_handlandmark.zip
 unzip virtual_painter_using_palmdet_handlandmark.zip
 ```
 

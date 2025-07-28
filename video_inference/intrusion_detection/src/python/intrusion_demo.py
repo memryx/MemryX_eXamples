@@ -31,8 +31,8 @@ INIT_NUM_FRAMES = 20
 def make_parser():
     parser = argparse.ArgumentParser("MX Intrusion Demo!")
     parser.add_argument('--roi_coordinates', nargs='+', type=int, help='space seperated ROI coordinates in x1y1x2y2 format')
-    parser.add_argument("--dfp", default="../../models/YOLO_v8_medium_640_640_3_tflite.dfp", type=str, help="dfp path")
-    parser.add_argument("--post_model_path",default="../../models/YOLO_v8_medium_640_640_3_tflite_post.tflite", type=str, help="postprocessing model path")
+    parser.add_argument("--dfp", default="../../models/yolov8m_float32.dfp", type=str, help="dfp path")
+    parser.add_argument("--post_model_path",default="../../models/yolov8m_float32_post.tflite", type=str, help="postprocessing model path")
     parser.add_argument(
         "--input_path", required=True, help="path to video"
     )

@@ -23,7 +23,7 @@ utilizes `MXObb` to identify and count objects within an image.
 | **Model Type**       | Object Detection (Oriented Bounding Boxes)                                                                              |
 | **Framework**        | [Onnx](https://onnx.ai/)                                                                                                |
 | **Model Source**     | [YoloV8m-OBB](https://github.com/ultralytics/ultralytics)                                                               |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/YOLO_v8_small_Oriented_Bounding_Boxes_1024_1024_3_onnx.zip) |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_small_Oriented_Bounding_Boxes_1024_1024_3_onnx.zip) |
 | **Output**           | Object bounding box + keypoints                                                                                         |
 | **OS**               | Linux                                                                                                                   |
 | **License**          | [AGPL](LICENSE.md)                                                                                                      |
@@ -33,7 +33,7 @@ utilizes `MXObb` to identify and count objects within an image.
 Before running the application, ensure that ultralytics is installed:
 
 ```bash
-pip install ultralytics
+pip install ultralytics==8.3.161
 ```
 
 ## Run the Application

@@ -120,6 +120,7 @@ class YoloV8 {
         cv::Mat displayImage;
         MxQt* gui_;  // GUI for display
         int length;
+        std::string model_type; 
 
         std::vector<Box> all_boxes;
         std::vector<float> all_scores;
@@ -142,7 +143,11 @@ class YoloV8 {
 
             // Resize to 640x640 for the model input
             cv::Mat resizedImage;
-            cv::resize(squareImage, resizedImage, cv::Size(640, 640), cv::INTER_LINEAR);
+            if (model_type == "tflite") {
+                cv::resize(squareImage, resizedImage, cv::Size(640, 640), cv::INTER_LINEAR);
+            } else {
+                cv::dnn::blobFromImage(squareImage, resizedImage, 1.0, cv::Size(640, 640), cv::Scalar(0, 0, 0), true, false);
+            }
 
             // Convert to float32 and normalize pixel values (0-1 range)
             resizedImage.convertTo(resizedImage, CV_32F, 1.0 / 255.0);
@@ -232,7 +237,7 @@ class YoloV8 {
         }
 
         // Input callback function to fetch frames and preprocess them
-        bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel) {
+        bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel) {
             if (runflag.load()) {
                 cv::Mat inframe;
                 cv::Mat rgbImage;
@@ -261,7 +266,7 @@ class YoloV8 {
 
                     // Preprocess frame and set data for inference
                     cv::Mat preProcframe = preprocess(rgbImage);
-                    dst[0]->set_data((float*)preProcframe.data, false);
+                    dst[0]->set_data((float*)preProcframe.data);
                     return true;
                 }
             }
@@ -272,7 +277,7 @@ class YoloV8 {
         }
 
         // Output callback function to process MXA output and display results
-        bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel) {
+        bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int streamLabel) {
             src[0]->get_data(mxa_output);  // Get the output data from MXA
 
             {
@@ -303,8 +308,9 @@ class YoloV8 {
 
     public:
         // Constructor to initialize YOLOv8 object
-        YoloV8(MX::Runtime::MxAccl* accl, std::string video_src, MxQt* gui, int index) {
+        YoloV8(MX::Runtime::MxAccl* accl, std::string video_src, std::string model_type, MxQt* gui, int index) {
             gui_ = gui;
+            this->model_type = model_type;
 
             // Open the camera or video source
             if(video_src.substr(0,3) == "cam") {
@@ -424,12 +430,23 @@ int main(int argc, char* argv[]) {
         video_src_list.push_back(video_str);
     }  
 
+    std::string model_type;
+    std::string path_str = postprocessing_model_path.string();  // convert path to string
+
+    if (path_str.size() >= 5 && path_str.substr(path_str.size() - 5) == ".onnx") {
+        model_type = "onnx";
+    } else if (path_str.size() >= 7 && path_str.substr(path_str.size() - 7) == ".tflite") {
+        model_type = "tflite";
+    } else {
+        std::cerr << "Unsupported post-processing model format: " << path_str << std::endl;
+        return 1;
+    }
+
     // Create the Accl object and load the DFP model
-    MX::Runtime::MxAccl* accl = new MX::Runtime::MxAccl();
-    accl->connect_dfp(model_path.c_str());
+    MX::Runtime::MxAccl accl{fs::path(model_path)};
 
     // Connect the post-processing model
-    accl->connect_post_model(postprocessing_model_path);
+    accl.connect_post_model(fs::path(postprocessing_model_path));
 
     // Creating GuiView for display
     MxQt gui(argc, argv);
@@ -441,17 +458,16 @@ int main(int argc, char* argv[]) {
     // Creating YoloV8 objects for each video stream
     std::vector<YoloV8*> yolo_objs;
     for (int i = 0; i < video_src_list.size(); ++i) {
-        YoloV8* obj = new YoloV8(accl, video_src_list[i], &gui, i);
+        YoloV8* obj = new YoloV8(&accl, video_src_list[i], model_type,  &gui, i);
         yolo_objs.push_back(obj);
     }
 
     // Run the accelerator and wait
-    accl->start();
+    accl.start();
     gui.Run();  // Wait until the exit button is pressed in the Qt window
-    accl->stop();
+    accl.stop();
 
     // Cleanup
-    delete accl;
     for (int i = 0; i < video_src_list.size(); ++i) {
         delete yolo_objs[i];
     }

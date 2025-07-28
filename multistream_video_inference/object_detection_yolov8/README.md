@@ -15,7 +15,7 @@ The **Object Detection** example demonstrates multi-stream real-time object dete
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/) and [onnx](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) and export to tflite or onnx |
-| **Pre-compiled DFP** | [Download here (TFLite)](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_tflite.zip) or [Download here (ONNX)](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_onnx.zip)   |
+| **Pre-compiled DFP** | [Download here (TFLite)](https://developer.memryx.com/example_files/2p0/YOLO_v8_small_640_640_3_tflite.zip) or [Download here (ONNX)](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_small_640_640_3_onnx.zip)   |
 | **Model Resolution** | 640x640                                                 |
 | **Output**           | Bounding box coordinates with objectness score, and class probabilities |
 | **OS**               | Linux |
@@ -27,17 +27,18 @@ Before running the application, ensure that Python, OpenCV, and the required pac
 
 ```bash
 # For application
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 
 # For exporting source model to onnx
-pip install seaborn pyyaml pandas
+pip install pyyaml==6.0.2
+pip install pandas==2.3.1
 ```
 
 ```bash
-pip install ultralytics
+pip install ultralytics==8.3.161
 ```
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ```bash
 sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui 
@@ -49,11 +50,11 @@ sudo apt-get install memx-accl memx-accl-plugins memx-utils-gui
 
 To download and unzip the precompiled DFPs, use the following commands: (Both tflite and ONNX is supported)
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_tflite.zip
+wget https://developer.memryx.com/example_files/2p0/YOLO_v8_small_640_640_3_tflite.zip
 mkdir -p models/tflite
-unzip YOLO_v8_small_640_640_3_tflite.zip -d models/tflite
+unzip -j YOLO_v8_small_640_640_3_tflite.zip -d models/tflite
 
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_small_640_640_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v8_small_640_640_3_onnx.zip
 mkdir -p models/onnx
 unzip YOLO_v8_small_640_640_3_onnx.zip -d models/onnx
 ```

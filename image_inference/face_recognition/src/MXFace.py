@@ -127,9 +127,15 @@ class MXFace():
             (self.detector_imgsz, self.detector_imgsz)
         ) 
         ifmap = ifmap / 255.0
+        # since the detector was originally an onnx model, transpose to channel first
+        ifmap = np.transpose(ifmap, (2,0,1))
+        # add batch dimension
+        ifmap = np.expand_dims(ifmap, 0)
+
         return ifmap.astype(np.float32)
 
     def _detector_sink(self, *outputs):
+
         annotated_frame = self.stage0_q.get()
         image = annotated_frame.image
         detections = self._postprocess_detector(image, outputs[0])
@@ -175,6 +181,8 @@ class MXFace():
             (self.recognizer_imgsz, self.recognizer_imgsz)
         )
         face = face / 255.0
+        # add batch dimension
+        face = np.expand_dims(face, 0)
         return face.astype(np.float32)
 
     def _recognizer_sink(self, *outputs):

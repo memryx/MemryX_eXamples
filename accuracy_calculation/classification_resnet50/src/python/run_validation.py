@@ -9,6 +9,7 @@
 #     └── ImageNet2012_valdata
 #           └── images
 #           └── ground_truth.txt
+# └── models
 #     └──resnet50_v1.pb
 #     └──resnet50_v1.dfp
 
@@ -43,6 +44,7 @@ def prepare_imagenet_dataset(imagenet_path, count):
         └── ImageNet2012_valdata
               └── images ← downloads here
               └── ground_truth.txt
+    └── models
         └──resnet50_v1.pb
         └──resnet50_v1.dfp
 
@@ -123,6 +125,7 @@ class ResNet50_Classification:
         for fname in self.image_paths[start:end]:
             img = cv2.imread(fname)
             preprocessed_img = pre_process_vgg(img, self.input_shape)
+            preprocessed_img = np.expand_dims(preprocessed_img, 0)
             images.append(preprocessed_img)
             # get ground_truth labels!
             # ILSVRC2012_val_xxxxxxxx -> int(xxxxxxxx) - 1 ; as numbering starts from 1
@@ -160,6 +163,8 @@ class ResNet50_Classification:
             start = b
             end   = b + batch if (b + batch) <= self.count else b + self.count
             images, labels = self.load_images_and_labels(start=start, end=end)
+            images = np.array(images)
+            images = np.squeeze(images, 1)
             labels_lst.extend(labels)
             feed_dict = {'input_tensor:0': images}
             # session run!
@@ -199,7 +204,7 @@ class ResNet50_Classification:
             return next(img_iter, None)
 
         def process_output(*outputs):
-            mxa_outputs.extend(np.squeeze(outputs[0], 0))
+           mxa_outputs.extend(outputs[0])
 
         accl = AsyncAccl(dfp_path)
         labels_lst = []
@@ -246,7 +251,8 @@ if __name__ == "__main__":
     count  = args.count
 
     assets_dir     =  os.path.join(Path.cwd().parent.parent, 'assets')
-    model_path     =  os.path.join(assets_dir, "resnet50_v1.pb")
+    models_dir     =  os.path.join(Path.cwd().parent.parent, 'models')
+    model_path     =  os.path.join(models_dir, "resnet50_v1.pb")
     imagenet_path =   os.path.join(assets_dir, os.path.join("ImageNet2012_valdata", "images"))
     prepare_imagenet_dataset(imagenet_path, count)
 

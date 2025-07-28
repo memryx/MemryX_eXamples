@@ -14,7 +14,7 @@ The **Chrome Dinosaur Game** example demonstrates how to control the Google Chro
 | **Model Type**       | Chrome Dinosaur Game                                                        |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/)                                                       |
 | **Model Source**     | [Download from MediaPipe GitHub](https://storage.googleapis.com/mediapipe-assets/palm_detection_lite.tflite) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/MediaPipe_palm_Detection_192_192_3_tflite.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/MediaPipe_palm_Detection_192_192_3_tflite.zip)                                           |
 | **Model Resolution** | 192x192 (default)                                                       |
 | **OS**               | Linux                                                       |
 | **License**          | [MIT](LICENSE.md)                                     |
@@ -32,8 +32,8 @@ Before running the application, ensure that the following are installed:
 You can install OpenCV and PyAutoGUI using the following commands:
 
 ```bash
-pip install opencv-python
-pip install pyautogui
+pip install opencv-python==4.11.0.86
+pip install pyautogui==0.9.54
 ```
 Install tkinter on Linux to use MouseInfo:
 
@@ -69,7 +69,7 @@ google-chrome-stable
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget wget https://developer.memryx.com/model_explorer/1p1/MediaPipe_palm_Detection_192_192_3_tflite.zip
+wget https://developer.memryx.com/model_explorer/2p0/MediaPipe_palm_Detection_192_192_3_tflite.zip
 mkdir -p models
 unzip MediaPipe_palm_Detection_192_192_3_tflite.zip -d models
 ```
@@ -87,7 +87,8 @@ wget https://storage.googleapis.com/mediapipe-assets/palm_detection_lite.tflite 
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
-mx_nc -v -m palm_detection_lite.tflite --autocrop -c 4
+mv palm_detection_lite.tflite MediaPipe_palm_Detection_192_192_3_tflite.tflite
+mx_nc -v -m MediaPipe_palm_Detection_192_192_3_tflite.tflite --autocrop -c 4
 ```
 
 </details>

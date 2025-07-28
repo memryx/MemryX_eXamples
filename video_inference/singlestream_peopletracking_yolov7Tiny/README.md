@@ -14,7 +14,7 @@ The **People Tracking** example demonstrates real-time people tracking on a sing
 | **Model Type**       | Object Detection                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                |
 | **Model Source**     | [Download](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt) and [export](https://github.com/WongKinYiu/yolov7/blob/main/export.py) to onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip) |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip) |
 | **Model Dataset**    | [COCO](https://docs.ultralytics.com/datasets/detect/coco/) |
 | **Model Resolution** | 416x416                                                    |
 | **Output**           | Bounding box coordinates & object probabilities            |
@@ -27,7 +27,7 @@ Before running the application, ensure that OpenCV Python is installed. You can 
 
 ```bash
 # For application
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 If you want to export and compile the DFP yourself, also install yolov7 dependencies:
@@ -43,7 +43,7 @@ pip install seaborn pyyaml pandas
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip
 mkdir -p models
 unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 ```
@@ -52,20 +52,25 @@ unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 <summary> (Optional) Export and compile the model yourself </summary>
 
 ```bash
+mkdir models
+cd models
+
 git clone https://github.com/WongKinYiu/yolov7.git
 cd yolov7
 wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt -O yolov7tiny.pt
 
 python export.py --weights yolov7-tiny.pt --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 416 416 --max-wh 416
+
+mv yolov7-tiny.onnx ../yolov7-tiny.onnx
+mv yolov7-tiny.onnx YOLO_v7_tiny_416_416_3_onnx.onnx
 ```
 
-The export script will generate a yolov7-tiny onnx file, which can be compiled to DFP with the NeuralCompiler:
+You can now compile the DFP with the NeuralCompiler using the command below:
 
 ```bash
- mx_nc -v -m yolov7-tiny.onnx -v --autocrop
+ mx_nc -v -m YOLO_v7_tiny_416_416_3_onnx.onnx -v --autocrop
 ```
 
-The compiler will generate the DFP and a post-processing file which can be passed as inputs to the application. Put these files in the `assets/` folder with the names `yolov7-tiny_416.dfp` and `yolov7-tiny_416.post.onnx`.
 
 </details>
 

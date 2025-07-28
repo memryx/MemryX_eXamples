@@ -111,7 +111,7 @@ class SpeechEmotionRecognition:
         mel_spectrogram = self._get_mel_spectrogram(spectrogram)
         mfcc = self._get_mfcc(mel_spectrogram)
         mfcc = tf.expand_dims(mfcc, -1)
-
+        mfcc = tf.expand_dims(mfcc, 0)
         return np.array(mfcc)
 
 
@@ -153,10 +153,8 @@ class SpeechEmotionRecognition:
             trimmed_data = raw_data[index : index+segment_length]
             normalized_data = self._normalize(trimmed_data)
             mfcc = self._get_input_to_model(normalized_data)
-
             mxa_output = self.syncaccl.run(mfcc)
-
-            prediction_index = np.argmax(mxa_output[0], axis=1)
+            prediction_index = np.argmax(mxa_output, axis=1)
             prediction = labels_list[prediction_index[0]]
            
             self.intermediate_class_predictions.append(prediction)

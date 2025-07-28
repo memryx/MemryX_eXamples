@@ -91,7 +91,7 @@ class FaceLandmarkMXA:
             keep_aspect_ratio=False,
             output_range=(0., 1.))
         input_data = image_data.tensor_data[np.newaxis]
-        input_data = np.transpose(input_data, axes = (1,2,0,3))
+        #input_data = np.transpose(input_data, axes = (1,2,0,3))
         padding = image_data.padding
         return input_data, padding
 

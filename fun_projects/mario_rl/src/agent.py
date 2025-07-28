@@ -398,8 +398,7 @@ class MarioNet(nn.Module):
             raise AttributeError(
                 "Compile the model to a DFP with MarioNet.compile_dfp() before running on MXA."
             )
-        input = np.transpose(input, (2, 3, 0, 1))
-        out = self.accl.run(input)[0]
+        out = self.accl.run(input)
         out = torch.from_numpy(out).to(self.device)
         return out
 

@@ -1,18 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-
-# Get the name of the application from the current source directory
-get_filename_component(app_name depthEstimation NAME)
+project(depthEstimation)
 
 # Set C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Find OpenCV package
-find_package(OpenCV REQUIRED)
-
-# Include directories for OpenCV and MemryX API
-include_directories(${OpenCV_INCLUDE_DIRS}       
-                    )
 
 # Gather all source files in the current directory
 file(GLOB local_src
@@ -21,10 +12,91 @@ file(GLOB local_src
 )
 
 # Create the executable for the application
-add_executable(${app_name} ${local_src})
+add_executable(${PROJECT_NAME} ${local_src})
+
+
+# Include directories for OpenCV and MemryX API
+if(WIN32)
+    message(STATUS "Configuring for Windows")
+
+    # MemryX SDK include path for Windows
+    set(MEMRYX_INCLUDE_DIR "C:/Program Files/MemryX/include")
+
+    # Find OpenCV package
+    set(OpenCV_DIR  "C:/opencv/build/x64/vc16/lib")
+    find_package(OpenCV REQUIRED)
+
+    include_directories(
+        "${MEMRYX_INCLUDE_DIR}"
+        ${OpenCV_INCLUDE_DIRS}
+    )
+
+    if (MSVC)
+        target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
+    endif()
+
+    find_library(MXACCL_DYNAMIC
+        NAMES memx-accl
+        PATHS
+            "C:/Program Files/MemryX/lib"
+        NO_DEFAULT_PATH
+    )
+    if (NOT MXACCL_DYNAMIC)
+        message(FATAL_ERROR "Cannot find memx-accl.lib")
+    endif()
+
+    find_library(MEMX_LIB
+        NAMES udriver
+        PATHS
+            "C:/Program Files/MemryX/lib"
+        NO_DEFAULT_PATH
+    )
+    if (NOT MEMX_LIB)
+        message(FATAL_ERROR "Cannot find udriver.lib")
+    endif()
+
+elseif(UNIX)
+    message(STATUS "Configuring for Linux")
+
+    find_package(OpenCV REQUIRED)
+
+    set(MEMRYX_INCLUDE_DIR "/usr/local/include")
+
+    include_directories(
+        "${MEMRYX_INCLUDE_DIR}"
+        ${OpenCV_INCLUDE_DIRS}
+    )
+
+    find_library(MXACCL_DYNAMIC
+        NAMES mx_accl
+        PATHS
+            /usr/lib
+            /usr/local/lib
+        NO_DEFAULT_PATH
+    )
+    if (NOT MXACCL_DYNAMIC)
+        message(FATAL_ERROR "Cannot find libmx_accl.so")
+    endif()
+
+    find_library(MEMX_LIB
+        NAMES memx
+        PATHS
+            /usr/lib
+            /usr/local/lib
+        NO_DEFAULT_PATH
+    )
+    if (NOT MEMX_LIB)
+        message(FATAL_ERROR "Cannot find libmemx.so")
+    endif()
+
+endif()
 
 # Link the mx_accl library and OpenCV libraries
-target_link_libraries(${app_name}  mx_accl  ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}
+    ${MXACCL_DYNAMIC}
+    ${MEMX_LIB}
+    ${OpenCV_LIBS}
+)
 
 # Copy DFP file to the binary directory during the build
 file(COPY "../../models/midas_v2_small.dfp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

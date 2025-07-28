@@ -10,7 +10,7 @@ The **ResNet50 Classification** example demonstrates how to validate the accurac
 | **Model Type**       | Classification                                                                                           |      
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/)                                                                |
 | **Model Source**     | [resnet50_v1.pb](https://zenodo.org/record/2535873/files/resnet50_v1.pb) (Downloaded Automatically)      |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/mlperf_accuracycalc_resnet50_v1.zip)                                                                  |  
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/mlperf_accuracycalc_resnet50_v1.zip)                                                                  |  
 | **Input**            | 224x224x3                                                                                                |  
 | **Output**           | class probabilities(Softmax) and class with highest confidence(Argmax)                                   |
 | **License**          | [MIT](LICENSE.md)                                                                                        |
@@ -21,17 +21,18 @@ The **ResNet50 Classification** example demonstrates how to validate the accurac
 Before running the application, ensure that Python, and the `cv2` package are installed:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ## Running the Application (Linux)
 
 ### Step 1: Download Pre-compiled DFP
 
-To download and unzip the precompiled DFPs, navigate to `classification_resnet50/assets` and use the following commands:
+To download and unzip the precompiled DFPs, and use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/mlperf_accuracycalc_resnet50_v1.zip
-unzip mlperf_accuracycalc_resnet50_v1.zip
+wget https://developer.memryx.com/example_files/2p0/mlperf_accuracycalc_resnet50_v1.zip
+mkdir -p models
+unzip mlperf_accuracycalc_resnet50_v1.zip -d models
 ```
 
 <details> 
@@ -45,6 +46,7 @@ wget https://zenodo.org/record/2535873/files/resnet50_v1.pb -O resnet50_v1.pb
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
+cd models
 mx_nc -v -m resnet50_v1.pb --autocrop -c 4
 ```
 
@@ -57,7 +59,8 @@ Your folder structure should now be:
 |- LICENSE.md
 |- assets/
 |  |-ImageNet2012_valdata
-|     |-ground_truth.txt    
+|     |-ground_truth.txt 
+|- models/   
 |  |- resnet50_v1.dfp
 |  |- resnet50_v1.pb
 |

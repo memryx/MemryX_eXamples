@@ -21,14 +21,14 @@ This example demonstrates integrating the Face Detection and Face Mesh Detection
 Before running the application, ensure that OpenCV is installed. You can install it using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ### Step 1: Download Pre-compiled DFP
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/facelandmark.zip
+wget https://developer.memryx.com/example_files/2p0/facelandmark.zip
 mkdir -p models
 unzip facelandmark.zip -d models
 ```
@@ -38,17 +38,17 @@ unzip facelandmark.zip -d models
 If you prefer, you can download and compile the models rather than using the precompiled model. Download the Face Detection and Face Landmark models:
 
 ```bash
+mkdir models && cd models/
 wget https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite https://storage.googleapis.com/mediapipe-assets/face_landmark.tflite
 ```
 
 You can now use the MemryX Neural Compiler to compile the models and generate the DFP file required by the accelerator.
 
 ```bash
-cd models/ 
 mx_nc -v -m blaze_face_short_range.tflite face_landmark.tflite --autocrop
 ```
 
-The Neural Compiler will generate the DFP file for the two models titled `models.dfp`. It will also create a postprocessing cropped model of the blaze face model (`blaze_face_short_range_post.tflite`).
+The Neural Compiler will generate the DFP file for the two models titled `models.dfp`. It will also create a postprocessing cropped model of the blaze face model (`model_0_blaze_face_short_range_post.tflite`).
 
 Additional Notes:
 * `-v`: Enables verbose output, useful for tracking the compilation process.

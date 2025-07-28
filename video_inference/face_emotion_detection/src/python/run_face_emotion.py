@@ -101,6 +101,7 @@ class App:
     # Generate frame for face detection
     def generate_frame_face(self):
         frame = self.face_app.generate_frame()
+        frame = np.expand_dims(frame, 0)
         if frame is None:
             print("EOF")  # Handle end of the stream
             os._exit(0)
@@ -124,9 +125,10 @@ class App:
         try:
             # Resize the face crop for emotion recognition model input
             face = cv.resize(self.face, (224, 224), interpolation=cv.INTER_CUBIC)
+            face = np.expand_dims(face, 0)
         except Exception:
             self.emotion_app.background = True  # Set background if face is not available
-            face = np.zeros((224,224,3))  # Create a blank frame if no face
+            face = np.zeros((1,224,224,3))  # Create a blank frame if no face
         self.emotion_app.cap_queue.put(self.capture_queue.get())
         return face.astype(np.float32)
 

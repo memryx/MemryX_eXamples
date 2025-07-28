@@ -17,7 +17,7 @@ The **intrusion detection** example demonstrates real-time detection of intrudin
 | **Model Type**       | Object Detection, Tracking
 | **Framework**        | [Tflite](https://www.tensorflow.org/)
 | **Model Source**     | [Download from ultralytics](https://docs.ultralytics.com/models/yolov8/)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_640_640_3_tflite.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/yolov8m_intrusion_detection.zip)
 | **Input**            | 640x640x3
 | **Output**           | Bounding boxes, confidence scores, Tracking Ids.
 | **OS**               | Linux
@@ -37,9 +37,9 @@ pip3 install -r requirements.txt
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_640_640_3_tflite.zip
+wget https://developer.memryx.com/example_files/2p0/yolov8m_intrusion_detection.zip
 mkdir -p models
-unzip YOLO_v8_medium_640_640_3_tflite.zip -d models
+unzip yolov8m_intrusion_detection.zip -d models
 ```
 
 
@@ -49,7 +49,7 @@ With the compiled model, you can now run real-time inference. Below are the exam
 
 #### Python
 
-Download the video from the link given below and copy it to the location `assets/surveillance.mp4`
+Download the video from the link given below and copy it to the location `assets/surveillance.mp4`. The video resolution should be 1920x1080p for the best results.
 
 To run the Python example for real-time depth estimation using MX3, simply execute the following command:
 

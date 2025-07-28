@@ -14,7 +14,7 @@ The **CeneterNet** example demonstrates real-time object detection on a single i
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [onnx](https://onnx.ai/),[tensorflow, tflite](https://www.tensorflow.org/)                                                  |
 | **Model Source**     | [Download](http://download.tensorflow.org/models/object_detection/tf2/20210210/centernet_mobilenetv2fpn_512x512_coco17_kpts.tar.gz) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/centernet.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/centernet.zip)                                           |
 | **Dataset**          | [COCO](https://cocodataset.org/#home) |
 | **Model Resolution**            | 320x320                                                    |
 | **Output**           | Bounding box coordinates with object probabilities |
@@ -23,7 +23,7 @@ The **CeneterNet** example demonstrates real-time object detection on a single i
 
 ## Requirements (Linux)
 
-Before running the application ensure that all MemryX runtime plugins and utilities libraries are installed. For more information on installation, please refer to DevHub pages such as [runtime installation page](https://developer.memryx.com/get_started/install_driver.html) , and [additional requirements for tutorial apps page](https://developer.memryx.com/tutorials/requirements/installation.html)
+Before running the application ensure that all MemryX runtime plugins and utilities libraries are installed. For more information on installation, please refer to DevHub pages such as [runtime installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [additional requirements for tutorial apps page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application (Linux)
 
@@ -38,7 +38,7 @@ sudo apt install qtbase5-dev
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
 cd assets
-wget https://developer.memryx.com/example_files/1p1/centernet.zip
+wget https://developer.memryx.com/example_files/2p0/centernet.zip
 mkdir -p models
 unzip centernet.zip -d models
 ```
@@ -56,16 +56,32 @@ cd centernet_mobilenetv2_fpn_kpts
 python -m tf2onnx.convert --saved-model saved_model --output centernet.onnx --verbose --opset 18
 
 ```
-The export script will generate a centernet.onnx and model.tflite files.
+The export script will generate a centernet.onnx and model.tflite files. Let's rename the model files and move them to a folder called `models`:
+
+```bash
+mv model.tflite centernet.tflite
+mv saved_model/saved_model.pb saved_model/centernet.pb
+mkdir -p models
+mv centernet.onnx models/
+mv centernet.tflite models/
+mv saved_model/centernet.pb models/
+cd models
+```
 
 You can use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator. If you prefer, you can download the pre-compiled DFP and skip this step.
 
 ```bash
  mx_nc -m centernet.onnx -v --autocrop --dfp_fname centernet_onnx
- mx_nc -m saved_model/saved_model.pb -v --autocrop --dfp_fname centernet_tf
- mx_nc -m model.tflite -v --autocrop --dfp_fname centernet_tflite
+ mx_nc -m centernet.pb -v --autocrop --dfp_fname centernet_tf
+ mx_nc -m centernet.tflite -v --autocrop --dfp_fname centernet_tflite
 ```
-The compiler will generate the DFP, a pre-processing and a post-processing file which can be passed as inputs to the application.
+The compiler will generate the DFP, a pre-processing and a post-processing file for each framework which can be passed as inputs to the application. Finally let's move the `models` folder to the correct path:
+
+```bash
+cd ..
+mv models ../assets/
+cd ..
+```
 
 </details>
 

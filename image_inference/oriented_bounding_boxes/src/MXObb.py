@@ -96,6 +96,8 @@ class MXObb:
         self.stage0_q.put(annotated_frame)
 
         ifmap = self._preprocess(annotated_frame.image)
+        ifmap = np.expand_dims(ifmap, 0)
+        ifmap = np.transpose(ifmap, (0,3,1,2))
         return ifmap.astype(np.float32)
 
     def _detector_sink(self, *outputs):

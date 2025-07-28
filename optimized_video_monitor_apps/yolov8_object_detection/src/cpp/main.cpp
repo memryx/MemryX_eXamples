@@ -28,6 +28,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
 #include <opencv2/opencv.hpp>
 
 #include <memx/accl/MxAccl.h>
@@ -119,7 +120,7 @@ float UpdatedFPS(int idx)
     return 0.0f;
 }
 
-bool incallback_func(vector<const MX::Types::FeatureMap<float> *> dst, int channel_idx)
+bool incallback_func(vector<const MX::Types::FeatureMap *> dst, int channel_idx)
 {
     if (!g_is_running)
         return false;
@@ -149,7 +150,7 @@ bool incallback_func(vector<const MX::Types::FeatureMap<float> *> dst, int chann
     // Set preprocessed input data for accelerator
     for (int in_idx = 0; in_idx < g_model_info.num_in_featuremaps; ++in_idx)
     {
-        dst[in_idx]->set_data(accl_input_data[in_idx], false);
+        dst[in_idx]->set_data(accl_input_data[in_idx]);
     }
 
     // Push the frame into queue for rendering in output callback
@@ -161,7 +162,7 @@ bool incallback_func(vector<const MX::Types::FeatureMap<float> *> dst, int chann
     return true;
 }
 
-bool outcallback_func(vector<const MX::Types::FeatureMap<float> *> src, int channel_idx)
+bool outcallback_func(vector<const MX::Types::FeatureMap *> src, int channel_idx)
 {
     if (!g_is_running)
         return false;
@@ -182,7 +183,7 @@ bool outcallback_func(vector<const MX::Types::FeatureMap<float> *> src, int chan
     // Retrieve output data from accelerator
     for (int out_idx = 0; out_idx < g_model_info.num_out_featuremaps; ++out_idx)
     {
-        src[out_idx]->get_data(accl_output_data[out_idx], false);
+        src[out_idx]->get_data(accl_output_data[out_idx]);
     }
 
     // Set confidence threshold and process detection results
@@ -377,9 +378,11 @@ int main(int argc, char *argv[])
     // Parse command-line arguments
     ParseArgs(argc, argv);
 
+    std::vector<int> device_ids = {0};
+    std::array<bool, 2> use_model_shape = {false, false};
+
     // Create the accelerator object and load the DFP model
-    std::unique_ptr<MX::Runtime::MxAccl> accl = std::make_unique<MX::Runtime::MxAccl>();
-    accl->connect_dfp(g_config.dfp_file, g_config.group_id);
+    std::unique_ptr<MX::Runtime::MxAccl> accl = std::make_unique<MX::Runtime::MxAccl>(filesystem::path(g_config.dfp_file),device_ids, use_model_shape);
 
     int model_id = 0; // The DFP is compiled with a single model
     g_model_info = accl->get_model_info(model_id);

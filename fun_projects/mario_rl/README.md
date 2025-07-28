@@ -59,11 +59,23 @@ We have provided one example agent for you to get started with. Run the commands
 
 ```bash
 cd src && mkdir runs && cd runs
-wget https://developer.memryx.com/example_files/mario_rl.zip
+wget https://developer.memryx.com/example_files/2p0/mario_rl.zip
 unzip mario_rl.zip -d example
 cd ..
 python play.py --ckpt runs/example/mario_net_final.ckpt --deterministic
 ```
+
+<details> 
+<summary> (Optional) Compile the model yourself </summary>
+If you prefer, you can compile the provided model. 
+
+```bash
+mx_nc -v -m runs/example/mario_net.onnx
+```
+
+This will create a dfp `mario_net.dfp` in the folder runs/example/
+
+</details>
 
 This agent was trained for 70,000 games using three different phases.
 

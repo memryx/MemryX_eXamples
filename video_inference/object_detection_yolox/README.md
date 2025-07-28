@@ -14,7 +14,7 @@ The **Object Detection** example demonstrates real-time Object Detection inferen
 | **Model Type**       | Object Detection                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from YoloX GitHub](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/object_detection_yolox.zip)                                       |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLOX_medium_640_640_3_onnx.zip)                                       |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Total number of prediction grid points, along with bounding boxes, confidence scores, and class probabilities for detected objects (in anchor-free YOLOX, without predefined anchor boxes). |
 | **OS**               | Linux |
@@ -25,7 +25,7 @@ The **Object Detection** example demonstrates real-time Object Detection inferen
 Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ## Running the Application
@@ -34,9 +34,15 @@ pip install opencv-python
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/object_detection_yolox.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLOX_medium_640_640_3_onnx.zip
 mkdir -p models
-unzip object_detection_yolox.zip -d models
+unzip YOLOX_medium_640_640_3_onnx.zip -d models
+
+cd models 
+mv YOLOX_medium_640_640_3_onnx.dfp yolox_m.dfp
+mv YOLOX_medium_640_640_3_onnx_post.onnx yolox_m_post.onnx
+
+cd ..
 ```
 
 <details> 
@@ -44,6 +50,9 @@ unzip object_detection_yolox.zip -d models
 If you prefer, you can download and compile the model rather than using the precompiled model. Download the pre-trained YOLOX-M model and export it to ONNX:
 
 ```
+mkdir models 
+cd models 
+
 wget https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx
 ```
 
@@ -57,7 +66,7 @@ Output:
 The MemryX compiler will generate two files:
 
 * `yolox_m.dfp`: The DFP file for the main section of the model.
-* `yolox_m.post.onnx`: The ONNX file for the cropped post-processing section of the model.
+* `yolox_m_post.onnx`: The ONNX file for the cropped post-processing section of the model.
 
 Additional Notes:
 * `-v`: Enables verbose output, useful for tracking the compilation process.
@@ -80,14 +89,13 @@ Command-line Options:
 You can specify the model path and DFP (Compiled Model) path using the following options:
 
 * `-d` or `--dfp`:  Path to the compiled DFP file (default is models/yolox-m.dfp)
-* `--post-model`: Path to the post-processing ONNX file generated after compilation (default is models/yolox_m_post.onnx)
 * `--video-source`: Path to video source or camera device (default is /dev/video0)
 
 Example:
-To run with a specific post model, DFP file, and video sourse use:
+To run with a specific DFP file, and video sourse use:
 
 ```bash
-python src/python/run_object_detection_yolox.py -d <dfp_path> --post-model <post_processing_onnx_path> --video-source <video_path>
+python src/python/run_object_detection_yolox.py -d <dfp_path> --video-source <video_path>
 ```
 
 If no arguments are provided, the script will use the default paths for the model and DFP.

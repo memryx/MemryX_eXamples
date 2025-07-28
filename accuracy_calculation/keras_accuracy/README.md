@@ -23,7 +23,7 @@ The **Keras Classification Accuracy** example demonstrates how to measure the to
 Before running the application, ensure that Python, and the `cv2` package are installed:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 
@@ -36,7 +36,7 @@ You can directly download the pre-compiled DFP from [here](https://developer.mem
 
 <details> 
 <summary> (Optional) Download and compile the model </summary>
-If you prefer, you can download and compile the model rather than using the precompiled model. The script will take care of downloading the model, all you would have to do is provide the name of the model via the command line. 
+If you prefer, you can download and compile the model rather than using the precompiled model. The script will take care of downloading the model, all you would have to do is provide the name of the model via the command line. Refer to the code snippet below for reference.
 
 
 

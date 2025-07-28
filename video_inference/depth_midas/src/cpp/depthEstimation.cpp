@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 
 // Command-line argument flags
 std::string modelPath;
-fs::path videoPath; 
+fs::path videoPath;
 
 atomic_bool runflag(true);
 void signalHandler(int pSignal){
@@ -26,8 +26,8 @@ bool configureCamera(cv::VideoCapture& vcap) {
     bool settings_success = true;
 
     try {
-        if (!vcap.set(cv::CAP_PROP_FRAME_HEIGHT, 480) || 
-            !vcap.set(cv::CAP_PROP_FRAME_WIDTH, 640) || 
+        if (!vcap.set(cv::CAP_PROP_FRAME_HEIGHT, 480) ||
+            !vcap.set(cv::CAP_PROP_FRAME_WIDTH, 640) ||
             !vcap.set(cv::CAP_PROP_FPS, 30)) {
             std::cout << "Setting vcap Failed\n";
             cv::Mat simpleframe;
@@ -82,7 +82,7 @@ class DepthEstimation{
         float fps_number;
         std::string fps_text;
         std::chrono::milliseconds start_ms;
-        
+
         std::string window_name;
         bool window_created;
         cv::Size displaySize;
@@ -119,13 +119,14 @@ class DepthEstimation{
                 #endif
             }
             else{
-                vcap.open(videoPath.c_str(), cv::CAP_ANY);
+                std::cout << "Running on Path: " << videoPath.string() << "\n";
+                vcap.open(videoPath.string(), cv::CAP_ANY);
             }
 
             if(vcap.isOpened()){
                 std::cout << "videocapture opened \n";
 
-                origWidth = vcap.get(cv::CAP_PROP_FRAME_WIDTH); //get the width of frames of the video 
+                origWidth = vcap.get(cv::CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
                 origHeight = vcap.get(cv::CAP_PROP_FRAME_HEIGHT);
                 runflag.store(true);
             }
@@ -158,7 +159,7 @@ class DepthEstimation{
         }
 
         // Input callback function
-        bool incallback_getframe(std::vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+        bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
             if(runflag.load()){
                 cv::Mat inframe;
                 bool got_frame = vcap.read(inframe);
@@ -175,19 +176,19 @@ class DepthEstimation{
                     cv::add(img_model_in, cv::Scalar(-0.485, -0.456, -0.406), img_model_in);
                     cv::multiply(img_model_in, cv::Scalar(1.0 / 0.229, 1.0 / 0.224, 1.0 / 0.225), img_model_in);
 
-                    dst[0]->set_data((float*)img_model_in.data, false);
+                    dst[0]->set_data((float*)img_model_in.data);
                     return true;
                 }
             }
             else{
                 vcap.release();
                 return false;
-            }    
+            }
         }
 
         // Output callback function
-        bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
-            src[0]->get_data((float*)img_model_out.data, false);
+        bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int streamLabel){
+            src[0]->get_data((float*)img_model_out.data);
 
             double depth_min_d, depth_max_d;
             float depth_min, depth_max;
@@ -235,7 +236,7 @@ class DepthEstimation{
             cv::imshow(window_name, img_final_out_resized);
             if (cv::waitKey(1) == 'q') {
                 runflag.store(false);
-            }     
+            }
             return true;
         }
         ~DepthEstimation(){
@@ -273,22 +274,33 @@ int main(int argc, char* argv[]){
     if(runflag.load()){
         std::cout << "Application start\n";
         std::cout << "Model path: " << dfpPath << "\n";
-        if(!use_cam) { 
-            std::cout << "Video File is used as input\nVideo Path: " << videoPath.c_str() << "\n"; 
+        if(!use_cam) {
+            std::cout << "Video File is used as input\nVideo Path: " << videoPath.c_str() << "\n";
+        }
+        if (!fs::exists(dfpPath)) {
+            std::cerr << "Error: Model file not found at path: " << dfpPath << std::endl;
+            std::exit(EXIT_FAILURE);
         }
 
-        MX::Runtime::MxAccl accl;
-        int tag = accl.connect_dfp(dfpPath);
+        MX::Runtime::MxAccl accl(
+            fs::path(dfpPath),                      // DFP path
+            std::vector<int>{0},                    // device_ids_to_use
+            std::array<bool, 2>{true, true},        // use_model_shape
+            false,                                  // local_mode
+            MX::RPC::SchedulerOptions{600, 0, false, 16, 12},  // sched_options
+            MX::RPC::ClientOptions{false, 0},       // client_options
+            "localhost",                            // server_addr
+            10000,                                  // server_port_base
+            false                                   // ignore_server_
+        );
+
         DepthEstimation app(&accl, use_cam);
         accl.start();
         accl.wait();
-        accl.stop();   
+        accl.stop();
     } else {
-        std::cout << "App exiting without execution\n\n\n";       
+        std::cout << "App exiting without execution\n\n\n";
     }
 
     return 0;
 }
-
-
-

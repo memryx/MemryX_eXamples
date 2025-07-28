@@ -29,7 +29,7 @@ The implementation includes `MXFace`, which emulates a `Queue` structure, making
 | **Model Type**       | Face Detection + Recognition
 | **Framework**        | [Onnx](https://onnx.ai/) + [Keras](https://keras.io/)
 | **Model Source**     | [YoloV8n-Face](https://github.com/derronqi/yolov8-face), [FaceNet](https://github.com/serengil/deepface/blob/master/deepface/models/facial_recognition/Facenet.py)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/face_recognition.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/face_recognition.zip)
 | **Output**           | Face bounding box + keypoints + embedding
 | **OS**               | Linux
 | **License**          | [GPL](LICENSE.md)                                         
@@ -39,7 +39,7 @@ The implementation includes `MXFace`, which emulates a `Queue` structure, making
 Before running the application, ensure that OpenCV and Kagglehub re installed. You can install them using the following commands:
 
 ```bash
-pip install opencv-python kagglehub
+pip install opencv-python==4.11.0.86 kagglehub
 ```
 
 ## Run the Application 
@@ -48,7 +48,7 @@ pip install opencv-python kagglehub
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/face_recognition.zip
+wget https://developer.memryx.com/example_files/2p0/face_recognition.zip
 mkdir -p models
 unzip face_recognition.zip -d models
 ```

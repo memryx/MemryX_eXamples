@@ -60,11 +60,23 @@ class App:
                 return self.preprocess(frame)
 
     def preprocess(self, img):
+ 
         arr = np.array(cv.resize(img, (512, 512))).astype(np.float32)
         arr = arr/127.5 - 1
+
+        # add batch dimension and change to channel first format 
+        # Ensure that the input shape to the accelerator matches the input shapes of the ONNX model.
+        arr = np.expand_dims(arr, 0)
+        arr = np.transpose(arr, (0,3,1,2))
         return arr
 
     def postprocess(self, frame, original_shape):
+
+        # get rid of batch dim and change to channel last format
+        # note that the output from the accelerator matches the output shapes from the ONNX model.
+        # i.e. channel last format with batch dim
+        frame = np.squeeze(frame, 0)
+        frame = np.transpose(frame, (1,2,0))
         frame = (frame + 1) * 127.5
         frame = np.clip(frame, 0, 255).astype(np.uint8)
         frame = cv.resize(frame, original_shape)

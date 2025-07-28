@@ -14,7 +14,7 @@ The **Segmentation** example demonstrates real-time Segmentation inference using
 | **Model Type**       | Segmentation                                                        |
 | **Framework**        | [onnx](https://onnx.ai/),[ tflite](https://www.tensorflow.org/)                                                  |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/segmentation_yolov8_2.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/segmentation_yolov8.zip)                                           |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Bounding boxes for detected objects, confidence scores, class labels, and segmentation masks |
 | **OS**               | Linux |
@@ -25,11 +25,11 @@ The **Segmentation** example demonstrates real-time Segmentation inference using
 Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV and the Ultralytics package (for YOLO models) using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ```bash
-pip install ultralytics
+pip install ultralytics==8.3.161
 ```
 
 ## Running the Application
@@ -38,8 +38,8 @@ pip install ultralytics
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/segmentation_yolov8_2.zip
-unzip segmentation_yolov8_2.zip
+wget https://developer.memryx.com/example_files/2p0/segmentation_yolov8.zip
+unzip segmentation_yolov8.zip
 ```
 
 <details> 
@@ -64,12 +64,22 @@ Additionally, it is essential to simplify the ONNX model by removing unnecessary
 python -m onnxsim yolov8n-seg.onnx yolov8n-seg.onnx
 ```
 
-Finally, if you want to export to TFLite format, please execute command:
+If you don't have `onnxsim` installed in your environment, use the following command:
+
 ```bash
+pip install onnxsim
+```
+
+Finally, if you want to export to TFLite format, please execute command:
+```bash 
 onnx2tf -i yolov8n-seg.onnx -o yolov8n-seg.tflite
 ```
 
+If you need to install `onnx2tf`, use the following command to install it along with some additional dependencies:
 
+```bash
+pip install onnx2tf onnx_graphsurgeon ai_edge_libert sng4onnx
+```
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash

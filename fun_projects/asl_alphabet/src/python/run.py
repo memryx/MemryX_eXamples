@@ -5,6 +5,9 @@ import extra
 from collections import Counter
 from MxHandPose import MxHandPose
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
 class ASLDemo:
     def __init__(self, mxpose, gesture_clf_dir, **kwargs):
 

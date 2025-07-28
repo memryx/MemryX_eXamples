@@ -14,33 +14,33 @@ The **Pose Estimation** example demonstrates real-time pose estimation inference
 | **Model Type**       | Pose Estimation                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_pose_640_640_3_onnx.zip)                                          |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_medium_pose_640_640_3_onnx.zip)                                          |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Person bounding boxes and pose landmark coordinates |
-| **OS**               | Linux, Windows |
+| **OS**               | Linux |
 | **License**          | [AGPL](LICENSE.md)                                       |
 
-## Requirements (Linux)
+## Requirements
 
 Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV and the Ultralytics package (for YOLO models) using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 ```bash
-pip install ultralytics
+pip install ultralytics==8.3.161
 ```
 
-For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
+For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
-## Running the Application (Linux)
+## Running the Application
 
 ### Step 1: Download Pre-compiled DFP
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v8_medium_pose_640_640_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v8_medium_pose_640_640_3_onnx.zip
 mkdir -p models
 unzip YOLO_v8_medium_pose_640_640_3_onnx.zip -d models
 ```
@@ -64,7 +64,7 @@ model.export(format="onnx")
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
-mx_nc -v -m yolov8m-pose.onnx --autocrop -c 4
+mx_nc -v -m yolov8m-pose.onnx --autocrop -c 4 --dfp_fname YOLO_v8_medium_pose_640_640_3_onnx
 ```
 
 Output:
@@ -138,16 +138,6 @@ You need to specify whether you want to use the camera or a video file as input.
 ```bash
 ./poseEstimation --video <video_path>
 ```
-
-## Running the Application (Windows)
-
-
-[Download](https://developer.memryx.com/example_files/poseEstimation_windows.zip) the compiled C++ executable version, and extract the zip.
-
-Then just double-click `run.bat` to launch using the first available webcam.
-
-Alternatively, you can use commandline arguments such as `--video` if launching the exe within Command Prompt or PowerShell.
-
 
 ## Tutorial
 

@@ -139,7 +139,7 @@ class YoloV7{
         cv::Mat preprocess( cv::Mat& image ) {
 
             cv::Mat resizedImage;
-            cv::resize(image, resizedImage, cv::Size(model_input_height, model_input_width), cv::INTER_LINEAR);
+            cv::dnn::blobFromImage(image, resizedImage, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
 
             // Convert image to float32 and normalize
             cv::Mat floatImage;
@@ -190,7 +190,7 @@ class YoloV7{
             return detections;
         }
 
-        bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+        bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
 
             if(runflag.load()){
                 cv::Mat inframe;
@@ -219,7 +219,7 @@ class YoloV7{
                     // Preprocess frame
                     cv::Mat preProcframe = preprocess(rgbImage);
                     // Set preprocessed input data to be sent to accelarator
-                    dst[0]->set_data((float*)preProcframe.data, false);
+                    dst[0]->set_data((float*)preProcframe.data);
 
                     return true;
                 }
@@ -231,7 +231,7 @@ class YoloV7{
         }
 
         // Input callback function to fetch frames and preprocess them
-        bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
+        bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int streamLabel){
             
             //Ouput from the post-processing model is a vector of size 1
             //So copying only the first featuremap
@@ -391,15 +391,13 @@ int main(int argc, char* argv[]){
         video_src_list.push_back(video_str);
     }  
 
-    //Create the Accl object and load the DFP
-    MX::Runtime::MxAccl* accl = new MX::Runtime::MxAccl();
-    accl->connect_dfp(model_path.c_str());
-
-
+    // Initialize the MemryX accelerator
+    MX::Runtime::MxAccl accl{fs::path(model_path)};
+    
     // Connecting the post-processing model obtained from the autocrop of neural compiler to get the final output.
     // The second parameter is required as the output shape of this particular post-processing model is variable
     // and accl requires to know maximum possible size of the output. In this case it is (max_possible_boxes * size_of_box = 300 *7= 2100).
-    accl->connect_post_model(postprocessing_model_path,0,std::vector<size_t>{300*7});
+    accl.connect_post_model(fs::path(postprocessing_model_path), 0, std::vector<size_t>{300*7});
     
     // Creating GuiView which is a memryx qt util for easy display
     MxQt gui(argc,argv);
@@ -412,17 +410,16 @@ int main(int argc, char* argv[]){
     //Creating a YoloV7 object for each stream which also connects the corresponding stream to accl.
     std::vector<YoloV7*>yolo_objs;
     for(int i =0; i<video_src_list.size();++i){
-        YoloV7* obj = new YoloV7(accl,video_src_list[i],&gui,i);
+        YoloV7* obj = new YoloV7(&accl,video_src_list[i],&gui,i);
         yolo_objs.push_back(obj);
     }
 
     //Run the accelerator and wait
-    accl->start();
+    accl.start();
     gui.Run(); //This command waits for exit to be pressed in Qt window
-    accl->stop();
+    accl.stop();
 
     //Cleanup
-    delete accl;
     for(int i =0; i<video_src_list.size();++i ){
         delete yolo_objs[i];
     }

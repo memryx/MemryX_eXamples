@@ -14,7 +14,7 @@ The **Object Detection** example demonstrates real-time object detection on a si
 | **Model Type**       | Object Detection                                                      |
 | **Framework**        | [onnx](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt) and [export](https://github.com/WongKinYiu/yolov7/blob/main/export.py) to onnx |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip)                                           |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip)                                           |
 | **Dataset**          | [COCO](https://docs.ultralytics.com/datasets/detect/coco/) |
 | **Model Resolution**            | 416x416                                                    |
 | **Output**           | Bounding box coordinates with object probabilities |
@@ -27,10 +27,11 @@ Before running the application, ensure that Python and OpenCV are installed, esp
 
 ```bash
 # For application
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 
 # For exporting source model to onnx
-pip install seaborn pyyaml pandas
+pip install pyyaml==6.0.2
+pip install pandas==2.3.1
 ```
 ## Running the Application
 
@@ -38,7 +39,7 @@ pip install seaborn pyyaml pandas
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/1p1/YOLO_v7_tiny_416_416_3_onnx.zip
+wget https://developer.memryx.com/model_explorer/2p0/YOLO_v7_tiny_416_416_3_onnx.zip
 mkdir -p models
 unzip YOLO_v7_tiny_416_416_3_onnx.zip -d models
 ```
@@ -59,7 +60,8 @@ The export script will generate a yolov7-tiny onnx file.
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
- mx_nc -m yolov7-tiny.onnx -v --autocrop
+mv yolov7-tiny.onnx YOLO_v7_tiny_416_416_3_onnx.onnx
+mx_nc -m YOLO_v7_tiny_416_416_3_onnx.onnx -v --autocrop
 ```
 The compiler will generate the DFP and a post-processing file which can be passed as inputs to the application.
 

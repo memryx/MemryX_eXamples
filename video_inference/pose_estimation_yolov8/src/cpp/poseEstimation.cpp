@@ -81,7 +81,7 @@ void signalHandler(int pSignal){
 }
 
 // Callback function for processing input frames
-bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
 
     if(runflag.load()){
         cv::Mat inframe;
@@ -112,12 +112,13 @@ bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int st
                 cv::Mat rgbImage;
                 cv::cvtColor(inframe, rgbImage, cv::COLOR_BGR2RGB);
                 cv::Mat preProcframe;
-                cv::resize(rgbImage, preProcframe, cv::Size(model_input_width, model_input_height), cv::INTER_LINEAR);
+                // cv::resize(rgbImage, preProcframe, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
+                cv::dnn::blobFromImage(rgbImage, preProcframe, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
                 cv::Mat floatImage;
                 preProcframe.convertTo(floatImage, CV_32F,  1.0 / 255.0); // Normalize the frame
 
                 // Set preprocessed input data to accelerator
-                dst[0]->set_data((float*)floatImage.data, false);
+                dst[0]->set_data((float*)floatImage.data);
                 return true;
             }
 	}
@@ -134,11 +135,11 @@ struct Box {
 };
 
 // Output callback function to process model output
-bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel) {
+bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int streamLabel) {
 
     // Get data from the feature maps
     for(int i = 0; i < post_model_info.num_out_featuremaps; ++i) {
-        src[i]->get_data(ofmap[i], false);
+        src[i]->get_data(ofmap[i]);
     }
 
     // Get the input frame from the queue
@@ -297,10 +298,9 @@ void run_inference() {
     if(runflag.load()) { 
 
         // Initialize the MemryX accelerator
-        MX::Runtime::MxAccl accl;
-        accl.connect_dfp(modelPath); // Connect the model to the accelerator
+        MX::Runtime::MxAccl accl{fs::path(modelPath)};
         
-        accl.connect_post_model(onnx_postprocessing_model_path, 0); // Connect the post-processing model
+        accl.connect_post_model(fs::path(onnx_postprocessing_model_path)); // Connect the post-processing model
         post_model_info = accl.get_post_model_info(0); // Get post-processing model info
 
         model_info = accl.get_model_info(0); // Get main model info

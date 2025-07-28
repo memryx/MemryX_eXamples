@@ -341,7 +341,7 @@ cv::Mat preprocess_face( cv::Mat& image ) {
     return normalizedImage;
 }
 
-bool incallback_getframe_face(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+bool incallback_getframe_face(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
 
     if(runflag.load()){
         bool got_frame = false;
@@ -381,7 +381,7 @@ bool incallback_getframe_face(vector<const MX::Types::FeatureMap<float>*> dst, i
             cv::Mat preProcframe = preprocess_face(inframe);
 
             // Set preprocessed input data to be sent to accelarator
-            dst[0]->set_data((float*)preProcframe.data, false);
+            dst[0]->set_data((float*)preProcframe.data);
 
             return true;
         }           
@@ -394,7 +394,7 @@ bool incallback_getframe_face(vector<const MX::Types::FeatureMap<float>*> dst, i
 }
 
 // Output callback function
-bool outcallback_getmxaoutput_face(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
+bool outcallback_getmxaoutput_face(std::vector<const MX::Types::FeatureMap*> src, int streamLabel){
 
     std::vector<float*> ofmap;
     ofmap.reserve(src.size());
@@ -476,7 +476,7 @@ cv::Mat preprocess_emotion(cv::Mat img, bool mirror) {
     return floatImg;
 }
 
-bool incallback_getframe_emotion(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+bool incallback_getframe_emotion(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
 
    if(runflag.load()){
 
@@ -497,7 +497,7 @@ bool incallback_getframe_emotion(vector<const MX::Types::FeatureMap<float>*> dst
        cv::Mat preProcframe = preprocess_emotion(inframe, true);
 
        // Set preprocessed input data to be sent to accelarator
-       dst[0]->set_data((float*)preProcframe.data, false);
+       dst[0]->set_data((float*)preProcframe.data);
 
        return true;
    }
@@ -508,7 +508,7 @@ bool incallback_getframe_emotion(vector<const MX::Types::FeatureMap<float>*> dst
 }
 
 // Output callback function
-bool outcallback_getmxaoutput_emotion(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
+bool outcallback_getmxaoutput_emotion(std::vector<const MX::Types::FeatureMap*> src, int streamLabel){
 
     std::vector<float*> ofmap_emotion;
     cv::Mat inframe;
@@ -517,7 +517,7 @@ bool outcallback_getmxaoutput_emotion(vector<const MX::Types::FeatureMap<float>*
 
     for(int i=0; i<model_info_emotion.num_out_featuremaps ; ++i){
         float * fmap_emotion = new float[model_info_emotion.out_featuremap_sizes[i]];
-        src[i]->get_data(fmap_emotion, true);
+        src[i]->get_data(fmap_emotion);
         ofmap_emotion.push_back(fmap_emotion);
     }
 
@@ -682,8 +682,7 @@ void run_inference(){
 
     if(runflag.load()){
     
-        MX::Runtime::MxAccl accl;
-        accl.connect_dfp(modelPath.c_str());
+        MX::Runtime::MxAccl accl{fs::path(modelPath)};
 
         model_info = accl.get_model_info(0);
         print_model_info_face();
@@ -691,7 +690,6 @@ void run_inference(){
         model0_input_width = model_info.in_featuremap_shapes[0][1];
 
         accl.connect_stream(&incallback_getframe_face, &outcallback_getmxaoutput_face, 0 /*unique stream ID*/, 0 /*Model ID */);   
-
         model_info_emotion = accl.get_model_info(1);
         print_model_info_emotion();
         model1_input_height = model_info_emotion.in_featuremap_shapes[0][0];

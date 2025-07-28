@@ -14,7 +14,7 @@ This application uses Mediapipe Palm and Hand models ('full' variants) to detect
 | **Model Type**       | Palm Detection & Hand Landmark Models
 | **Framework**        | TFLite
 | **Model Source**     | [Palm Detection (Full)](https://storage.googleapis.com/mediapipe-assets/palm_detection_full.tflite)🔗⬇️ ,  [Hand Landmark (Full)](https://storage.googleapis.com/mediapipe-assets/hand_landmark_full.tflite)🔗⬇️ from the [google-edge-ai/mediapipe repository](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/models.md#hands)🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/mediapipe_hands.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/mediapipe_hands.zip)
 | **Input**            | Input size for Palm Detection model: (192,192,3), Input size for Hand Landmark model: (224,224,3)
 | **Output**           | Output from HandLandmark model: bounding boxes, landmarks, rotated landmarks, handedness, confidence 
 | **License**          | [MIT License](LICENSE.md)
@@ -24,12 +24,15 @@ This application uses Mediapipe Palm and Hand models ('full' variants) to detect
 
 ### Linux
 
-Before running the application, ensure that **OpenCV** is installed
+Before running the application, ensure that **OpenCV** and other dependencies are installed.
 
-You can install OpenCV using the following command:
+You can install OpenCV, scikit-learn, joblib, and pandas using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
+pip install joblib==1.5.1
+pip install pandas==2.3.1
+pip install -U scikit-learn==1.7.0
 ```
 
 
@@ -42,19 +45,20 @@ pip install opencv-python
 To download and unzip the precompiled DFPs, use the following commands:
 
 ```bash
-cd models
-wget https://developer.memryx.com/example_files/1p1/mediapipe_hands.zip
+mkdir models && cd models
+wget https://developer.memryx.com/example_files/2p0/mediapipe_hands.zip
 unzip mediapipe_hands.zip
 ```
 
 <details>
 <summary> (Optional) Download and Compile the Model Yourself </summary>
 
-If you prefer, you can download and compile the model rather than using the precompiled model. Download the pre-trained 
+If you prefer, you can download and compile the model rather than using the pre-compiled model. Download the pre-trained 
 
 * Palm Detection and HandLandmark models from from the [google-edge-ai/mediapipe repository](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/models.md#hands)🔗
 
 ```bash
+mkdir models && cd models
 wget https://storage.googleapis.com/mediapipe-assets/palm_detection_full.tflite
 wget https://storage.googleapis.com/mediapipe-assets/hand_landmark_full.tflite
 ```
@@ -65,7 +69,7 @@ You can now use the MemryX Neural Compiler to compile the model and generate the
 mx_nc -m hand_landmark_full.tflite palm_detection_full.tflite --autocrop
 ```
 
-**NOTE:** if you compile the DFP yourself, the NeuralCompiler will create a cropped post-processing model. This model is just simple data organziation operations, so our `MxHandPose.py` actually forgoes use of the `post.tflite` and uses plain numpy functions. Thus it is safe to delete the post model file.
+**NOTE:** if you compile the DFP yourself, the NeuralCompiler will create a cropped post-processing model. This model is just simple data organziation operations, so our `MxHandPose.py` actually forgoes use of the `post.tflite` and uses plain numpy functions. Thus, it is safe to delete the post model file.
 
 </details>
 

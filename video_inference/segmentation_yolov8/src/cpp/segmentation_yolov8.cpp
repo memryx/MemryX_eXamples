@@ -351,7 +351,7 @@ private:
     }
 
     // Input callback function to fetch frames and preprocess them
-    bool incallback_getframe(vector<const MX::Types::FeatureMap<float> *> dst, int streamLabel)
+    bool incallback_getframe(vector<const MX::Types::FeatureMap *> dst, int streamLabel)
     {
         if (runflag.load())
         {
@@ -386,7 +386,12 @@ private:
 
                     // Preprocess frame and set data for inference
                     cv::Mat preProcframe = preprocess(rgbImage);
-                    dst[0]->set_data((float *)preProcframe.data, false);
+                    if(!use_tflite) {
+                        cv::Mat chw_image;
+                        cv::dnn::blobFromImage(preProcframe, chw_image, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0,0,0), true, false);
+                        preProcframe = chw_image;
+                    }
+                    dst[0]->set_data((float *)preProcframe.data);
 
                     return true;
                 }
@@ -400,7 +405,7 @@ private:
     }
 
     // Output callback function to process MXA output and display results
-    bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float> *> src, int streamLabel)
+    bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap *> src, int streamLabel)
     {
         // Get data from the feature maps
         for (int i = 0; i < post_model_info.num_out_featuremaps; ++i)
@@ -431,6 +436,7 @@ private:
         {
             // [32, 160*160]
             mask_protos = cv::Mat(features_per_mask, mask_proto_height * mask_proto_width, CV_32F, mxa_outputs[0]);
+            // mask_protos = mask_protos.t();
         }
 
         // postprocess masks (crop & scale)
@@ -620,21 +626,21 @@ int main(int argc, char *argv[])
     use_tflite = postprocessing_model_path.extension() == ".tflite";
 
     // Create the Accl object and load the DFP model
-    MX::Runtime::MxAccl accl;
-    accl.connect_dfp(model_path.c_str());
+    MX::Runtime::MxAccl* accl;
+    accl = new MX::Runtime::MxAccl(model_path);
 
     // Connect the post-processing model
-    accl.connect_post_model(postprocessing_model_path);
+    accl->connect_post_model(postprocessing_model_path);
 
     // Creating GuiView for display
     MxQt gui(argc, argv);
     gui.screens[0]->SetSquareLayout(1, false); // Single stream layout
 
     // Creating YoloV8 objects for each video stream
-    YoloV8 obj(&accl, video_str, &gui, 0);
+    YoloV8 obj(accl, video_str, &gui, 0);
 
     // Run the accelerator and wait
-    accl.start();
+    accl->start();
     gui.Run(); // Wait until the exit button is pressed in the Qt window
-    accl.stop();
+    accl->stop();
 }

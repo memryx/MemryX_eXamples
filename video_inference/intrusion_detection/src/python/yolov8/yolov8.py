@@ -87,9 +87,8 @@ class YoloV8:
         image_data = np.array(img) / 255.0
 
 
-        # Expand dimensions to add the batch size as the third axis
-        image_data = np.expand_dims(image_data, axis=2)  # Adds batch dimension after width and height
-        image_data = np.expand_dims(image_data, axis=0)  # Adds another dimension for batch size
+        # Expand dimensions to add the batch size
+        image_data = np.expand_dims(image_data, axis=0)  
 
         # Return the preprocessed image data
         return image_data

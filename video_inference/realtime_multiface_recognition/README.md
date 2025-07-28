@@ -15,23 +15,25 @@ pipeline into a realtime application with an interactive GUI.
 | **Model Type**       | Face Detection + Recognition
 | **Framework**        | [Onnx](https://onnx.ai/) + [Keras](https://keras.io/)
 | **Model Source**     | [YoloV8n-Face](https://github.com/derronqi/yolov8-face), [FaceNet](https://github.com/serengil/deepface/blob/master/deepface/models/facial_recognition/Facenet.py)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/face_recognition.zip)                                           
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/face_recognition.zip)                                           
 | **Output**           | Face bounding box + keypoints + embedding
 | **OS**               | Linux
 | **License**          | [GPL](LICENSE.md)                                         
 
 ## Requirements
 
-Before running the application, ensure that OpenCV is installed. You can install it using the following commands:
+Before running the application, ensure that `OpenCV`, `PySide6`, and `lap` are installed. You can install them using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
+pip install PySide6==6.9.1
+pip install lap==0.5.12
 ```
 ### Step 1: Download Pre-compiled DFP
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/face_recognition.zip
+wget https://developer.memryx.com/example_files/2p0/face_recognition.zip
 mkdir -p models
 unzip face_recognition.zip -d models
 ```
@@ -60,7 +62,7 @@ Move to the `src/` directory and run the viewer application. This will by defaul
 
 ```bash
 cd src/
-python viewer.py 
+python demo.py 
 ```
 
 ## Viewer Details

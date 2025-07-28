@@ -123,7 +123,7 @@ class App:
         if cv.waitKey(1) == ord('q'):  # Exit on 'q' key press
             self.cam.release()  # Release the camera resource
             cv.destroyAllWindows()  # Close OpenCV windows
-            exit(1)
+            os._exit(0)
 
     # Postprocess the logits from the model to get emotion index
     def postprocess(self, logits, original_shape):

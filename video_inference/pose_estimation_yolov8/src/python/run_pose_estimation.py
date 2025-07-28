@@ -69,8 +69,9 @@ class App:
         padded_img = padded_img / 255.0
         padded_img = padded_img.astype(np.float32)
         
-        # Add new axis and change shape to (640, 640, 1, 3)
-        padded_img = np.expand_dims(padded_img, axis=2)  # Add a new axis for batch size
+        # Change the shape to (1, 3, 640, 640)
+        padded_img = np.transpose(padded_img, (2, 0, 1))  # Change shape to (3, 640, 640)
+        padded_img = np.expand_dims(padded_img, axis=0)  # Add batch dimension to make it (1, 3, 640, 640)
         
         return padded_img, r
 

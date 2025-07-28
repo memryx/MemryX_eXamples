@@ -14,7 +14,7 @@ The **Audio classification using YAMNet** example demonstrates how to classify a
 | **Model Type**       | Classification
 | **Framework**        | [Tflite](https://www.tensorflow.org/)
 | **Model Source**     | [Download from Kaggle](https://www.kaggle.com/models/google/yamnet/tfLite)
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/audio_classification.zip)
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/Audio_classification_YamNet_96_64_1_tflite.zip)
 | **Input**            | Audio clips (.wav files)
 | **Output**           | Class to which the audio clip mostly is about.
 | **OS**               | Linux
@@ -27,10 +27,10 @@ The **Audio classification using YAMNet** example demonstrates how to classify a
 Before running the application, ensure that **ai_edge_litert**, **flask** and **scipy** are installed. You can install using the following commands:
 
 ```bash
-pip install ai-edge-litert scipy flask
+pip install ai-edge-litert==1.3.0 scipy flask==3.1.1
 ```
 
-NOTE: The package **ai-edge-litert** is only supported in Python versions 3.9 - 3.11. Please make sure you have right versions of Python installed.
+NOTE: The package **ai-edge-litert** is only supported in Python versions 3.9 - 3.12. Please make sure you have right versions of Python installed.
 
 
 ## Running the Application
@@ -39,10 +39,41 @@ NOTE: The package **ai-edge-litert** is only supported in Python versions 3.9 - 
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/1p1/audio_classification.zip
+wget https://developer.memryx.com/model_explorer/2p0/Audio_classification_YamNet_96_64_1_tflite.zip
 mkdir -p models
-unzip audio_classification.zip -d models
+unzip Audio_classification_YamNet_96_64_1_tflite.zip -d models
 ```
+
+<details> 
+<summary> (Optional) Download and compile model yourself </summary>
+
+First, let us create the folders required to store the model using the commands below:
+
+```bash
+cd audio_classification_cmd
+
+mkdir models 
+cd models 
+
+```
+
+Follow the steps below to download the model. 
+
+```bash
+curl -L -o ./model.tar.gz https://www.kaggle.com/api/v1/models/google/yamnet/tfLite/tflite/1/download
+tar -xzf ./model.tar.gz -C ./
+mv 1.tflite Audio_classification_YamNet_96_64_1_tflite.tflite
+
+```
+
+Now you may compile the model. Run the following command to generate the DFP. 
+
+```bash
+ mx_nc Audio_classification_YamNet_96_64_1_tflite.tflite -v --autocrop
+```
+
+This completes the process of download and compilation. 
+</details>
 
 
 ### Step 2: Running the Script/Program

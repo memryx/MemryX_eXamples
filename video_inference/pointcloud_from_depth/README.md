@@ -12,9 +12,9 @@ The **Point Cloud from Depth Estimation** example demonstrates real-time depth i
 |----------------------|-------------------------------------------------------------------------|
 | **Model**            | [MiDaS v2 Small](https://arxiv.org/pdf/1907.01341) 🔗 
 | **Model Type**       | Depth Estimation                                                        |
-| **Framework**        | [TensorFlow](https://www.tensorflow.org/) 🔗
+| **Framework**        | [LiteRT](https://ai.google.dev/edge/litert) 🔗
 | **Model Source**     | [Download from TensorFlow Hub](https://www.kaggle.com/models/intel/midas) 🔗
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/1p1/depth_estimation_using_midas.zip)                                           
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/MiDaS_256_256_3_tflite.zip)                                           
 | **Input**            | 256x256 (default)                                                       
 | **Output**           | Depth map (matches input resolution), Point Cloud Visualization         |
 | **Application**      | Real-time point cloud generation and visualization from depth data      |
@@ -28,51 +28,15 @@ The **Point Cloud from Depth Estimation** example demonstrates real-time depth i
 Before running the application, ensure that **OpenCV**, **Open3D**, and **curl** are installed. You can install the necessary libraries using the following commands:
 
 ```bash
-pip install opencv-python open3d
-sudo apt install curl
+pip install opencv-python==4.11.0.86 open3d==0.19.0
+sudo apt install curl==8.5.0
 ```
-
+for ARM (aarch64) platforms, pip install open3d is only supported for python 3.8 and 3.10.
 ### Windows
 
 On Windows, first make sure you have installed [Python 3.11](https://apps.microsoft.com/detail/9nrwmjp3717k)🔗
 
 Then open the `src/python_windows/` folder and double-click on `setup_env.bat`. The script will install all requirements automatically.
-
-
-### Linux Python Requirements
-
-Although the MemryX SDK supports Python 3.12, Open3D is currently incompatible with Python versions higher than 3.11. Therefore, to run this example, you'll need Python 3.11 installed. You can check your current Python version with the following command:
-
-```bash
-python --version
-```
-
-If your version is 3.12 or higher, follow the steps below to install Python 3.11:
-
-#### Installing Python 3.11 on Linux
-
-1. Add the deadsnakes PPA (for Ubuntu-based systems):
-    ```bash
-    sudo add-apt-repository ppa:deadsnakes/ppa
-    sudo apt update
-    ```
-
-2. Install Python 3.11:
-    ```bash
-    sudo apt install python3.11 python3.11-venv python3.11-dev
-    ```
-3. Verify the installation:
-    ```bash
-    python3.11 --version
-    ```
-
-4. (Optional) Set up a virtual environment to ensure you're using Python 3.11 for this project:
-    ```bash
-    python3.11 -m venv mxenv
-    source mxenv/bin/activate
-    ```
-
-**Important Note**: Please ensure that the MemryX SDK is installed in the new Python installation or virtual environment. For instructions, refer to the [SDK tool installation](https://developer.memryx.com/get_started/install_tools.html) page for guidance.
 
 
 ## Running the Application
@@ -81,15 +45,15 @@ If your version is 3.12 or higher, follow the steps below to install Python 3.11
 
 #### Windows
 
-[Download](https://developer.memryx.com/example_files/1p1/depth_estimation_using_midas.zip) and place the .dfp file in the `python_windows/models/` folder.
+[Download](https://developer.memryx.com/model_explorer/2p0/MiDaS_256_256_3_tflite.zip) and place the .dfp file in the `python_windows/models/` folder.
 
 #### Linux
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/1p1/depth_estimation_using_midas.zip
+wget https://developer.memryx.com/model_explorer/2p0/MiDaS_256_256_3_tflite.zip
 mkdir -p models
-unzip depth_estimation_using_midas.zip -d models
+unzip MiDaS_256_256_3_tflite.zip -d models
 ```
 
 <details> 
@@ -100,13 +64,13 @@ If you prefer, you can download and compile the model rather than using the prec
 curl -L -o ./midas_v2_small.tar.gz https://www.kaggle.com/api/v1/models/intel/midas/tfLite/v2-1-small-lite/1/download
 tar -xzf ./midas_v2_small.tar.gz -C ./
 mkdir -p models
-mv 1.tflite ./models/midas_v2_small.tflite
+mv 1.tflite ./models/MiDaS_256_256_3_tflite.tflite
 ```
 
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:
 
 ```bash
-mx_nc -m models/midas_v2_small.tflite
+mx_nc -m models/MiDaS_256_256_3_tflite.tflite
 ```
 
 </details>
@@ -114,6 +78,7 @@ mx_nc -m models/midas_v2_small.tflite
 
 ### Step 2: Run the Script/Program
 
+#### Linux
 To run the Python example for real-time point cloud generation from depth data using MX3, simply execute the following command:
 
 ```bash
@@ -128,6 +93,20 @@ For example, to run with a specific model and DFP file, use:
 
 ```bash
 python src/python/run_pointcloud_from_depth.py -m <model_path> -d <dfp_path>
+```
+
+NOTE: In case you run into the following error:
+```bash
+[Open3D WARNING] GLFW Error: Wayland: The platform does not support setting the window position
+[Open3D WARNING] Failed to initialize GLEW.
+Running Real-Time Inference
+[ WARN:0@5.219] global cap_v4l.cpp:803 requestBuffers VIDEOIO(V4L2:/dev/video0): failed VIDIOC_REQBUFS: errno=16 (Device or resource busy)
+```
+
+you can run the application by using the command below:
+
+```bash 
+XDG_SESSION_TYPE=x11 python src/python/run_pointcloud_from_depth.py
 ```
 
 If no arguments are provided, the script will use the default model and DFP paths.

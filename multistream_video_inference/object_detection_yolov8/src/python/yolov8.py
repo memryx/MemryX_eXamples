@@ -45,7 +45,7 @@ class YoloV8:
     """
 
 ###################################################################################################
-    def __init__(self, stream_img_size=None):
+    def __init__(self, stream_img_size=None, model_type='tflite'):
         """
         The initialization function.
         """
@@ -56,6 +56,7 @@ class YoloV8:
         self.input_height = 640
         self.confidence_thres = 0.4
         self.iou_thres = 0.6
+        self.model_type = model_type
 
         self.stream_mode = False
         if stream_img_size:
@@ -87,10 +88,9 @@ class YoloV8:
         # Preprocess the image and prepare blob for model
         blob = cv2.dnn.blobFromImage(self.image, scalefactor=1 / 255, size=(640, 640), swapRB=True)
 
-        # Assume 'blob' is currently (1, 3, 640, 640)
-        blob = blob.squeeze(0)  # Removes the batch dimension -> (3, 640, 640)
-        blob = blob.transpose(1, 2, 0)  # Change to (640, 640, 3)
-        blob = np.expand_dims(blob, axis=2)  # Add new axis at index 2 -> (640, 640, 1, 3)
+        if self.model_type == 'tflite':
+            # Assume 'blob' is currently (1, 3, 640, 640)
+            blob = blob.transpose(0, 2, 3, 1)  # Change to (1, 640, 640, 3)
 
         # Return the preprocessed image data
         return blob

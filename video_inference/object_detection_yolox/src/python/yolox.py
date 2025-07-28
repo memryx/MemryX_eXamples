@@ -69,13 +69,83 @@ class YoloX:
         # Step 5: Concatenate along the channel dimension (axis 2)
         concatenated_img = np.concatenate([x0, x1, x2, x3], axis=2)
 
-        # Step 6: Return the processed image as a contiguous array of type float32
+        # Step 6: Reshape image to what is expected by the original onnx model - i.e channel first, and a single batch
+        concatenated_img = np.transpose(concatenated_img, (2,0,1))
+        concatenated_img = np.expand_dims(concatenated_img, axis=0)
+
+        # Step 7: Return the processed image as a contiguous array of type float32
         return np.ascontiguousarray(concatenated_img).astype(np.float32)
+    
+    def sigmoid(self, x: np.ndarray) -> np.ndarray:
+
+        return 1 / (1 + np.exp(-x))
+
+    def onnx_concat(self, inputs: list, axis: int) -> np.ndarray:
+
+        # Ensure all inputs are numpy arrays
+        if not all(isinstance(x, np.ndarray) for x in inputs):
+            raise TypeError("All inputs must be numpy arrays.")
+        
+        # Ensure shapes match on non-concat axes
+        ref_shape = list(inputs[0].shape)
+        for i, tensor in enumerate(inputs[1:], start=1):
+            for ax in range(len(ref_shape)):
+                if ax == axis:
+                    continue
+                if tensor.shape[ax] != ref_shape[ax]:
+                    raise ValueError(f"Shape mismatch at axis {ax} between input[0] and input[{i}]")
+
+        return np.concatenate(inputs, axis=axis)
+
+    def onnx_reshape(self, data: np.ndarray, shape: np.ndarray) -> np.ndarray:
+
+        # Ensure shape is a 1D array of integers
+        target_shape = shape.astype(int).tolist()
+
+        # Use NumPy reshape with dynamic handling of -1
+        reshaped = np.reshape(data, target_shape)
+
+        return reshaped
 
     ##  Post-Processing  ######################################################
-    def postprocess(self, fmap):
+    def postprocess(self, output):
+
+        # output is of shape (1, C, H, W)
+
+        output_785 = output[0]     # 785
+        output_794 = output[1]     # 794   
+        output_795 = output[2]     # 795
+        output_811 = output[3]     # 811
+        output_820 = output[4]     # 820
+        output_821 = output[5]     # 821
+        output_837 = output[6]     # 837
+        output_846 = output[7]     # 846
+        output_847 = output[8]     # 847
+
+        output_795 = self.sigmoid(output_795)
+        output_785 = self.sigmoid(output_785)
+        output_821 = self.sigmoid(output_821)
+        output_811 = self.sigmoid(output_811)
+        output_847 = self.sigmoid(output_847)
+        output_837 = self.sigmoid(output_837)
+
+        concat_1 = self.onnx_concat([output_794, output_795, output_785], axis=1)
+        concat_2 = self.onnx_concat([output_820, output_821, output_811], axis=1)
+        concat_3 = self.onnx_concat([output_846, output_847, output_837], axis=1)
+
+        shape = np.array([1, 85, -1], dtype=np.int64)   
+
+        reshape_1 = self.onnx_reshape(concat_1, shape)
+        reshape_2 = self.onnx_reshape(concat_2, shape)
+        reshape_3 = self.onnx_reshape(concat_3, shape)
+
+        concat_out = self.onnx_concat([reshape_1, reshape_2, reshape_3], axis=2)
+
+        output = concat_out.transpose(0,2,1)  #1, 840, 85
+
+        self.num_classes = output.shape[2] - 5
         
-        post_output = fmap[0]
+        post_output = output
 
         # Perform more post + NMS
         grids, expanded_strides = [], []

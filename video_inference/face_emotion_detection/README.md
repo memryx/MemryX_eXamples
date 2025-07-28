@@ -13,8 +13,8 @@ The **Face Detection & Emotion Classification** example demonstrates real-time F
 | **Model**            | [Face Detection](https://github.com/patlevin/face-detection-tflite) and [Emotion Classification](https://github.com/av-savchenko/face-emotion-recognition)     |
 | **Model Type**       | Face Detection and Emotion Classification                                                        |
 | **Framework**        | [TensorFlow](https://www.tensorflow.org/)                                                   |
-| **Model Source**     | [Download from GitHub for Face Detection](https://github.com/patlevin/face-detection-tflite/blob/main/fdlite/data/face_detection_short_range.tflite) and [Download from GitHub for Emotion Recognition](https://github.com/av-savchenko/face-emotion-recognition/blob/main/models/affectnet_emotions/mobilenet_7.h5) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/face_emotion_detection.zip)                                         |
+| **Model Source**     | [Download from GitHub for Face Detection](https://github.com/patlevin/face-detection-tflite/raw/main/fdlite/data/face_detection_short_range.tflite) and [Download from GitHub for Emotion Recognition](https://github.com/sb-ai-lab/EmotiEffLib/raw/main/models/affectnet_emotions/mobilenet_7.h5) |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/face_emotion_detection.zip)                                         |
 | **Model Resolution** | 128 x 128 (Face Detection)  and 224 x 224  (Emotion Recognition)                                      |
 | **Output**           | Face Bounding boxes and Emotion classes |
 | **OS**               | Linux |
@@ -22,10 +22,18 @@ The **Face Detection & Emotion Classification** example demonstrates real-time F
 
 ## Requirements
 
-Before running the application, ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV using the following commands:
+Before running the application, 
+
+The emoji files are stored as `git lfs` files, ensure that the emojis are pulled properly by explicitly running
+
+```
+git lfs pull
+```
+
+Ensure that Python, OpenCV, and the required packages are installed. You can install OpenCV using the following commands:
 
 ```bash
-pip install opencv-python
+pip install opencv-python==4.11.0.86
 ```
 
 For C++ applications, download the supported version of PyTorch [PyTorch Get Started Page](https://pytorch.org/get-started/locally/)
@@ -35,26 +43,17 @@ This application requires the PyTorch C++ library to run.
 
 Download Instructions:
 
-    Please download the supported version of PyTorch by following these steps at PyTorch Get Started Page
+    Please download the supported version of PyTorch by following these steps:
 
-    1. PyTorch Build: Select 'Stable (2.3.0 or later)'
+    1. cd src/cpp
 
-    2. Your OS: Choose between Linux, Mac, or Windows
+    2. wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.4.1%2Bcpu.zip
 
-    3. Package: Select 'LibTorch'
+    3. unzip libtorch-cxx11-abi-shared-with-deps-2.4.1+cpu.zip
 
-    4. Language: Choose 'C++'
-
-    5. Compute Platform: Select 'CPU'
-
-    6. Installation Command: Ensure to download the 'cxx11 ABI' version, not the pre-built version.
-
-    After downloading, extract the .zip file and place the file in the cpp folder.
-
-Also, change the 'cxx11 ABI' version in the file CMakeLists.txt at lines 11 to match the downloaded version.
 ```
 
-Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_driver.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
+Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application
 
@@ -62,7 +61,7 @@ Also ensure that all memx runtime plugins and utilities libs are installed. For 
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/example_files/face_emotion_detection.zip
+wget https://developer.memryx.com/example_files/2p0/face_emotion_detection.zip
 mkdir -p models
 unzip face_emotion_detection.zip -d models
 ```
@@ -72,13 +71,13 @@ unzip face_emotion_detection.zip -d models
 If you prefer, you can download and compile the model rather than using the precompiled model. Download the pre-trained face_detection_short_range.tflite model from face-detection-tflite GitHub:
 
 ```bash
-wget https://github.com/patlevin/face-detection-tflite/blob/main/fdlite/data/face_detection_short_range.tflite
+wget https://github.com/patlevin/face-detection-tflite/raw/main/fdlite/data/face_detection_short_range.tflite
 ```
 
 Download the pre-trained mobilenet model from emotion recognition from GitHub:
 
 ```bash
-wget https://github.com/av-savchenko/face-emotion-recognition/blob/main/models/affectnet_emotions/mobilenet_7.h5
+wget https://github.com/sb-ai-lab/EmotiEffLib/raw/main/models/affectnet_emotions/mobilenet_7.h5 
 ```
 
 You can now use the MemryX Neural Compiler to compile the model and generate the DFP file required by the accelerator:

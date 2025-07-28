@@ -157,6 +157,7 @@ class CenterNet{
 
             // Convert image to float32 and normalize
             cv::Mat floatImage;
+            //resizedImage.convertTo(floatImage, CV_32F, 1.0 / 127.5, -1.0);
             resizedImage.convertTo(floatImage, CV_32F);
 
             return floatImage;
@@ -190,6 +191,7 @@ class CenterNet{
                 float x2                = output[outmap_.box_idx][i * 4 + 3];
                 float y2                = output[outmap_.box_idx][i * 4 + 2];
                 int classPrediction     = output[outmap_.class_idx][i];
+                //printf("classPrediction: %d, confidence: %f, x1: %f, y1: %f, x2: %f, y2: %f\n", classPrediction, confidence, x1, y1, x2, y2);
 
                 // Coords should be scaled to the original image. The coords from the model are relative to the model's input height and width.
                 x1 = x1 * input_image_width ;
@@ -204,7 +206,7 @@ class CenterNet{
             return detections;
         }
 
-        bool incallback_getframe(vector<const MX::Types::FeatureMap<float>*> dst, int streamLabel){
+        bool incallback_getframe(vector<const MX::Types::FeatureMap*> dst, int streamLabel){
 
             if(runflag.load()){
                 cv::Mat inframe;
@@ -222,8 +224,15 @@ class CenterNet{
                 }
                 // Preprocess frame
                 cv::Mat preProcframe = preprocess(rgbImage);
-                // Set preprocessed input data to be sent to accelarator
-                dst[0]->set_data((float*)preProcframe.data, false);
+
+                if(type_ == App_Onnx){
+                    // For ONNX models, we need to convert the image to CHW format
+                    cv::Mat chwImage;
+                    cv::dnn::blobFromImage(preProcframe, chwImage, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
+                    preProcframe = chwImage;
+                }
+
+                dst[0]->set_data((float*)preProcframe.data);
 
                 return true;
             }           
@@ -233,7 +242,7 @@ class CenterNet{
             }    
         }
 
-        bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap<float>*> src, int streamLabel){
+        bool outcallback_getmxaoutput(vector<const MX::Types::FeatureMap*> src, int streamLabel){
 
             for(int i =0; i<src.size();++i){
                 src[i]->get_data(output[i]);
@@ -247,6 +256,7 @@ class CenterNet{
 
             //Get the detections from model output
             num_boxes = output[outmap_.num_boxes_idx][0];
+            //printf("num_boxes: %d\n", num_boxes);
             std::vector<detectedObj> detected_objectVector = get_detections(output);
             
             // draw boundign boxes
@@ -283,7 +293,7 @@ class CenterNet{
             else if(type_==App_Tf){
                 outmap_ = {.confidence_idx=3,.class_idx=4,.box_idx=5,.num_boxes_idx=2};
             }
-            else{
+            else{ // tflite
                 outmap_ = {.confidence_idx=0,.class_idx=2,.box_idx=3,.num_boxes_idx=1};
             }
             // If the input is a camera, try to use optimal settings
@@ -348,24 +358,21 @@ int main(int argc, char *argv[]){
         //Decoding the plugin passed by user
         if(plugin_name=="onnx"){
             //Create the Accl object and load the DFP
-            accl = new MX::Runtime::MxAccl;
-            accl->connect_dfp(onnx_model_path.c_str());
+            accl = new MX::Runtime::MxAccl(onnx_model_path.c_str(), {0}, {true,true}, false, {20, 0, false, 12, 12}, {false, 0});
             //Connecting the pre-processing and post-processing models
             accl->connect_pre_model(onnx_preprocessing_model_path,0);
             accl->connect_post_model(onnx_postprocessing_model_path,0);
         }
         else if(plugin_name=="tf"){
             //Create the Accl object and load the DFP
-            accl = new MX::Runtime::MxAccl;
-            accl->connect_dfp(tf_model_path.c_str());
+            accl = new MX::Runtime::MxAccl(tf_model_path.c_str(), {0}, {true,true}, false, {20, 0, false, 12, 12}, {false, 0});
             //Connecting the pre-processing and post-processing models
             accl->connect_pre_model(tf_preprocessing_model_path,0);
             accl->connect_post_model(tf_postprocessing_model_path,0);
         }
         else if(plugin_name=="tflite"){
             //Create the Accl object and load the DFP
-            accl = new MX::Runtime::MxAccl;
-            accl->connect_dfp(tflite_model_path.c_str());
+            accl = new MX::Runtime::MxAccl(tflite_model_path.c_str(), {0}, {true,true}, false, {20, 0, false, 12, 12}, {false, 0});
             //Connecting the pre-processing and post-processing models
             accl->connect_pre_model(tflite_preprocessing_model_path,0);
             accl->connect_post_model(tflite_postprocessing_model_path,0);

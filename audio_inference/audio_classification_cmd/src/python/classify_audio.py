@@ -141,12 +141,11 @@ class AudioClassify:
         output_details = self._post_interpreter.get_output_details()
         postprocessed_waveform = output_details[0]['index'] 
 
-        # Reshape the output to match the expected input shape of the model
-        output_reshaped = np.squeeze(output, axis=1)  # Reshape from (1, 1, 521) to (1, 521)
+        # shape of output is (1, 521)
 
-        self._post_interpreter.resize_tensor_input(waveform_input_index, list(output_reshaped.shape), strict=True)
+        self._post_interpreter.resize_tensor_input(waveform_input_index, list(output.shape), strict=True)
         self._post_interpreter.allocate_tensors()
-        self._post_interpreter.set_tensor(waveform_input_index, output_reshaped)
+        self._post_interpreter.set_tensor(waveform_input_index, output)
 
         self._post_interpreter.invoke()
 
@@ -212,11 +211,8 @@ class AudioClassify:
             # Normalize wave data in [-1.0, 1.0] (Refer to Yamnet model documentation)
             wav_data_frame = wav_data_frame / tf.int16.max
             preprocessed_wav_data = self._run_preprocess_model(wav_data_frame)
-            
-            # We do a transpose so that the shape of the output matches the DFP expected input shape
-            preprocessed_wav_data = np.transpose(preprocessed_wav_data, (1,2,0,3))
 
-            # Get the MXA output
+            # Get the MXA output ; the shape of preporcessed_wav_data is (1, 94, 64, 1)
             mxa_output = self.accl.run(preprocessed_wav_data)
             
             # Run the output through the post processing model to generate the class scores
@@ -269,9 +265,9 @@ def main():
     # Define paths to all required items
     class_map_csv_text = '../../assets/yamnet_class_map.csv'
 
-    preprocess_model_path = '../../models/audio_classification/audioclassifymodel_pre.tflite'
-    model_dfp_path = "../../models/audio_classification/audioclassifymodel.dfp"
-    postprocess_model_path = '../../models/audio_classification/audioclassifymodel_post.tflite'
+    preprocess_model_path = '../../models/Audio_classification_YamNet_96_64_1_tflite_pre.tflite'
+    model_dfp_path = "../../models/Audio_classification_YamNet_96_64_1_tflite.dfp"
+    postprocess_model_path = '../../models/Audio_classification_YamNet_96_64_1_tflite_post.tflite'
 
     # Initialize class 
     audioclassify = AudioClassify(class_map_csv_text, preprocess_model_path, model_dfp_path, postprocess_model_path)
