@@ -93,7 +93,7 @@ Maximize performance by running multiple video streams concurrently on MemryX ac
 | [**Multi-Stream Object Detection using YOLOv8S**](multistream_video_inference/object_detection_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html) | Detect objects across multiple streams      | YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/object_detection_yolov8/assets/yolov8_objectDetection.png" alt="Yolov8 Object Detection Preview" height="50"> |
 | [**Multi-Stream Object Detection using YOLOv7Tiny**](multistream_video_inference/multistream_objectdetection_yolov7Tiny/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html) | Detect objects across multiple streams      | YOLOv7 (Tiny)  | ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/multistream_objectdetection_yolov7Tiny/assets/yolov7_objectDetection_multistream.png" alt="Yolov7-Tiny Object Detection Preview" height="50"> |
 
-### Multi-DFP(Data Flow Pipelines) Applications 🖥️
+### Multi-DFP Applications 🖥️
 Run multiple models simultaneously on separate DFPs within a single application.
 
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |

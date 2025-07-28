@@ -17,7 +17,7 @@ public:
                std::condition_variable* queue_cv,
                std::atomic_bool* runflag,
                MxQt* gui,
-               int stream_idx);
+               int gui_stream_idx);
 
 private:
     // Input/output callbacks

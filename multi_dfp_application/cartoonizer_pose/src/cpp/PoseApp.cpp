@@ -12,7 +12,7 @@ PoseApp::PoseApp(MX::Runtime::MxAccl* accl,
                  std::condition_variable* queue_cv,
                  std::atomic_bool* runflag,
                  MxQt* gui,
-                 int stream_idx)
+                 int gui_stream_idx)
     : frame_queue(frame_queue),
       queue_mutex(queue_mutex),
       queue_cv(queue_cv),
@@ -31,7 +31,7 @@ PoseApp::PoseApp(MX::Runtime::MxAccl* accl,
           {6, 8}, {8, 10}, {5, 6}, {5, 11}, {6, 12}, {11, 12}, {11, 13},
           {13, 15}, {12, 14}, {14, 16}
       }),
-      gui_(gui), gui_stream_idx_(stream_idx)
+      gui_(gui), gui_stream_idx_(gui_stream_idx)
 {
     accl->connect_post_model(postproc_model_path);
     post_model_info = accl->get_post_model_info(0);

@@ -18,7 +18,7 @@ public:
             std::mutex* queue_mutex,
             std::condition_variable* queue_cv,
             std::atomic_bool* runflag,
-            MxQt* gui, int stream_idx);
+            MxQt* gui, int gui_stream_idx);
 
 private:
     // Callback functions

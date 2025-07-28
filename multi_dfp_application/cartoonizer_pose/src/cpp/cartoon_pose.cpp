@@ -114,8 +114,18 @@ int main(int argc, char* argv[]) {
     }
 
     // Accelerator options
-    MX::RPC::SchedulerOptions sched_opts{30, 0, false, 20, 20};
-    MX::RPC::ClientOptions client_opts{true, 30.0};
+    MX::RPC::SchedulerOptions sched_opts{
+        30,   // frame_limit: Max frames before DFP swap
+        0,    // time_limit (ms): No time-based swap limit
+        false,// stop_on_empty: Keep DFP active even if input is empty
+        20,   // ifmap_queue_size: Input queue capacity
+        20    // ofmap_queue_size: Output queue capacity per client
+    };
+
+    MX::RPC::ClientOptions client_opts{
+        true,  // smoothing: Enable FPS smoothing
+        30.0f  // fps_target: Limit input pacing to 30 FPS
+    };
 
     // Cartoon pipeline
     std::vector<int> cartoon_device = {0};

@@ -31,7 +31,7 @@ Before running the application, ensure that Python, OpenCV, and the required pac
 
 ```bash
 pip install opencv-python==4.11.0.86
-pip install PyQt5
+pip install PyQt5==5.15.11
 pip install ultralytics==8.3.161
 ```
 

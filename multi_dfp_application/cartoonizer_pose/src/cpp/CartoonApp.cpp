@@ -11,9 +11,9 @@ CartoonApp::CartoonApp(MX::Runtime::MxAccl* accl,
                        std::condition_variable* queue_cv,
                        std::atomic_bool* runflag,
                        MxQt* gui,
-                       int stream_idx)
+                       int gui_stream_idx)
     : frame_queue(frame_queue), queue_mutex(queue_mutex), queue_cv(queue_cv),
-      runflag(runflag), gui_(gui), gui_stream_idx_(stream_idx)
+      runflag(runflag), gui_(gui), gui_stream_idx_(gui_stream_idx)
 {
     model_info = accl->get_model_info(0);
     model_input_height = model_info.in_featuremap_shapes[0][0];
