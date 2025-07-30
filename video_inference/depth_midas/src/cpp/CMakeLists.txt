@@ -23,7 +23,7 @@ if(WIN32)
     set(MEMRYX_INCLUDE_DIR "C:/Program Files/MemryX/include")
 
     # Find OpenCV package
-    set(OpenCV_DIR  "C:/opencv/build/x64/vc16/lib")
+    set(OpenCV_DIR  "C:/OpenCV/opencv/build/x64/vc16/lib")
     find_package(OpenCV REQUIRED)
 
     include_directories(
@@ -55,6 +55,14 @@ if(WIN32)
         message(FATAL_ERROR "Cannot find udriver.lib")
     endif()
 
+    # Link the mx_accl library and OpenCV libraries
+    target_link_libraries(${PROJECT_NAME}
+        ${MXACCL_DYNAMIC}
+        ${MEMX_LIB}
+        ${OpenCV_LIBS}
+    )
+
+
 elseif(UNIX)
     message(STATUS "Configuring for Linux")
 
@@ -67,36 +75,11 @@ elseif(UNIX)
         ${OpenCV_INCLUDE_DIRS}
     )
 
-    find_library(MXACCL_DYNAMIC
-        NAMES mx_accl
-        PATHS
-            /usr/lib
-            /usr/local/lib
-        NO_DEFAULT_PATH
-    )
-    if (NOT MXACCL_DYNAMIC)
-        message(FATAL_ERROR "Cannot find libmx_accl.so")
-    endif()
-
-    find_library(MEMX_LIB
-        NAMES memx
-        PATHS
-            /usr/lib
-            /usr/local/lib
-        NO_DEFAULT_PATH
-    )
-    if (NOT MEMX_LIB)
-        message(FATAL_ERROR "Cannot find libmemx.so")
-    endif()
+    # Link the mx_accl library and OpenCV libraries
+    target_link_libraries(${PROJECT_NAME} mx_accl ${OpenCV_LIBS})
 
 endif()
 
-# Link the mx_accl library and OpenCV libraries
-target_link_libraries(${PROJECT_NAME}
-    ${MXACCL_DYNAMIC}
-    ${MEMX_LIB}
-    ${OpenCV_LIBS}
-)
 
 # Copy DFP file to the binary directory during the build
 file(COPY "../../models/midas_v2_small.dfp" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

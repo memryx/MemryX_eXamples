@@ -8,6 +8,7 @@
 #include <string>
 
 namespace fs = std::filesystem;
+std::string server_addr = "/run/mxa_manager/";
 
 #define AVG_FPS_CALC_FRAME_COUNT  50
 
@@ -282,6 +283,11 @@ int main(int argc, char* argv[]){
             std::exit(EXIT_FAILURE);
         }
 
+        #ifdef _WIN32
+            // Change server address 
+            server_addr = "localhost";
+        #endif
+
         MX::Runtime::MxAccl accl(
             fs::path(dfpPath),                      // DFP path
             std::vector<int>{0},                    // device_ids_to_use
@@ -289,7 +295,7 @@ int main(int argc, char* argv[]){
             false,                                  // local_mode
             MX::RPC::SchedulerOptions{600, 0, false, 16, 12},  // sched_options
             MX::RPC::ClientOptions{false, 0},       // client_options
-            "localhost",                            // server_addr
+            server_addr,                            // server_addr
             10000,                                  // server_port_base
             false                                   // ignore_server_
         );
