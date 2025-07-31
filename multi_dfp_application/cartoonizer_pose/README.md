@@ -17,7 +17,7 @@ While [Cartoonizer](../../fun_projects/cartoonizer/README.md) and [Pose Estimati
 | **Pose-Estimation model**  | [Yolov8s-pose](https://docs.ultralytics.com/models/yolov8/)                                            |
 | **Model Type**       | Cartoonizer and Pose Estimation                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
-| **Model Source**     | [Cartoonizer](https://docs.ultralytics.com/models/yolov8/) and [Pose-Estimation](https://github.com/SystemErrorWang/FacialCartoonization/blob/master/weight.pth)|
+| **Model Source**     | [Cartoonizer](https://github.com/SystemErrorWang/FacialCartoonization/blob/master/weight.pth) and [Pose-Estimation](https://docs.ultralytics.com/models/yolov8/)|
 | **Pre-compiled DFP** | [Cartoonizer](https://developer.memryx.com/model_explorer/2p0/Facial_cartoonizer_512_512_3_onnx.zip) and [Pose-Estimation](https://developer.memryx.com/model_explorer/2p0/YOLO_v8_small_pose_640_640_3_onnx.zip)        |
 | **Cartoonizer Model Resolution** | 512x512                         
 | **Pose-Estimation Model Resolution** | 640x640                                                       |

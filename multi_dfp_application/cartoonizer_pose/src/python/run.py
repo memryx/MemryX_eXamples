@@ -6,14 +6,12 @@ import cv2 as cv
 import numpy as np
 from collections import deque
 import argparse
-from queue import Queue
 from multiprocessing import Process, Queue, Event
 from memryx import AsyncAccl
 from apps import Cartoonizer, PoseEstmiation
 from PyQt5.QtWidgets import QApplication
 from displayer import Displayer
 from memryx.runtime import SchedulerOptions, ClientOptions
-from threading import Thread  
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Cartoonizer and Pose Estimation demo with Multi-DFP")
@@ -30,7 +28,8 @@ def parse_args():
 
 def shared_capture_loop(src, queue1, queue2, stop_flag):
     cap = cv.VideoCapture(src)
-    is_cam = src == "/dev/video0"
+    # Check if the source is a camera or video file
+    is_cam = isinstance(src, int) or (isinstance(src, str) and src.startswith('/dev/video'))
 
     while not stop_flag.is_set():
         ret, frame = cap.read()
@@ -49,8 +48,8 @@ def run_cartoonizer(queue, dfp_path, display_thread, src_is_cam, frame_limit, st
         frame_limit,    # frame_limit: Max frames before DFP swap
         0,              # time_limit (ms): No time-based swap limit
         False,          # stop_on_empty: Keep DFP active even if input is empty
-        30,             # ifmap_queue_size: Input queue capacity
-        30              # ofmap_queue_size: Output queue capacity per client
+        24,             # ifmap_queue_size: Input queue capacity
+        24              # ofmap_queue_size: Output queue capacity per client
     )
     client_opts = ClientOptions(
         True,           # smoothing: Enable FPS smoothing
@@ -66,7 +65,7 @@ def run_cartoonizer(queue, dfp_path, display_thread, src_is_cam, frame_limit, st
     return accl
 
 def run_pose_estimation(queue, dfp_path, pose_post_model, input_shape, display_thread, src_is_cam, frame_limit, stop_flag):
-    sched_opts = SchedulerOptions(frame_limit, 0, False, 30, 30)
+    sched_opts = SchedulerOptions(frame_limit, 0, False, 24, 24)
     client_opts = ClientOptions(True, 30.0)
     accl = AsyncAccl(
         dfp_path,
@@ -90,7 +89,7 @@ def main():
     pose_post_model = args.post
 
     if args.cam:
-        input_source = "/dev/video0"
+        input_source = 0 # default camera
         src_is_cam = True
     elif args.video:
         input_source = args.video
@@ -99,8 +98,8 @@ def main():
         print(" Please specify either --cam or --video <path>")
         sys.exit(1)
 
-    queue_cartoonizer = Queue(maxsize=100)
-    queue_pose = Queue(maxsize=100)
+    queue_cartoonizer = Queue(maxsize=30)
+    queue_pose = Queue(maxsize=30)
     stop_flag = Event()
 
     capture_proc = Process(

@@ -20,7 +20,7 @@ class Cartoonizer:
         self.input_width = None
         self.prev_t = None
         self.frame_count = 0
-        self.capture_queue = Queue(maxsize=5)
+        self.capture_queue = Queue(maxsize=30)
         self.frame_times = deque(maxlen=30)
 
         self.accl = accl
@@ -30,7 +30,7 @@ class Cartoonizer:
     def get_frame(self):
         while True:
             try:
-                frame = self.frame_queue.get(timeout=1.0)
+                frame = self.frame_queue.get(timeout=5)
             except queue.Empty:
                 return None
 
@@ -86,7 +86,7 @@ class PoseEstmiation:
 
         self.input_height = None
         self.input_width = None
-        self.capture_queue = Queue(maxsize=5)
+        self.capture_queue = Queue(maxsize=30)
 
         self.box_score = 0.25
         self.kpt_score = 0.5
@@ -113,7 +113,7 @@ class PoseEstmiation:
     def generate_frame(self):
         while True:
             try:
-                frame = self.frame_queue.get(timeout=1.0)
+                frame = self.frame_queue.get(timeout=5)
             except queue.Empty:
                 return None
 
