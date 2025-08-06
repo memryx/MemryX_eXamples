@@ -52,7 +52,7 @@ class MxHandPose:
         self.handpose_model    = MPHandPose(confThreshold=0.5)
 
         dfp_path               = os.path.join(mx_modeldir, 'models.dfp')
-        self.accl = AsyncAccl(dfp_path, device_ids=0)
+        self.accl = AsyncAccl(dfp_path, local_mode=True)
 
         # Connect input and output functions to the accelerator
         self.accl.connect_input(self._palmdetect_src, model_idx=1)
