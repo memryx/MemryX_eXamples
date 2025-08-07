@@ -23,6 +23,7 @@ bool window_created = false; // Flag to ensure window is only created once
 // Model file paths
 const fs::path modelPath = "YOLO_v8_medium_pose_640_640_3_onnx.dfp"; // Path to DFP model
 const fs::path onnx_postprocessing_model_path = "YOLO_v8_medium_pose_640_640_3_onnx_post.onnx"; // Path to post-processing ONNX model
+std::string server_addr = "/run/mxa_manager/";
 fs::path videoPath;
 
 // Model information containers
@@ -32,8 +33,8 @@ MX::Types::MxModelInfo post_model_info; // Information for post-processing model
 std::vector<float*> ofmap; // Container for output feature maps
 
 // Model input parameters
-int model_input_width = 640; 
-int model_input_height = 640; 
+int model_input_width = 640;
+int model_input_height = 640;
 double origHeight = 0.0;  // Original frame height
 double origWidth = 0.0;  // Original frame width
 
@@ -45,7 +46,7 @@ int dets_length = 8400; // Number of detections
 int num_kpts = 17; // Number of keypoints in pose estimation
 
 // OpenCV video capture object
-cv::VideoCapture vcap; 
+cv::VideoCapture vcap;
 
 // Queue to store frames for processing
 std::deque<cv::Mat> frames_queue;
@@ -76,36 +77,38 @@ const std::vector<std::pair<int, int>> KEYPOINT_PAIRS = {
 };
 
 // Signal handler for cleanly exiting on interrupt (Ctrl + C)
-void signalHandler(int pSignal){
+void signalHandler(int pSignal) {
     runflag.store(false);
 }
 
 // Callback function for processing input frames
-bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel){
+bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int streamLabel) {
 
-    if(runflag.load()){
+    if (runflag.load()) {
         cv::Mat inframe;
 
 
-	while(true){
+        while (true) {
             // Capture a frame from video/camera
             bool got_frame = vcap.read(inframe);
 
             if (!got_frame) {
                 std::cout << "\n\n No frame - End of cam? \n\n\n";
                 runflag.store(false);
-                return false; 
-            } else {
+                return false;
+            }
+            else {
                 // Push the captured frame to the queue
                 {
                     std::lock_guard<std::mutex> flock(frameQueue_mutex);
-		            // only push this frame if there's space
-		            if(use_cam && (frames_queue.size() >= max_backlog)){
-			            // drop it and capture the next frame instead
-			            continue;
-		            } else {
+                    // only push this frame if there's space
+                    if (use_cam && (frames_queue.size() >= max_backlog)) {
+                        // drop it and capture the next frame instead
+                        continue;
+                    }
+                    else {
                         frames_queue.push_back(inframe);
-		            }
+                    }
                 }
 
                 // Convert frame to RGB and preprocess for model input
@@ -115,14 +118,15 @@ bool incallback_getframe(std::vector<const MX::Types::FeatureMap*> dst, int stre
                 // cv::resize(rgbImage, preProcframe, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
                 cv::dnn::blobFromImage(rgbImage, preProcframe, 1.0, cv::Size(model_input_width, model_input_height), cv::Scalar(0, 0, 0), true, false);
                 cv::Mat floatImage;
-                preProcframe.convertTo(floatImage, CV_32F,  1.0 / 255.0); // Normalize the frame
+                preProcframe.convertTo(floatImage, CV_32F, 1.0 / 255.0); // Normalize the frame
 
                 // Set preprocessed input data to accelerator
                 dst[0]->set_data((float*)floatImage.data);
                 return true;
             }
-	}
-    } else {
+        }
+    }
+    else {
         vcap.release(); // Release video resources if runflag is false
         return false;
     }
@@ -138,7 +142,7 @@ struct Box {
 bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int streamLabel) {
 
     // Get data from the feature maps
-    for(int i = 0; i < post_model_info.num_out_featuremaps; ++i) {
+    for (int i = 0; i < post_model_info.num_out_featuremaps; ++i) {
         src[i]->get_data(ofmap[i]);
     }
 
@@ -151,7 +155,7 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
     }
 
     // Create a window for displaying results if not created yet
-    if(!window_created) {
+    if (!window_created) {
         cv::namedWindow("Pose Estimation", cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
         cv::resizeWindow("Pose Estimation", cv::Size(origWidth, origHeight));
         cv::moveWindow("Pose Estimation", 0, 0);
@@ -162,9 +166,9 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
     std::vector<Box> all_boxes;
     std::vector<float> all_scores;
     std::vector<cv::Rect> cv_boxes;
-    
+
     // Loop through each detection
-    #pragma omp parallel for num_threads(2)
+#pragma omp parallel for num_threads(2)
     for (int i = 0; i < dets_length; ++i) {
 
         // Extract bounding box coordinates and confidence score
@@ -192,7 +196,7 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
             int y2 = (int)(y0 + 0.5 * h);
 
             // Extract keypoints for pose estimation
-            for (int j = 0; j < num_kpts; ++j) { 
+            for (int j = 0; j < num_kpts; ++j) {
                 float kpt_x = ofmap[0][dets_length * (5 + j * 3) + i] * x_factor;
                 float kpt_y = ofmap[0][dets_length * (5 + j * 3 + 1) + i] * y_factor;
                 float kpt_conf = ofmap[0][dets_length * (5 + j * 3 + 2) + i];
@@ -200,17 +204,18 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
                 // Add keypoints if confidence is above threshold
                 if (kpt_conf > kpt_score) {
                     box.keypoints.push_back(std::make_pair(kpt_x, kpt_y));
-                } else {
+                }
+                else {
                     box.keypoints.push_back(std::make_pair(-1, -1)); // Invalid keypoint
                 }
             }
 
-	    #pragma omp critical
-	    {
-            	all_boxes.push_back(box);
-            	all_scores.push_back(confidence);
-            	cv_boxes.push_back(cv::Rect(x1, y1, x2 - x1, y2 - y1));
-	    }
+#pragma omp critical
+            {
+                all_boxes.push_back(box);
+                all_scores.push_back(confidence);
+                cv_boxes.push_back(cv::Rect(x1, y1, x2 - x1, y2 - y1));
+            }
         }
     }
 
@@ -225,8 +230,8 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
     }
 
     // Draw keypoints and connections (skeleton) on the frame
-    for (const auto &box : filtered_boxes) {
-        for (const auto &connection : KEYPOINT_PAIRS) {
+    for (const auto& box : filtered_boxes) {
+        for (const auto& connection : KEYPOINT_PAIRS) {
             int idx1 = connection.first;
             int idx2 = connection.second;
 
@@ -242,7 +247,7 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
 
         // Draw individual keypoints
         for (int k = 0; k < box.keypoints.size(); ++k) {
-            auto &kpt = box.keypoints[k];
+            auto& kpt = box.keypoints[k];
             if (kpt.first != -1 && kpt.second != -1) {
                 cv::circle(inframe, cv::Point(kpt.first, kpt.second), 4, COLOR_LIST[k % COLOR_LIST.size()], -1);
             }
@@ -253,7 +258,8 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
     frame_count++;
     if (frame_count == 1) {
         start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
-    } else if (frame_count % AVG_FPS_CALC_FRAME_COUNT == 0) {
+    }
+    else if (frame_count % AVG_FPS_CALC_FRAME_COUNT == 0) {
         std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()) - start_ms;
         fps_number = (float)AVG_FPS_CALC_FRAME_COUNT * 1000 / (float)(duration.count());
         sprintf(fps_text, "FPS = %.1f", fps_number);
@@ -271,35 +277,54 @@ bool outcallback_getmxaoutput(std::vector<const MX::Types::FeatureMap*> src, int
         runflag.store(false);
     }
 
-    return true; 
+    return true;
 }
 
 // Function to start inference
 void run_inference() {
 
-    runflag.store(true); 
-    
-    if(use_cam) { 
+    runflag.store(true);
+
+    if (use_cam) {
         std::cout << "use cam";
-        vcap.open(0, cv::CAP_V4L2); // Open camera
-    } else {
-        vcap.open(videoPath.c_str()); // Open video file
+        vcap.open(0, cv::CAP_ANY); // Open camera
+    }
+    else {
+        vcap.open(videoPath.string()); // Open video file
     }
 
-    if(vcap.isOpened()) { 
+    std::cout<<"check use cam\n";
+
+    if (vcap.isOpened()) {
         std::cout << "videocapture opened \n";
         origWidth = vcap.get(cv::CAP_PROP_FRAME_WIDTH); // Get original frame width
         origHeight = vcap.get(cv::CAP_PROP_FRAME_HEIGHT); // Get original frame height
-    } else {
+    }
+    else {
         std::cout << "videocapture NOT opened \n";
-        runflag.store(false); 
+        runflag.store(false);
     }
 
-    if(runflag.load()) { 
 
-        // Initialize the MemryX accelerator
-        MX::Runtime::MxAccl accl{fs::path(modelPath)};
-        
+
+    if (runflag.load()) {
+
+        #ifdef _WIN32
+            // Initialize the MemryX accelerator
+            server_addr = "localhost";
+        #endif
+
+        MX::Runtime::MxAccl accl{ 
+                    fs::path(modelPath),                      // DFP path
+                    std::vector<int>{0},                    // device_ids_to_use
+                    std::array<bool, 2>{true, true},        // use_model_shape
+                    false,                                  // local_mode
+                    MX::RPC::SchedulerOptions{600, 0, false, 16, 12},  // sched_options
+                    MX::RPC::ClientOptions{false, 0},       // client_options
+                    server_addr,                            // server_addr
+                    10000,                                  // server_port_base
+                    false };
+
         accl.connect_post_model(fs::path(onnx_postprocessing_model_path)); // Connect the post-processing model
         post_model_info = accl.get_post_model_info(0); // Get post-processing model info
 
@@ -309,13 +334,13 @@ void run_inference() {
 
         // Allocate memory for feature maps
         ofmap.reserve(post_model_info.num_out_featuremaps);
-        for(int i = 0; i < post_model_info.num_out_featuremaps; ++i) {
+        for (int i = 0; i < post_model_info.num_out_featuremaps; ++i) {
             ofmap.push_back(new float[post_model_info.out_featuremap_sizes[i]]);
         }
 
         // Connect input and output streams to the accelerator
         accl.connect_stream(&incallback_getframe, &outcallback_getmxaoutput, 10 /*unique stream ID*/, 0 /*Model ID*/);
-        
+
         std::cout << "Connected stream \n\n\n";
         accl.start(); // Start inference
         accl.wait();  // Wait for inference to complete
@@ -326,38 +351,39 @@ void run_inference() {
             delete[] fmap;
             fmap = NULL;
         }
-        std::cout << "\n\rAccl stop called \n";  
+        std::cout << "\n\rAccl stop called \n";
     }
 }
 
 // Main function to handle command-line arguments and start the app
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 
-    if(argc>1){
+    if (argc > 1) {
 
         std::string inputType(argv[1]);
 
-        if(inputType == "--cam"){
+        if (inputType == "--cam") {
             use_cam = true;
             runflag.store(true); // Use camera
         }
-        else if(inputType == "--video"){
+        else if (inputType == "--video") {
             use_cam = false;
-            if(argc > 2) {
+            if (argc > 2) {
                 videoPath = std::filesystem::path(argv[2]);  // Get the video path from the command line
-            } else {
+            }
+            else {
                 std::cout << "Error: Missing video path after --video\n";
                 return 1;
             }
             runflag.store(true); // Use video
         }
-        else{
+        else {
             std::cout << "\n\nIncorrect Argument Passed \n\tuse ./app [--cam] or [--video <path-to-video>]\n\n\n";
             runflag.store(false);
         }
 
     }
-    else{
+    else {
         std::cout << "\n\nNo Arguments Passed \n\tuse ./app [--cam] or [--video <path-to-video>]\n\n\n";
         runflag.store(false);
     }
@@ -365,17 +391,17 @@ int main(int argc, char* argv[]){
     // Handle signal (Ctrl+C) to gracefully stop the app
     signal(SIGINT, signalHandler);
 
-    if(runflag.load()){
+    if (runflag.load()) {
 
         std::cout << "application start \n";
-        std::cout << "model path = " << modelPath.c_str() << "\n";
+        std::cout << "model path = " << modelPath.string() << "\n";
 
         // Start the inference process
         run_inference();
     }
 
-    else{
-        std::cout << "App exiting without execution \n\n\n";       
+    else {
+        std::cout << "App exiting without execution \n\n\n";
     }
 
     return 1;

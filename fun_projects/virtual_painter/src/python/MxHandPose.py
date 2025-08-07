@@ -56,7 +56,7 @@ class MxHandPose:
         palmdet_postprocess    = os.path.join(mx_modeldir, 'model_1_palm_detection_lite_post.tflite')
 
         # Initialize the accelerator with the model
-        self.accl = AsyncAccl(dfp_path, local_mode=True)
+        self.accl = AsyncAccl(dfp_path, device_ids=0)
 
         # Connect pre & post
         self.accl.set_postprocessing_model(palmdet_postprocess, model_idx=1)

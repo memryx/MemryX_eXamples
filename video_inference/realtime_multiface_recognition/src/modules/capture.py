@@ -20,7 +20,7 @@ def is_image(source):
     return source.endswith(('.jpg', '.jpeg', '.png', '.bmp'))
 
 def is_video(source):
-    return source.endswith(('.mp4', '.webm'))
+    return source.endswith(('.mp4', '.webm', 'mkv'))
 
 class VideoConfig:
     def __init__(self, width=3840, height=2160, fourcc='MJPG', fps=30):
@@ -95,29 +95,40 @@ class CaptureThread(QThread):
         cap.release()
 
     def _read_video(self):
-        """Read stream"""
+        """Read stream and throttle to the video’s native FPS."""
         cap = cv2.VideoCapture(self.video_source)
+        # grab the file’s native FPS; fall back to 30 if we can’t read it
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+        frame_interval = 1.0 / fps
 
+        last_time = time.time()
         while not self.stop_threads:
-            self.framerate.update()
+            # if paused, just spin-sleep
             if self.pause:
                 time.sleep(0.1)
                 continue
 
+            start = time.time()
             ret, frame = cap.read()
             if not ret:
+                # loop back to start
                 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
 
-            frame = np.array(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            self.frame_ready.emit(frame)
+            # convert & emit
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.frame_ready.emit(np.array(frame))
 
-            # Simulating real-time video stream (30fps)
-            #start = time.time()
-            #dt = time.time() - start
-            #time.sleep(max(0.033-dt, 0))  
+            # throttle: sleep the remainder of frame_interval
+            elapsed = time.time() - start
+            to_wait = frame_interval - elapsed
+            if to_wait > 0:
+                time.sleep(to_wait)
+
+            last_time = start
 
         cap.release()
+
 
     def run(self):
         """Read video frames and emit signal"""

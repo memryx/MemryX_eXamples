@@ -34,7 +34,7 @@ pip install ultralytics==8.3.161
 
 For C++ applications, ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
-## Running the Application
+## Running the Application (Linux)
 
 ### Step 1: Download Pre-compiled DFP
 
@@ -138,6 +138,81 @@ You need to specify whether you want to use the camera or a video file as input.
 ```bash
 ./poseEstimation --video <video_path>
 ```
+
+
+## Running the Application (Windows)
+
+### Running from compiled executable
+[Download](https://developer.memryx.com/example_files/2p0/pose_estimation_windows.zip) the compiled C++ executable version, and extract the zip.
+
+To run the application using the default DFP file and a camera as input, use the following command:
+
+```bash
+./poseEstimation --cam
+```
+
+Alternatively, you can use commandline arguments such as `--video` if launching the exe within Command Prompt or PowerShell.
+
+ 
+### Running from source code
+
+#### Step 1: OpenCV Installation
+
+Download and install the OpenCV Windows package:
+
+- Official download: https://github.com/opencv/opencv/releases
+
+- Recommended version: `opencv-4.x.x-windows.exe`
+
+- Install to `C:/OpenCV`
+
+#### Step 2: Microsoft Visual Studio 2022 Community (Free)
+
+Install Visual Studio 2022 and enable:
+
+- Official download: https://visualstudio.microsoft.com/vs/community/
+  
+- Recommended version: Visual Studio 17 2022
+
+- Install **Desktop development with C++**
+
+#### Step 3: Onnxruntime
+
+- Official download: https://onnxruntime.ai/
+  
+- Recommended version:  `onnxruntime-win-x64-1.x.x.exe`
+
+- Install **Desktop development with C++**
+
+#### Step 4: CMake build steps
+
+- Open "x64 Native Tools Command Prompt for VS 2022"
+
+- Create Build Folder and Run CMake
+
+```bash
+mkdir build
+cd build
+cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release
+```
+
+- After build, an executable `Release\poseEstimation.exe` will be generated.
+
+- Finally, copy the relevant opencv `.dll` and `.dfp` file into the Release folder to run. The path to opencv and onnxruntime `.dll` will depend on where your opencv, onnxruntime is installed!
+
+```bash
+cp .\YOLO_v8_medium_pose_640_640_3_onnx.dfp .\Release\
+cp .\YOLO_v8_medium_pose_640_640_3_onnx_post.onnx .\Release\
+cp C:\opencv\build\x64\vc16\bin\opencv_world4110.dll .\Release\.
+cp path\to\onnxruntime.dll .\Release\.
+```
+
+-  run the following command:
+```bash
+.\Release\poseEstimation.exe  --cam  # run with cam 
+```
+
 
 ## Tutorial
 

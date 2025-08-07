@@ -35,6 +35,7 @@ class Demo(QMainWindow):
         self.database_viewer = DatabaseViewerWidget(self.face_database)
         self.tracker = FaceTracker(self.face_database)
         self.compositor = Compositor(self.tracker)
+        self.compositor.set_paused(self.capture_thread.pause)
 
         # Create a button to open the compositor config popup.
         self.config_popup_button = QPushButton("Compositor Config", self)
@@ -50,6 +51,9 @@ class Demo(QMainWindow):
         self.viewer.mouse_move.connect(self.compositor.update_mouse_pos)
         self.viewer.mouse_click.connect(self.handle_viewer_mouse_click)
 
+        # Add click-to-pause functionality: clicking anywhere in the viewer toggles capture play/pause
+        self.viewer.mouse_click.connect(self.toggle_capture_pause)
+
         self.setup_layout()
 
         self.tracker.start()
@@ -57,7 +61,7 @@ class Demo(QMainWindow):
         self.timestamps = [0] * 30
 
         self.fps_timer = QTimer(self)
-        self.fps_timer.setInterval(1000)
+        self.fps_timer.setInterval(500)
         self.fps_timer.timeout.connect(self.poll_framerates)
         self.fps_timer.start()
 
@@ -86,7 +90,6 @@ class Demo(QMainWindow):
         logo_label.setPixmap(logo_pixmap.scaledToWidth(200, Qt.SmoothTransformation))
         logo_label.setAlignment(Qt.AlignCenter)
         self.control_layout.addWidget(logo_label)
-
 
         # Add the capture config and compositor config buttons.
         self.control_layout.addWidget(self.capture_control_button)
@@ -122,9 +125,10 @@ class Demo(QMainWindow):
             self.capture_thread.start()
 
     def handle_viewer_mouse_click(self, mouse_pos):
+        # Existing face-capture logic
         if mouse_pos is None:
             return
-            
+        
         tracker_frame = np.copy(self.tracker.current_frame.image)
         tracker_objects = self.tracker.get_activated_tracker_objects()
 
@@ -164,9 +168,31 @@ class Demo(QMainWindow):
                 found = True
                 break
 
+    def toggle_capture_pause(self, pos):
+            """Toggle play/pause of the capture thread when the viewer is clicked, 
+            but only if the click is NOT over a face."""
+            if pos is None:
+                return
+
+            mouse_x, mouse_y = pos
+            # If click is on any active tracked face, do not toggle pause.
+            for obj in self.tracker.get_activated_tracker_objects():
+                left, top, right, bottom = obj.bbox
+                if left <= mouse_x <= right and top <= mouse_y <= bottom:
+                    return  # clicked on a face; preserve current paused state
+
+            # Click was not on a face: toggle pause/play.
+            self.capture_thread.toggle_play()
+            state = "paused" if self.capture_thread.pause else "running"
+            print(f"Capture thread {state}")
+            self.compositor.set_paused(self.capture_thread.pause)
+
     def poll_framerates(self):
-        # If needed, you can add a mechanism here to display or log frame rates.
-        pass
+        # If paused, redraw the last known frame so the overlay shows.
+        if self.capture_thread.pause:
+            if hasattr(self.tracker, "current_frame") and self.tracker.current_frame is not None:
+                frame = np.copy(self.tracker.current_frame.image)
+                self.compositor.draw(frame)
 
     def closeEvent(self, event):
         self.capture_thread.stop()

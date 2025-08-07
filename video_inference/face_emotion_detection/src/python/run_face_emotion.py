@@ -140,7 +140,7 @@ class App:
 
 # Main function to run the application with MemryX AsyncAccl
 def run_mxa(dfp):
-    accl = AsyncAccl(dfp, local_mode=True)  # Initialize AsyncAccl with the DFP file
+    accl = AsyncAccl(dfp)  # Initialize AsyncAccl with the DFP file
     accl.connect_input(app.generate_frame_face)  # Connect face detection input
     accl.connect_input(app.generate_frame_emotion, 1)  # Connect emotion recognition input
     accl.connect_output(app.process_face)  # Connect face detection output
