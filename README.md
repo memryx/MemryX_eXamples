@@ -49,7 +49,7 @@ Follow the detailed instructions here: [**MemryX SDK Get Started Guide**](https:
 Clone this repository plus any linked submodules with:
 
 ```bash
-git clone --recursive https://github.com/memryx/mx_examples.git
+git clone --recursive https://github.com/memryx/memryx_examples.git
 ```
 
 ## Example Categories
