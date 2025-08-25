@@ -1,0 +1,15 @@
+{
+    "outputs": [
+        "output1", 
+        "/model.22/cv5.0/cv5.0.2/Conv_output_0", 
+        "/model.22/cv5.1/cv5.1.2/Conv_output_0",
+        "/model.22/cv5.2/cv5.2.2/Conv_output_0",
+        "/model.22/cv2.0/cv2.0.2/Conv_output_0",
+        "/model.22/cv3.0/cv3.0.1/act/Mul_output_0", 
+        "/model.22/cv2.1/cv2.1.2/Conv_output_0",
+        "/model.22/cv3.1/cv3.1.1/act/Mul_output_0",
+        "/model.22/cv2.2/cv2.2.2/Conv_output_0",
+        "/model.22/cv3.2/cv3.2.1/act/Mul_output_0"
+    ]
+}
+

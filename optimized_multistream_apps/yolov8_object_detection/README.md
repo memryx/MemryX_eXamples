@@ -1,10 +1,11 @@
-# Object Detection Using yolov8 (Optimized C++)
+# Object Detection Using YOLOv8 (Optimized C++)
 
-The **Object Detection** example demonstrates multi-stream(video/usbcam/ipcam) real-time object detection using the pre-trained YOLOv8 model on MemryX accelerators.  
+The **Object Detection** example demonstrates multi-stream (video / USB camera / IP camera) real-time object detection using the pre-trained YOLOv8 model on MemryX accelerators.  
 
-In this example, instead of utilizing ONNX Runtime for running the cropped post-processing model, hand-optimized C++ code does the post-processing. This allows users to achieve higher performance and efficiency, espeically on resource-constrained systems such as ARM platforms.
+In this example, instead of utilizing ONNX Runtime for running the cropped post-processing model, optimized C++ code performs the post-processing. This approach delivers higher performance and efficiency, especially on resource-constrained systems such as ARM platforms.  
 
-This guide offers setup instructions, model details, and essential code snippets to help you get started quickly.  
+This guide provides setup instructions, model details, and essential code snippets to help you get started quickly.
+
 
 <p align="center">
   <img src="assets/result.png" alt="Yolov8n Object Detection Example" width="45%" />
