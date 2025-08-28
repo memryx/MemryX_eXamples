@@ -76,6 +76,8 @@ Leverage MemryX accelerators for **real-time video processing** tasks. These app
 | [**Mediapipe Hand Landmarks**](video_inference/mediapipe_hands/README.md) | Detect hands and draw a "skeleton" of landmarks | PalmDet and HandPose | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Windows" width="20" height="20"> | <img src="video_inference/mediapipe_hands/assets/hand.gif" alt="Hand Preview" height="50"> |
 | [**Interactive Realtime Multi-Face Recognition**](video_inference/realtime_multiface_recognition/README.md) | Interactive app for face recognition | Multiple Models | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/realtime_multiface_recognition/assets/demo.gif" alt="Face Recognition App" height="50"> |
 | [**Intrusion Detection**](video_inference/intrusion_detection/README.md) | Detect any intruding object in a ROI | Yolov8 and ByteTrack| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="video_inference/intrusion_detection/assets/intrusion.gif" alt="Intrusion Preview" height="50"> |
+
+
 ### Image Inference 🖼️
 Explore models performing inference on static images and data. These examples demonstrate how to leverage the MXA to process large amounts of data.
 
@@ -84,13 +86,13 @@ Explore models performing inference on static images and data. These examples de
 | [**Satellite Object Detection with Oriented Boxes**](image_inference/oriented_bounding_boxes/README.md)       | Detect oriented bounding boxes on satellite images | YoloV8m-OBB | ![python-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="image_inference/oriented_bounding_boxes/assets/parking_lot_output.png" alt="OBB Preview" height="50"> |
 | [**Face Detection + Recognition**](image_inference/face_recognition/README.md)       | Perform face detection + recognition     | YoloV8n-Face + FaceNet | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="image_inference/face_recognition/assets/face.png" alt="Face Preview" height="50"> |
 
+
 ### Open-Vocabulary 📖
 Explore how the MemryX accelerators can be used for open-vocabulary tasks. The examples below demonstrate how to run models using MemryX hardware.  
 
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |
 |-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
 | [**Open-Vocab Seg with YoloE**](open_vocabulary/yoloe/README.md) | open-vocabulary, zero-shot object detection and segmentation      | yoloe-v8s-seg| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="open_vocabulary/yoloe/assets/yoloe.gif" alt="YoloE App Preview" height="50"> |
-
 
 
 ### Multi-Stream Video Inference 🖥️
@@ -101,12 +103,14 @@ Maximize performance by running multiple video streams concurrently on MemryX ac
 | [**Multi-Stream Object Detection using YOLOv8S**](multistream_video_inference/object_detection_yolov8/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od_yolov8s.html) | Detect objects across multiple streams      | YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/object_detection_yolov8/assets/yolov8_objectDetection.png" alt="Yolov8 Object Detection Preview" height="50"> |
 | [**Multi-Stream Object Detection using YOLOv7Tiny**](multistream_video_inference/multistream_objectdetection_yolov7Tiny/README.md) [📝](https://developer.memryx.com/tutorials/multistream_realtime_inf/multistream_od.html) | Detect objects across multiple streams      | YOLOv7 (Tiny)  | ![python-badge] ![cpp-badge]  | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multistream_video_inference/multistream_objectdetection_yolov7Tiny/assets/yolov7_objectDetection_multistream.png" alt="Yolov7-Tiny Object Detection Preview" height="50"> |
 
-### Multi-DFP(Data Flow Pipelines) Applications 🖥️
+
+### Multi-DFP Applications 🖥️
 Run multiple models simultaneously on separate DFPs within a single application.
 
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |
 |-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
-| [**Cartoonizer and Pose Estimation**](multi_dfp_application/cartoonizer_pose/README.md) | Real-time cartoon effects and pose detection simultaneously    | Facial-Cartoonizer & YOLOv8 (Small) | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multi_dfp_application/cartoonizer_pose/assets/cartoon_pose.png" alt="Cartoon & PoseEstimation Preview" height="50"> |
+| [**Cartoonizer and Pose (Side-by-Side)**](multi_dfp_application/cartoonizer_pose/README.md) | Real-time cartoon effects and pose detection simultaneously    | Facial-Cartoonizer & YOLOv8s-pose | ![python-badge] ![cpp-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multi_dfp_application/cartoonizer_pose/assets/cartoon_pose.png" alt="Cartoon & PoseEstimation Preview" height="50"> |
+| [**Cartoonizer and Pose (Selectable Overlays)**](multi_dfp_application/cartoonizer_pose_overlay/README.md) | Real-time overlay of cartoon and pose estimation | Facial-Cartoonizer & YOLOv8s-pose | ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="multi_dfp_application/cartoonizer_pose_overlay/assets/overlay.png" alt="Overlay Cartoon & PoseEstimation Preview" height="50"> |
 
 ### Optimized Multi-Stream Apps 👀
 Configurable many-stream video applications with USB, RTSP, and video file support, using optimized C++ pre/post-processing.
