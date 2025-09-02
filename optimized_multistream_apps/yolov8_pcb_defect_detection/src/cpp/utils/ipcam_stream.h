@@ -28,8 +28,10 @@ public:
     }
     void push(T item)
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
-        m_queue.push(item);
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_queue.push(item);
+        }
         m_cond.notify_one();
     }
     T pop()
