@@ -21,7 +21,7 @@ The **YOLOE** example demonstrates **real-time open-vocabulary object detection 
 | **Input**            | Configurable (e.g., 640x640x3)
 | **Output**           | Bounding boxes, segmentation masks, confidence scores
 | **OS**               | Linux
-| **License**          | [MIT](LICENSE.md)
+| **License**          | [MIT](LICENSE.md) (GUI), [AGPL](../../guidelines/LICENSE_AGPLv3.md) (model weights)
 
 ## Requirements
 
