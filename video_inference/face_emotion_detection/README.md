@@ -36,24 +36,6 @@ Ensure that Python, OpenCV, and the required packages are installed. You can ins
 pip install opencv-python==4.11.0.86
 ```
 
-For C++ applications, download the supported version of PyTorch [PyTorch Get Started Page](https://pytorch.org/get-started/locally/)
-
-```bash 
-This application requires the PyTorch C++ library to run.
-
-Download Instructions:
-
-    Please download the supported version of PyTorch by following these steps:
-
-    1. cd src/cpp
-
-    2. wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.4.1%2Bcpu.zip
-
-    3. unzip libtorch-cxx11-abi-shared-with-deps-2.4.1+cpu.zip
-
-```
-
-Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 ## Running the Application
 
@@ -126,6 +108,25 @@ python run_face_emotion.py -d <dfp_path>
 If no arguments are provided, the script will use the default paths for the model and DFP.
 
 #### C++
+
+For C++ applications, download the supported version of PyTorch [PyTorch Get Started Page](https://pytorch.org/get-started/locally/)
+
+```bash 
+This application requires the PyTorch C++ library to run.
+
+Download Instructions:
+
+    Please download the supported version of PyTorch by following these steps:
+
+    1. cd src/cpp
+
+    2. wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.4.1%2Bcpu.zip
+
+    3. unzip libtorch-cxx11-abi-shared-with-deps-2.4.1+cpu.zip
+
+```
+
+Also ensure that all memx runtime plugins and utilities libs are installed. For more information on installation, please refer to DevHub pages such as [memx runtime libs installation page](https://developer.memryx.com/get_started/install_runtime.html) , and [third party libs installation page](https://developer.memryx.com/tutorials/requirements/installation.html)
 
 To run the C++ example for real-time Face Detection & Emotion Classification using MX3, follow these steps:
 

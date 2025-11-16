@@ -207,7 +207,7 @@ void _mxutil_stream_player_h::mxutil_stream_player_reconnect()
         {
             avformat_close_input(&format_ctx_);
             std::cout << "Failed to Re-open RTSP input stream: " << stream_source_name << "Retry in 1 seconds ..." << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));            
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             continue;
         }
 
@@ -232,27 +232,25 @@ void _mxutil_stream_player_h::mxutil_stream_player_reconnect()
             std::cout << "Error: Could not find a video stream." << std::endl;
             continue;
         }
-        
         // play RTSP
         av_read_play(format_ctx_);
         break;
     }
 }
-
 void _mxutil_stream_player_h::mxutil_stream_player_main_worker()
 {
     int ret;
-    AVFrame *frame;
+    AVFrame* frame;
 
     while (running_)
     {
         // H.264 data in packet_
         if ((ret = av_read_frame(format_ctx_, &packet_)) < 0)
         {
-            printf("%s: av_read_frame failed: ", stream_source_name.c_str());
+            std::cerr << stream_source_name << ": av_read_frame failed: ";
             print_ffmpeg_error_message(ret);
             printf("%d %d\n", ret, AVERROR_EOF);
-            if (ret == AVERROR_EOF) 
+            if (ret == AVERROR_EOF)
             {
                 avformat_close_input(&format_ctx_);
                 mxutil_stream_player_reconnect();
@@ -261,48 +259,89 @@ void _mxutil_stream_player_h::mxutil_stream_player_main_worker()
         }
 
         if (packet_.stream_index != video_stream_index_)
-            continue;
-
-        // send packet_(H.264 data) to codec_ to decode
-        if ((ret = avcodec_send_packet(codec_ctx_, &packet_)) != 0)
         {
-            if (ret == AVERROR(EAGAIN))
-            {
-                av_packet_unref(&packet_);
-                continue;
-            }
-            printf("%s: avcodec_send_packet failed: ", stream_source_name.c_str());
+            av_packet_unref(&packet_);
+            continue;
+        }
+
+        // Send packet to decoder
+        ret = avcodec_send_packet(codec_ctx_, &packet_);
+        if (ret == AVERROR(EAGAIN))
+        {
+            av_packet_unref(&packet_);
+            continue;
+        }
+        else if (ret < 0)
+        {
+            std::cerr << stream_source_name << ": avcodec_send_packet failed: ";
             print_ffmpeg_error_message(ret);
             av_packet_unref(&packet_);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-        // get decoded yuv frame
 
-        if ((ret = avcodec_receive_frame(codec_ctx_, frame_yuv_)) != 0)
+        // Receive decoded frame
+        while ((ret = avcodec_receive_frame(codec_ctx_, frame_yuv_)) >= 0)
         {
-            if (ret == AVERROR(EAGAIN))
-                continue;
-            else
+            // Check frame validity
+            if (!frame_yuv_ || !frame_yuv_->data[0])
             {
-                printf("%s: avcodec_receive_frame failed: ", stream_source_name.c_str());
-                print_ffmpeg_error_message(ret);
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::cerr << "[WARNING] Received invalid or empty frame.\n";
+                av_frame_unref(frame_yuv_);
                 continue;
             }
+
+            if (frame_yuv_->flags & AV_FRAME_FLAG_CORRUPT)
+            {
+                std::cerr << "[WARNING] Decoder returned a corrupt frame. Skipping.\n";
+                av_frame_unref(frame_yuv_);
+                continue;
+            }
+
+            // Handle dynamic resolution changes
+            if (frame_yuv_->width != codec_ctx_->width || frame_yuv_->height != codec_ctx_->height)
+            {
+                std::cerr << "[INFO] Resolution change detected. Reinitializing sws context.\n";
+                sws_freeContext(img_convert_ctx_);
+                img_convert_ctx_ = sws_getContext(
+                    frame_yuv_->width, frame_yuv_->height, codec_ctx_->pix_fmt,
+                    disp_width_, disp_height_, AV_PIX_FMT_RGB24,
+                    SWS_BICUBIC, NULL, NULL, NULL);
+            }
+
+            // Convert YUV to RGB if buffer is available
+            if (!available_frame_bufs_.empty())
+            {
+                frame = available_frame_bufs_.pop();
+
+                if (!frame || !frame->data[0]) {
+                    available_frame_bufs_.push(frame); // recycle
+                    continue;
+                } else {
+                    int scale_ret = sws_scale(img_convert_ctx_,
+                                        frame_yuv_->data, frame_yuv_->linesize,
+                                        0, codec_ctx_->height,
+                                        frame->data, frame->linesize);
+                    if (scale_ret != frame->height) {
+                        std::cerr << "[WARNING] Scale failed: " << scale_ret << "\n";
+                        av_frame_unref(frame_yuv_);
+                        available_frame_bufs_.push(frame);  // recycle
+                        continue;
+                    }
+                }
+                frames_.push(frame);
+            }
+
+            av_frame_unref(frame_yuv_);
         }
 
-        if (!available_frame_bufs_.empty())
+        if (ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
         {
-            frame = available_frame_bufs_.pop();
-            // convert yuv to BGR by software
-            sws_scale(img_convert_ctx_, frame_yuv_->data, frame_yuv_->linesize, 0,
-                      codec_ctx_->height, frame->data, frame->linesize);
-
-            frames_.push(frame);
+            std::cerr << stream_source_name << ": avcodec_receive_frame failed: ";
+            print_ffmpeg_error_message(ret);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        av_frame_unref(frame_yuv_);
         av_packet_unref(&packet_);
     }
 }
@@ -330,9 +369,6 @@ void mxutil_stream_get_input_resolution(mxutil_stream_player_h stream_handle, in
 void *mxutil_stream_player_get_frame(mxutil_stream_player_h stream_handle)
 {
     _mxutil_stream_player_h *ctx = (_mxutil_stream_player_h *)stream_handle;
-
-    if (ctx->frames_.empty())
-        return NULL;
 
     AVFrame *frame = ctx->frames_.pop();
 

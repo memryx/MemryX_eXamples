@@ -6,6 +6,7 @@ from mp_palmdet import MPPalmDet
 from mp_handpose import MPHandPose
 
 from memryx import AsyncAccl
+from memryx.runtime.accl import SchedulerOptions, ClientOptions
 
 @dataclass
 class HandPose():
@@ -54,7 +55,15 @@ class MxHandPose:
         dfp_path               = os.path.join(mx_modeldir, 'models.dfp')
 
         # Initialize the accelerator with the model
-        self.accl = AsyncAccl(dfp_path, device_ids=0)
+        sched_opts = SchedulerOptions(
+                            20,    # 20 frames before swapping
+                            0,     # do NOT use idle timeouts due to the nature of inter-dependent models!
+                            False, # don't use the immediate-timeout feature
+                            16,    # input queue < frames
+                            21     # output queue > frames
+                        )
+
+        self.accl = AsyncAccl(dfp_path, scheduler_options=sched_opts)
 
         # Connect input and output functions to the accelerator
         self.accl.connect_input(self._palmdetect_src, model_idx=1)

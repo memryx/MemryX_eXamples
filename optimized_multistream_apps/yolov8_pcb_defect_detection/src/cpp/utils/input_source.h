@@ -63,8 +63,17 @@ public:
      */
     void GetFrame(cv::Mat &frame) override
     {
-        void *data = mxutil_stream_player_get_frame(stream_ctx_);
-        memcpy(frame.data, data, frame.total() * frame.elemSize());
+        if (frame.empty()) {
+            std::cerr << "GetFrame: frame mat empty\n";
+            return;
+        }
+
+        void* data = mxutil_stream_player_get_frame(stream_ctx_);
+        if (!data) {
+            std::cerr << "mxutil_stream_player_get_frame error: data null\n";
+        } else {
+            memcpy(frame.data, data, frame.total() * frame.elemSize());
+        }
 
         this->ReturnFrame();
         return;

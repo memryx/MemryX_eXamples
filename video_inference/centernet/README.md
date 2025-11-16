@@ -37,10 +37,8 @@ sudo apt install qtbase5-dev
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-cd assets
 wget https://developer.memryx.com/example_files/2p0/centernet.zip
-mkdir -p models
-unzip centernet.zip -d models
+unzip centernet.zip
 ```
 
 <details> 
@@ -122,6 +120,7 @@ You need to specify whether you want to use the camera or a video file as input.
 ./CenterNet tf vid:<video file>
 ./CenterNet tflite vid:<video file>
 ```
+>Note: The videos should be in the assets folder before bulding. 
 
 ## Tutorial
 
