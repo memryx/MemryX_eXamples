@@ -63,7 +63,7 @@ class MxHandPose:
                             21     # output queue > frames
                         )
 
-        self.accl = AsyncAccl(dfp_path, scheduler_options=sched_opts)
+        self.accl = AsyncAccl(dfp_path, scheduler_options=sched_opts, local_mode=True)
 
         # Connect input and output functions to the accelerator
         self.accl.connect_input(self._palmdetect_src, model_idx=1)
