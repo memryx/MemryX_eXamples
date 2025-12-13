@@ -15,19 +15,19 @@ std::atomic_bool runflag;
 #define FRAME_QUEUE_MAX_LENGTH     5
 
 //CenterNet application specific Onnx model files
-fs::path onnx_model_path = "models/centernet_onnx.dfp";
-fs::path onnx_preprocessing_model_path = "models/centernet_pre.onnx";
-fs::path onnx_postprocessing_model_path = "models/centernet_post.onnx";
+fs::path onnx_model_path = "./centernet_onnx.dfp";
+fs::path onnx_preprocessing_model_path = "./centernet_pre.onnx";
+fs::path onnx_postprocessing_model_path = "./centernet_post.onnx";
 
 //CenterNet application specific Tf model files
-fs::path tf_model_path = "models/centernet_tf.dfp";
-fs::path tf_preprocessing_model_path = "models/centernet_pre.pb";
-fs::path tf_postprocessing_model_path = "models/centernet_post.pb";
+fs::path tf_model_path = "./centernet_tf.dfp";
+fs::path tf_preprocessing_model_path = "./centernet_pre.pb";
+fs::path tf_postprocessing_model_path = "./centernet_post.pb";
 
 //CenterNet application specific Tflite model files
-fs::path tflite_model_path = "models/centernet_tflite.dfp";
-fs::path tflite_preprocessing_model_path = "models/centernet_pre.tflite";
-fs::path tflite_postprocessing_model_path = "models/centernet_post.tflite";
+fs::path tflite_model_path = "./centernet_tflite.dfp";
+fs::path tflite_preprocessing_model_path = "./centernet_pre.tflite";
+fs::path tflite_postprocessing_model_path = "./centernet_post.tflite";
 
 enum AppType{
     App_Onnx,

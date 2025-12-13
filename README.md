@@ -93,6 +93,8 @@ Explore how the MemryX accelerators can be used for open-vocabulary tasks. The e
 | Application                                         | Description                              | Models        | Code                   | OS  | Preview |
 |-----------------------------------------------------|------------------------------------------|---------------|------------------------|-----|-----------|
 | [**Open-Vocab Seg with YoloE**](open_vocabulary/yoloe/README.md) | open-vocabulary, zero-shot object detection and segmentation      | yoloe-v8s-seg| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="open_vocabulary/yoloe/assets/yoloe.gif" alt="YoloE App Preview" height="50"> |
+| [**Zero-Shot Classify — OpenAI CLIP**](open_vocabulary/clipResNet50/README.md) | open-vocabulary, zero-shot object classification      | ClipResNet50| ![python-badge] | <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" alt="Linux" width="20" height="20"> | <img src="open_vocabulary/clipResNet50/assets/labeled_image.jpg" alt="clip App Preview" height="50"> |
+
 
 
 ### Multi-Stream Video Inference 🖥️
