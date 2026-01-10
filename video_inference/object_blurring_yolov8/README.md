@@ -85,7 +85,7 @@ You can download the sample video footage for testing from the [link](TODO).
 
 ### Step 3: Run the Script/Program
 
-With the compiled model, you can now run real-time inference. Below are the examples of how to do this using Python and C++.
+With the compiled model, you can now run real-time inference. Below are the examples of how to do this using Python.
 
 #### Python
 
