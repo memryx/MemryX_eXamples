@@ -80,7 +80,7 @@ Additional Notes:
 
 ### Step-2: Sample Video
 
-You can download the sample video footage for testing from the [link](TODO).
+Download the sample video footage for testing from the [link](#link to video file) and store it inside `../videos` folder.
 
 
 ### Step 3: Run the Script/Program
