@@ -5,6 +5,7 @@ import queue
 import time
 import cv2
 import numpy as np
+import json
 
 from PySide6.QtWidgets import  (QApplication, QLabel, QMainWindow, QWidget,
                                 QVBoxLayout, QHBoxLayout, QPushButton)
@@ -143,13 +144,34 @@ class VideoDisplayThread(QThread):
 class UpdateClasses(QThread):
     def __init__(self):
         super().__init__()
-        self.classes = ['person']
+
+        self.CLASS_FILE = "../../assets/classes.json"
+
+        self.classes = self.load_classes()
+        self.run() # Pre-load model with classes
+
+    def load_classes(self):
+        try:
+            with open(self.CLASS_FILE, "r") as f:
+                classes = json.load(f)
+                if isinstance(classes, list) and classes:
+                    return classes
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+        
+        # Default classes if file not found or invalid
+        return ['person']
+
+    def save_classes(self):
+        with open(self.CLASS_FILE, "w") as f:
+            json.dump(self.classes, f)
 
     def set_classes(self, classes):
         self.classes = classes
 
     def run(self):
         mxyoloe.update_classes(self.classes)
+        self.save_classes()
         print(f"Updated classes: {self.classes}")
 
 class VideoPlayer(QMainWindow):
@@ -224,6 +246,10 @@ class VideoPlayer(QMainWindow):
         self.progress_bar.setVisible(False)
         self.video_layout.addWidget(self.progress_bar)
 
+        # Class Updater
+        self.update_thread = UpdateClasses()
+        self.update_thread.finished.connect(self.update_classes_finished)
+
         # Control Panel
         self.control_panel = ControlPanel(mxyoloe._conf, mxyoloe._iou, mxyoloe.classes)
         self.control_panel.setMaximumWidth(200)
@@ -253,10 +279,6 @@ class VideoPlayer(QMainWindow):
         # Start threads
         self.video_reader_thread.start()
         self.video_display_thread.start()
-
-        # Class Updater
-        self.update_thread = UpdateClasses()
-        self.update_thread.finished.connect(self.update_classes_finished)
 
         self.current_frame = None
         self.annotated_frame = None
