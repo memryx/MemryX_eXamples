@@ -78,12 +78,7 @@ Additional Notes:
 
 </details>
 
-### Step-2: Sample Video
-
-Download the sample video footage for testing from the [link](#link to video file) and store it inside `../videos` folder.
-
-
-### Step 3: Run the Script/Program
+### Step 2: Run the Script/Program
 
 With the compiled model, you can now run real-time inference. Below are the examples of how to do this using Python.
 
