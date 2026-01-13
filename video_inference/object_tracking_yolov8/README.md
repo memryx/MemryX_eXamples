@@ -87,28 +87,33 @@ With the compiled model, you can now run real-time inference. Below are the exam
 
 #### Python
 
-To run the Python example for real-time Object tracking using MX3, follow these steps:
-
-Simply execute the following command:
+To run the Python example for real-time Object tracking using MX3, simply navigate to `src/python/` and run the script:
 
 ```bash
 cd src/python/
-python run_object_tracking.py
+python3 run_object_tracking.py [--cam | --video VIDEO]
 ```
-Command-line Options:
-You can specify the model path and DFP (Compiled Model) path using the following options:
 
-* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/YOLO_v8_small_640_640_3_onnx.dfp)
-* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_small_640_640_3_onnx_post.onnx)
+Where you either use:
 
-Example:
-To run with a specific model and DFP file, use:
+* `--cam`: Use the camera as input source (will use opencv camera #0).
+* `--video VIDEO`: Use a video file as input source.
+
+
+
+There are additional optional arguments you can use to customize the behavior of the program:
 
 ```bash
-python run_object_tracking.py -d <dfp_path> -post <post_processing_onnx_path>
+python3 run_object_tracking.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--mirror] [--no_show]
 ```
 
-If no arguments are provided, the script will use the default paths for the model and DFP.
+Where the optional arguments are:
+
+* `--save`,`-s`: Enable saving output to file. Output will be ./results.mp4
+* `--mirror`,`-m`: Mirror the video horizontally. Useful for webcam input.
+* `--no_show`: Disable displaying output window. Useful when working with video files.
+* `--dfp DFP`,`-d DFP`: Specify the path to the compiled DFP file. Default is '../../models/YOLO_v8_small_640_640_3_onnx.dfp'.
+* `--post_model POST_MODEL`,`-post POST_MODEL`: Specify the path to the post model. Default is '../../models/YOLO_v8_small_640_640_3_onnx_post.onnx'.
 
 
 ## Third-Party Licenses
