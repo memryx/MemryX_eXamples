@@ -1,6 +1,6 @@
 # Object blurring Using Yolov8s model
 
-The **Object Blurring** example demonstrates real-time privacy protection of individual in public places using the pre-trained yolov8 small model on MemryX accelerators. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
+The **Object Blurring** example demonstrates real-time privacy protection of individual in public places using the pre-trained yolov8 small model on MemryX accelerators. It works by blurring the region around detected "Person" objects. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
 
 <p align="center">
   <img src="assets/object_blurring.gif" alt="Object blurring Example" width="45%" />
@@ -84,28 +84,35 @@ With the compiled model, you can now run real-time inference. Below are the exam
 
 #### Python
 
-To run the Python example for real-time Object blurring using MX3, follow these steps:
-
-Simply execute the following command:
+To run the Python example for real-time person blurring using MX3, simply navigate to `src/python/` and run the script.
 
 ```bash
 cd src/python/
-python run_object_blurring.py
+python3 run_object_blurring.py [--cam | --video VIDEO]
 ```
-Command-line Options:
-You can specify the model path and DFP (Compiled Model) path using the following options:
 
-* `-d` or `--dfp`:  Path to the compiled DFP file (default is models/YOLO_v8_small_640_640_3_onnx.dfp)
-* `-post` or `--post_model`: Path to the post-processing ONNX file generated after compilation (default is models/YOLO_v8_small_640_640_3_onnx_post.onnx)
+Where you either use:
 
-Example:
-To run with a specific model and DFP file, use:
+* `--cam`: Use the camera as input source (will use opencv camera #0).
+* `--video VIDEO`: Use a video file as input source.
+
+
+
+There are additional optional arguments you can use to customize the behavior of the program:
 
 ```bash
-python run_object_blurring.py -d <dfp_path> -post <post_processing_onnx_path>
+python3 run_object_blurring.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--mirror] [--no_show] [--no_boxes]
 ```
 
-If no arguments are provided, the script will use the default paths for the model and DFP.
+Where the optional arguments are:
+
+* `--save`,`-s`: Enable saving output to file. Output will be ./results.mp4
+* `--mirror`,`-m`: Mirror the video horizontally. Useful for webcam input.
+* `--no_boxes`: Only blur the detected persons; do not draw bounding boxes.
+* `--no_show`: Disable displaying output window. Useful when working with video files.
+* `--dfp DFP`,`-d DFP`: Specify the path to the compiled DFP file. Default is '../../models/YOLO_v8_small_640_640_3_onnx.dfp'.
+* `--post_model POST_MODEL`,`-post POST_MODEL`: Specify the path to the post model. Default is '../../models/YOLO_v8_small_640_640_3_onnx_post.onnx'.
+
 
 
 ## Third-Party Licenses
@@ -120,4 +127,4 @@ This project uses third-party software, models, and libraries. Below are the det
 
 ## Summary
 
-This guide offers a quick and easy way to run object blurring using the yolov8s model on MemryX accelerators. You can use the Python  implementation to perform real-time inference. Download the full code and the pre-compiled DFP file to get started immediately.
+This guide offers a quick and easy way to run object blurring using the yolov8s model on MemryX accelerators. You can use the Python implementation to perform real-time inference. Download the full code and the pre-compiled DFP file to get started immediately.

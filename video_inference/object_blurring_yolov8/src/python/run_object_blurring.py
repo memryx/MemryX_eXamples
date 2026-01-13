@@ -11,7 +11,7 @@ import argparse
 
 
 class App:
-    def __init__(self, cam, model_input_shape, output_path, mirror=False, src_is_cam=False, **kwargs):
+    def __init__(self, cam, model_input_shape, output_path, mirror=False, src_is_cam=False, save_output=False, show_output=True, no_boxes=False, **kwargs):
         # Initialize camera and various configurations
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
@@ -22,6 +22,9 @@ class App:
         self.confidence_thres = 0.25  # Threshold for object confidence
         self.iou_thres = 0.7  # IoU threshold for non-max suppression
         self.src_is_cam = src_is_cam
+        self.save_output = save_output
+        self.show_output = show_output
+        self.no_boxes = no_boxes
 
         # Calculate the scaling factors for the bounding box coordinates
         input_max_dim = max((self.input_height, self.input_width))
@@ -34,9 +37,12 @@ class App:
 
         # .............................
         # Initialize video writer
-        fc = cv.VideoWriter_fourcc(*'mp4v')  # Codec
-        self.vw = cv.VideoWriter(output_path, fc, cam.get(cv.CAP_PROP_FPS),
-            (self.input_width, self.input_height))
+        if self.save_output:
+            fc = cv.VideoWriter_fourcc(*'mp4v')  # Codec
+            self.vw = cv.VideoWriter(output_path, fc, cam.get(cv.CAP_PROP_FPS),
+                (self.input_width, self.input_height))
+        else:
+            self.vw = None
         # .............................
 
     def generate_frame(self):
@@ -65,6 +71,9 @@ class App:
         # Create a padded image
         padded_img = np.zeros((self.model_input_shape[0], self.model_input_shape[1], 3), dtype=np.uint8)
         padded_img[:int(h * r), :int(w * r)] = image_resized
+        
+        # OpenCV uses BGR channels by default, but the model expects RGB
+        padded_img = cv.cvtColor(padded_img, cv.COLOR_BGR2RGB)
 
         # Normalize image to [0, 1] range
         #
@@ -151,19 +160,26 @@ class App:
         img = self.capture_queue.get()  # Get the frame from the queue
         self.capture_queue.task_done()
 
+        blurred_img = img
+
         for det in results:
             x1, y1, x2, y2 = det['bbox']
             blurred_img = self.blur_roi(img, x1, y1, x2, y2, ksize=75)
-            cv.rectangle(
-                blurred_img,
-                (x1, y1),
-                (x2, y2),
-                self.bbox_color,
-                thickness=self.bbox_thickness
-            )
 
-        self.show(blurred_img)  # Optional: display processed frame.
-        self.vw.write(blurred_img)  # Write the results
+            if not self.no_boxes:
+                cv.rectangle(
+                    blurred_img,
+                    (x1, y1),
+                    (x2, y2),
+                    self.bbox_color,
+                    thickness=self.bbox_thickness
+                )
+
+        if self.show_output:
+            self.show(blurred_img)  # display processed frame.
+
+        if self.save_output and self.vw is not None:
+            self.vw.write(blurred_img)  # Write the results
 
         return img
 
@@ -173,7 +189,8 @@ class App:
         if cv.waitKey(1) == ord('q'):  # Exit on 'q' key press
             self.cam.release()
             cv.destroyAllWindows()
-            self.vw.release()
+            if self.save_output and self.vw is not None:
+                self.vw.release()
             exit(1)
 
 def run_mxa(dfp, post_model, app):
@@ -196,20 +213,42 @@ def run_mxa(dfp, post_model, app):
 if __name__ == '__main__':
     # Parse command-line arguments for model path (-d) and post-processing ONNX file (-post)
     parser = argparse.ArgumentParser(description="Run MX3 real-time inference")
-    parser.add_argument('-d', '--dfp', type=str, default="../models/YOLO_v8_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is 'models/YOLO_v8_small_640_640_3_onnx.dfp'.")
-    parser.add_argument('-post', '--post_model', type=str, default="../models/YOLO_v8_small_640_640_3_onnx_post.onnx", help="Specify the path to the post model. Default is 'models/YOLO_v8_small_640_640_3_onnx_post.onnx.")
+    parser.add_argument('-d', '--dfp', type=str, default="../../models/YOLO_v8_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../../models/YOLO_v8_small_640_640_3_onnx.dfp'.")
+    parser.add_argument('-post', '--post_model', type=str, default="../../models/YOLO_v8_small_640_640_3_onnx_post.onnx", help="Specify the path to the post model. Default is '../../models/YOLO_v8_small_640_640_3_onnx_post.onnx.")
+    parser.add_argument('-s', '--save', action='store_true', help="Enable saving output to file. Output will be ./results.mp4  Default is False.")
+    parser.add_argument('-m', '--mirror', action='store_true', help="Mirror the video horizontally. Useful for webcam input.")
+    parser.add_argument('-c', '--cam', action='store_true', help="Use the camera as input source (will use opencv camera #0).")
+    parser.add_argument('-v', '--video', type=str, default="", help="Use a video file as input source, or a camera full path for non-index-0 cams (e.g., /dev/video2).")
+    parser.add_argument('--no_show', action='store_false', help="Disable displaying output window. Useful when working with video files.")
+    parser.add_argument('--no_boxes', action='store_true', help="Only blur detected persons; do not draw bounding boxes.")
+
     args = parser.parse_args()
+    
+    # User needs to specify either camera or video file
+    if args.cam:
+        cam = cv.VideoCapture(0)
+        if not cam.isOpened():
+            print("Error: Could not open camera 0")
+            sys.exit(1)
+    elif args.video != "":
+        cam = cv.VideoCapture(args.video)
+        if not cam.isOpened():
+            print(f"Error: Could not open video file {args.video}")
+            sys.exit(1)
+    else:
+        print("Error: Please specify either --cam to use the camera or --video <path> to use a video file.")
+        cam = None
+        sys.exit(1)
 
-    # Connect to the camera and initialize the app
-    video_path = "../videos/sample-1.mov"
-    cam = cv.VideoCapture(video_path)
-    parent_path = Path(__file__).resolve().parent
+
+    # Constants
     model_input_shape = (640, 640)
-
-    output_path = f"results.mp4"
+    output_path = "results.mp4"
 
     app = App(cam, model_input_shape, output_path=output_path, 
-                mirror=False, src_is_cam=False)
+                mirror=args.mirror, src_is_cam=args.cam,
+                save_output=args.save, show_output=args.no_show,
+                no_boxes=args.no_boxes)
     dfp = args.dfp
     post_model = args.post_model
     run_mxa(dfp, post_model, app)
