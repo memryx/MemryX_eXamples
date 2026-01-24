@@ -3,7 +3,7 @@
 The **PPE detection and tracking** example demonstrates real-time object detection using the yolov8 small model trained on personal protective equipment dataset on MemryX accelerators. The object tracking is added for stable prediction results across different envirnoments. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
 
 <p align="center">
-  <img src="assets/ppe_detection_tracking.gif" alt="Personal protective equipment detection Example" width="45%" />
+  <img src="assets/ppe_detection.gif" alt="Personal protective equipment detection Example" width="45%" />
 </p>
 
 ## Overview
@@ -14,7 +14,7 @@ The **PPE detection and tracking** example demonstrates real-time object detecti
 | **Model Type**       | Object Detection                                                        |
 | **Model Source**     | [Download here](https://developer.memryx.com/model_explorer/2p0/ppe_small.pt) |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/ppe_small_640_640_3_onnx zip)                                          |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/ppe_small_640_640_3_onnx.zip)                                      |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Object bounding boxes |
 | **OS**               | Linux |
