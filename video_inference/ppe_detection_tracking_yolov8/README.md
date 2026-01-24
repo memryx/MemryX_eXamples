@@ -49,7 +49,10 @@ unzip ppe_small_640_640_3_onnx.zip -d models
 
 <details> 
 <summary> (Optional) Download and compile the model yourself </summary>
-If you prefer, you can download and compile the model rather than using the precompiled model. Download the [model](https://developer.memryx.com/model_explorer/2p0/ppe_small.pt) and export it to ONNX:
+<br>
+If you prefer, you can download and compile the model rather than using the precompiled model. 
+
+Download the [model](https://developer.memryx.com/model_explorer/2p0/ppe_small.pt) and export it to ONNX:
 
 ```bash
 from ultralytics import YOLO
