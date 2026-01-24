@@ -244,7 +244,7 @@ def run_mxa(dfp, post_model, app):
 
 if __name__ == '__main__':
     # Parse command-line arguments for model path (-d) and post-processing ONNX file (-post)
-    parser = argparse.ArgumentParser(description="Run MX3 real-time persona; protective equipment detection and tracking using YOLOv8 and ByteTrack.")
+    parser = argparse.ArgumentParser(description="Run MX3 real-time personal protective equipment detection and tracking using YOLOv8 and ByteTrack.")
     parser.add_argument('-d', '--dfp', type=str, default="../../models/ppe_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../models/ppe_small_640_640_3_onnx.dfp'.")
     parser.add_argument('-post', '--post_model', type=str, default="../../models/ppe_small_640_640_3_onnx_post.onnx", help="Specify the path to the post model. Default is '../models/ppe_small_640_640_3_onnx_post.onnx.")
     parser.add_argument('-s', '--save', action='store_true', help="Enable saving output to file. Output will be ./results.mp4  Default is False.")
