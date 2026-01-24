@@ -1,6 +1,6 @@
 # Luggage Counting Using Yolov8s model
 
-The **Object Blurring** example demonstrates real-time privacy protection of individual in public places using the pre-trained yolov8 small model on MemryX accelerators. It works by blurring the region around detected "Person" objects. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
+The **Luggage counting** example demonstrates real-time privacy protection of individual in public places using the pre-trained yolov8 small model on MemryX accelerators. It works by blurring the region around detected "Person" objects. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
 
 <p align="center">
   <img src="assets/object_blurring.gif" alt="Object blurring Example" width="45%" />
