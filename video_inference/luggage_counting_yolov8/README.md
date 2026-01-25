@@ -1,9 +1,9 @@
 # Luggage Counting Using Yolov8s model
 
-The **Luggage counting** example demonstrates real-time privacy protection of individual in public places using the pre-trained yolov8 small model on MemryX accelerators. It works by blurring the region around detected "Person" objects. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
+The **Luggage Counting** example showcases real-time detection and counting of luggage items (such as suitcases and handbags) at an airport using a pre-trained YOLOv8 small model running on MemryX accelerators. The system tracks detected objects and employs a line-crossing counter to increment the count whenever an item passes a defined line. The line coordinates are fully configurable to suit different camera setups. This guide walks you through the setup process, explains the model used, and provides the required code snippets to help you get up and running quickly.
 
 <p align="center">
-  <img src="assets/object_blurring.gif" alt="Object blurring Example" width="45%" />
+  <img src="assets/luggage_counting.gif" alt="Luggage counting Example" width="45%" />
 </p>
 
 ## Overview
@@ -84,11 +84,11 @@ With the compiled model, you can now run real-time inference. Below are the exam
 
 #### Python
 
-To run the Python example for real-time person blurring using MX3, simply navigate to `src/python/` and run the script.
+To run the Python example for real-time luggage counting using MX3, simply navigate to `src/python/` and run the script.
 
 ```bash
 cd src/python/
-python3 run_object_blurring.py [--cam | --video VIDEO]
+python3 run_luggage_counting.py [--cam | --video VIDEO]
 ```
 
 Where you either use:
@@ -101,18 +101,16 @@ Where you either use:
 There are additional optional arguments you can use to customize the behavior of the program:
 
 ```bash
-python3 run_object_blurring.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--mirror] [--no_show] [--no_boxes]
+python3 run_luggage_counting.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--mirror] [--no_show] [--no_boxes]
 ```
 
 Where the optional arguments are:
 
 * `--save`,`-s`: Enable saving output to file. Output will be ./results.mp4
 * `--mirror`,`-m`: Mirror the video horizontally. Useful for webcam input.
-* `--no_boxes`: Only blur the detected persons; do not draw bounding boxes.
 * `--no_show`: Disable displaying output window. Useful when working with video files.
 * `--dfp DFP`,`-d DFP`: Specify the path to the compiled DFP file. Default is '../../models/YOLO_v8_small_640_640_3_onnx.dfp'.
 * `--post_model POST_MODEL`,`-post POST_MODEL`: Specify the path to the post model. Default is '../../models/YOLO_v8_small_640_640_3_onnx_post.onnx'.
-
 
 
 ## Third-Party Licenses
@@ -127,4 +125,4 @@ This project uses third-party software, models, and libraries. Below are the det
 
 ## Summary
 
-This guide offers a quick and easy way to run object blurring using the yolov8s model on MemryX accelerators. You can use the Python implementation to perform real-time inference. Download the full code and the pre-compiled DFP file to get started immediately.
+This guide offers a quick and easy way to run luggage counting using the yolov8s model on MemryX accelerators. You can use the Python implementation to perform real-time inference. Download the full code and the pre-compiled DFP file to get started immediately.
