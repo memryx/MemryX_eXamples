@@ -32,6 +32,9 @@ pip install opencv-python==4.11.0.86
 pip install ultralytics==8.3.161
 ```
 
+```bash
+pip install supervision==0.27.0
+```
 
 ## Running the Application (Linux)
 
