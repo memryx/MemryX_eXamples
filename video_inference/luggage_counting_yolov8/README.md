@@ -72,8 +72,8 @@ mx_nc -v -m yolov8s.onnx --autocrop -c 4 --dfp_fname YOLO_v8_small_640_640_3_onn
 Output:
 The MemryX compiler will generate two files:
 
-* `yolov8s.dfp`: The DFP file for the main section of the model.
-* `yolov8s-post.onnx`: The ONNX file for the cropped post-processing section of the model.
+* `YOLO_v8_small_640_640_3_onnx.dfp`: The DFP file for the main section of the model.
+* `YOLO_v8_small_640_640_3_onnx-post.onnx`: The ONNX file for the cropped post-processing section of the model.
 
 Additional Notes:
 * `-v`: Enables verbose output, useful for tracking the compilation process.
