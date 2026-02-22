@@ -346,7 +346,7 @@ Leverage MemryX accelerators for **real-time video processing** tasks. These app
     <td align="center" valign="top" width="25%">
       <a href="video_inference/fire_detection_yolov8/README.md"><b>Fire Detection</b></a><br/>
       <a href="video_inference/fire_detection_yolov8/README.md">
-        <img src="video_inference/fire_detection_yolov8/assets/out.gif" style="height:165px; object-fit:cover;" />
+        <img src="video_inference/fire_detection_yolov8/assets/fire_detection.gif" style="height:165px; object-fit:cover;" />
       </a><br/>
       <sub>Fire detection with tracking</sub><br/>
       <sub>Models: Yolov8</sub><br/>
