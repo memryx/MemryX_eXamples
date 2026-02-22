@@ -85,7 +85,7 @@ With the compiled model, you can now run real-time inference. Below are the exam
 
 #### Python
 
-To run the Python example for real-time luggage counting using MX3, simply navigate to `src/python/` and run the script.
+To run the Python example for real-time fire detection using MX3, simply navigate to `src/python/` and run the script.
 
 ```bash
 cd src/python/
