@@ -1,5 +1,6 @@
 # OpenCV and helper libraries imports
 import sys
+import json
 from queue import Queue
 import cv2 as cv
 import numpy as np
@@ -7,12 +8,12 @@ from memryx import AsyncAccl
 import argparse
 import supervision as sv
 from collections import defaultdict
-from ultralytics.utils.plotting import colors
 
-CLASSES = ("fire", "other", "smoke")  # Fire detection model classes names
+CLASSES = ("pedestrian", "people", "bicycle", "car", "van", "truck",
+           "tricycle", "awning-tricycle", "bus", "motor")
 
 class App:
-    def __init__(self, cam, model_input_shape, output_path, mirror=False, src_is_cam=False, save_output=False, show_output=True, **kwargs):
+    def __init__(self, cam, model_input_shape, output_path,parking_json, mirror=False, src_is_cam=False, save_output=False, show_output=True, **kwargs):
         # Initialize camera and various configurations
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
@@ -21,7 +22,7 @@ class App:
         self.capture_queue = Queue(maxsize=10)  # Queue to store frames for processing
         self.mirror = mirror  # Flag to mirror the video frame
         self.confidence_thres = 0.25  # Threshold for object confidence
-        self.iou_thres = 0.7  # IoU threshold for non-max suppression
+        self.iou_thres = 0.9  # IoU threshold for non-max suppression
         self.src_is_cam = src_is_cam
         self.save_output = save_output
         self.show_output = show_output
@@ -33,23 +34,22 @@ class App:
 
         # Init bytetrack
         self.tracker = sv.ByteTrack()
-        self.track_history = defaultdict(list)
-        self.track_last_side = {}   # tid -> -1 or +1
 
         ### Constants
-        self.bbox_thickness = 8
-        self.text_scale = 2.5
-        self.text_thickness = 5
-        self.text_padding = 15
-        self.text_color = (255, 255, 255)  # White
+        self.box_color = (108, 27, 255)  # bounding box color
+        self.ts = 1.2   # text scale
+        self.tt = 3     # text thickness
+        self.tp = 10    # text padding
+        self.text_color = (255, 255,255)  # label text color
 
-        # Line Counter
-        self.line_p1 = (1880, 40)   # <-- adjustable
-        self.line_p2 = (40, 1040)   # <-- adjustable
-        self.count_in = 0
-        self.count_out = 0
-        self.counted_ids = set()   # avoid double counting
-        
+        # Parking management
+        self.oclr = (108, 27, 255) # Red color = occupied
+        self.eclr = (0, 153, 0)  # Green color = empty
+        self.analytics_padding_x, self.analytics_padding_y = 60, 60
+
+        # Load parking region json file
+        self.parking_regions = self.load_parking_regions(parking_json)
+        self.slot_status = {i: False for i in range(len(self.parking_regions))}
 
         # .............................
         # Initialize video writer
@@ -163,6 +163,8 @@ class App:
         # Return the list of final detections
         return final_detections
 
+    # .....................................
+    # Helper methods for parking management
     def to_sv_detections(self, detections):
         if len(detections) == 0:
             return sv.Detections.empty()
@@ -171,87 +173,73 @@ class App:
         confidence = np.array([d["score"] for d in detections], dtype=np.float32)
         class_id = np.array([d["class_id"] for d in detections], dtype=np.int64)
 
-        return sv.Detections(
-            xyxy=xyxy,
-            confidence=confidence,
-            class_id=class_id
-        )
+        return sv.Detections(xyxy=xyxy, confidence=confidence, class_id=class_id)
+
+    def is_inside_polygon(self, point, polygon):
+        return cv.pointPolygonTest(polygon, point, False) >= 0
+    
+    def load_parking_regions(self, json_path):
+        with open(json_path, "r") as f:
+            data = json.load(f)
+        regions = []
+        for region in data:
+            pts = np.array(region["points"], dtype=np.int32)
+            regions.append(pts)
+        return regions
+    # .....................................
 
     def process_model_output(self, *ofmaps):
-        results = self.postprocess(ofmaps)  # Postprocess the model output
-
-        img = self.capture_queue.get()  # Get the frame from the queue
+        results = self.postprocess(ofmaps)
+        img = self.capture_queue.get()
         self.capture_queue.task_done()
-        
+
         tracks = self.tracker.update_with_detections(self.to_sv_detections(results))
 
-        h, w = img.shape[:2]
-
-        for xyxy, cls, tid in zip(tracks.xyxy, tracks.class_id, tracks.tracker_id):
-            if int(cls) in {0}: # Only detect and track fire class
+        # Store track centers
+        track_centers = []
+        for xyxy, cls in zip(tracks.xyxy, tracks.class_id):
+            if cls in {3, 4, 5, 8}:  # Only detect vehicles
                 x1, y1, x2, y2 = map(int, xyxy)
+                track_centers.append(((x1 + x2) // 2, (y1 + y2) // 2))
 
-                # color for each class. 
-                box_color = colors(10, bgr=True)
+        # Update parking metrics
+        occupied_count = 0
+        for polygon in self.parking_regions:
+            occupied = False
+            for (xc, yc) in track_centers:
+                if cv.pointPolygonTest(polygon, (xc, yc), False) >= 0:
+                    occupied = True
+                    break
+            if occupied:
+                color = self.oclr
+                occupied_count += 1
+            else:
+                color = self.eclr
+            cv.polylines(img, [polygon], True, color, 5)
+        self.os, self.es = occupied_count, len(self.parking_regions) - occupied_count
 
-                # Store tracks
-                x, y = int((x1 + x2) / 2), int((y1 + y2) / 2)
-                track = self.track_history[tid]
-                track.append((float(x), float(y)))
-                if len(track) > 45:  # store last 30 frames track position
-                    track.pop(0)
-                
-                # Draw bounding box
-                cv.rectangle(img, (x1, y1), (x2, y2), box_color, thickness=self.bbox_thickness)
-
-                # Label text
+        # plot detections
+        for xyxy, cls in zip(tracks.xyxy, tracks.class_id):
+            if cls in {3, 4, 5, 8}:  # Only detect vehicles
+                x1, y1, x2, y2 = map(int, xyxy)
+                xc, yc = (x1 + x2) // 2, (y1 + y2) // 2
                 label = f"{CLASSES[int(cls)]}"
-                (text_w, text_h), _ = cv.getTextSize(
-                    label,
-                    cv.FONT_HERSHEY_SIMPLEX,
-                    self.text_scale,
-                    self.text_thickness
-                )
+                (tw, th), _ = cv.getTextSize(label, 0, self.ts, self.tt)
+                tx, ty = xc - tw // 2, yc + th // 2
+                cv.rectangle(img,(tx - 10, ty - th - 10), 
+                             (tx + tw + 10, ty + 10), self.box_color, -1)
+                cv.putText(img, label, (tx, ty),0, self.ts, self.text_color, self.tt)
 
-                # Default label position (above box)
-                label_x1 = x1
-                label_y1 = y1 - text_h - self.text_padding * 2
-                label_x2 = x1 + text_w + self.text_padding * 2
-                label_y2 = y1
-
-                # If label goes above image → draw inside box
-                if label_y1 < 0:
-                    label_y1 = y1
-                    label_y2 = y1 + text_h + self.text_padding * 2
-
-                # If label goes outside right boundary → shift left
-                if label_x2 > w:
-                    shift = label_x2 - w
-                    label_x1 -= shift
-                    label_x2 -= shift
-
-                # If label goes outside left boundary → clamp
-                if label_x1 < 0:
-                    label_x1 = 0
-                    label_x2 = text_w + self.text_padding * 2
-
-                # Draw label background
-                cv.rectangle(img, (label_x1, label_y1),
-                            (label_x2, label_y2),
-                            box_color, -1)
-
-                # Draw text
-                cv.putText(
-                    img,
-                    label,
-                    (label_x1 + self.text_padding,
-                    label_y2 - self.text_padding),
-                    cv.FONT_HERSHEY_SIMPLEX,
-                    self.text_scale,
-                    self.text_color,
-                    self.text_thickness,
-                    cv.LINE_AA
-                )
+        # Display parking analytics
+        stats = [(f"Occupied: {self.os}", self.oclr, 35), (f"Available: {self.es}", self.eclr, 175)]
+        for text, color, y1 in stats:
+            (text_w, text_h) = cv.getTextSize(text, 0, 2.6, 6)[0]
+            x1 = self.input_width - text_w - self.analytics_padding_x - 20
+            x2 = x1 + text_w + self.analytics_padding_x
+            y2 = y1 + text_h + self.analytics_padding_y
+            cv.rectangle(img, (x1, y1), (x2, y2), color, -1)
+            text_x, text_y = x1 + (x2 - x1 - text_w) // 2, y1 + (y2 - y1 + text_h) // 2
+            cv.putText(img, text, (text_x, text_y),0, 2.6, (255, 255, 255), 6)
         
         if self.show_output:
             self.show(img)  # display processed frame.
@@ -291,14 +279,15 @@ def run_mxa(dfp, post_model, app):
 
 if __name__ == '__main__':
     # Parse command-line arguments for model path (-d) and post-processing ONNX file (-post)
-    parser = argparse.ArgumentParser(description="Run MX3 real-time fire detection/tracking using YOLOv8.")
-    parser.add_argument('-d', '--dfp', type=str, default="../models/fire_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../models/fire_small_640_640_3_onnx.dfp'.")
-    parser.add_argument('-post', '--post_model', type=str, default="../models/fire_small_640_640_3-post.onnx", help="Specify the path to the post model. Default is '../models/fire_small_640_640_3-post.onnx'.")
+    parser = argparse.ArgumentParser(description="Run MX3 real-time parking management system using YOLOv8.")
+    parser.add_argument('-d', '--dfp', type=str, default="../models/visdrone_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../models/YOLO_v8_visdrone_small_640_640_3_onnx.dfp'.")
+    parser.add_argument('-post', '--post_model', type=str, default="../models/visdrone_small_640_640_3_post.onnx", help="Specify the path to the post model. Default is '../models/visdrone_small_640_640_3_post.onnx'.")
     parser.add_argument('-s', '--save', action='store_true', help="Enable saving output to file. Output will be ./results.mp4  Default is False.")
     parser.add_argument('-m', '--mirror', action='store_true', help="Mirror the video horizontally. Useful for webcam input.")
     parser.add_argument('-c', '--cam', action='store_true', help="Use the camera as input source (will use opencv camera #0).")
     parser.add_argument('-v', '--video', type=str, default="", help="Use a video file as input source, or a camera full path for non-index-0 cams (e.g., /dev/video2).")
     parser.add_argument('--no_show', action='store_false', help="Disable displaying output window. Useful when working with video files.")
+    parser.add_argument('-j', '--json', type=str, default="../region_json/sample-1.json" , help="Specify path to parking region files.")
 
     args = parser.parse_args()
 
@@ -325,7 +314,8 @@ if __name__ == '__main__':
     # Connect to the camera and initialize the app
     app = App(cam, model_input_shape, output_path=output_path, 
                 mirror=args.mirror, src_is_cam=args.cam,
-                save_output=args.save, show_output=args.no_show)
+                save_output=args.save, show_output=args.no_show,
+                parking_json=args.json)
     dfp = args.dfp
     post_model = args.post_model
     run_mxa(dfp, post_model, app)
