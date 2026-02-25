@@ -19,7 +19,7 @@ This guide includes setup instructions, model details, and essential code snippe
 | **Model Type**       | Object Detection                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/visdrone_small_640_640_3_.zip)                                          |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/visdrone_small_640_640_3_onnx.zip)                                          |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Object bounding boxes |
 | **OS**               | Linux |
@@ -48,7 +48,7 @@ unzip visdrone_small_640_640_3_onnx.zip -d models
 <summary> (Optional) Download and compile the model yourself </summary>
 If you prefer, you can download and compile the model rather than using the precompiled model.
 
-Download the visdrone pretrained YOLOv8s model using mentioned command below.
+Download the visdrone pretrained YOLOv8s model using the command mentioned below.
 
 ```bash
 # Download visdrone-yolov8s.pt (YOLOv8 trained model on visdrone dataset)
@@ -101,8 +101,8 @@ python3 run_parking_management.py.py [--cam | --video VIDEO]
 
 Where you either use:
 
-* `--cam`: Use the camera as input source (will use opencv camera #0).
-* `--video VIDEO`: Use a video file as input source.
+* `--cam`: Use the camera as an input source (will use opencv camera #0).
+* `--video VIDEO`: Use a video file as an input source.
 
 
 There are additional optional arguments you can use to customize the behavior of the program:
