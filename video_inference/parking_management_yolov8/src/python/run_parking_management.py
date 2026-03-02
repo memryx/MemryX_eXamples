@@ -13,14 +13,13 @@ CLASSES = ("pedestrian", "people", "bicycle", "car", "van", "truck",
            "tricycle", "awning-tricycle", "bus", "motor")
 
 class App:
-    def __init__(self, cam, model_input_shape, output_path,parking_json, mirror=False, src_is_cam=False, save_output=False, show_output=True, **kwargs):
+    def __init__(self, cam, model_input_shape, output_path,parking_json, src_is_cam=False, save_output=False, show_output=True, **kwargs):
         # Initialize camera and various configurations
         self.cam = cam
         self.input_height = int(cam.get(cv.CAP_PROP_FRAME_HEIGHT))
         self.input_width = int(cam.get(cv.CAP_PROP_FRAME_WIDTH))
         self.model_input_shape = model_input_shape
         self.capture_queue = Queue(maxsize=10)  # Queue to store frames for processing
-        self.mirror = mirror  # Flag to mirror the video frame
         self.confidence_thres = 0.25  # Threshold for object confidence
         self.iou_thres = 0.9  # IoU threshold for non-max suppression
         self.src_is_cam = src_is_cam
@@ -53,9 +52,12 @@ class App:
 
         # .............................
         # Initialize video writer
-        fc = cv.VideoWriter_fourcc(*'mp4v')  # Codec
-        self.vw = cv.VideoWriter(output_path, fc, cam.get(cv.CAP_PROP_FPS),
-            (self.input_width, self.input_height))
+        if self.save_output:
+            fc = cv.VideoWriter_fourcc(*'mp4v')  # Codec
+            self.vw = cv.VideoWriter(output_path, fc, cam.get(cv.CAP_PROP_FPS),
+                (self.input_width, self.input_height))
+        else:
+            self.vw = None
         # .............................
 
     def generate_frame(self):
@@ -69,8 +71,6 @@ class App:
                 # drop frame
                 continue
             else:
-                if self.mirror:
-                    frame = cv.flip(frame, 1)  # Mirror the frame if needed
                 self.capture_queue.put(frame)  # Store the frame in the queue
                 out, self.ratio = self.preprocess_image(frame)  # Preprocess the frame
                 return out
@@ -280,14 +280,13 @@ def run_mxa(dfp, post_model, app):
 if __name__ == '__main__':
     # Parse command-line arguments for model path (-d) and post-processing ONNX file (-post)
     parser = argparse.ArgumentParser(description="Run MX3 real-time parking management system using YOLOv8.")
-    parser.add_argument('-d', '--dfp', type=str, default="../models/visdrone_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../models/YOLO_v8_visdrone_small_640_640_3_onnx.dfp'.")
-    parser.add_argument('-post', '--post_model', type=str, default="../models/visdrone_small_640_640_3_post.onnx", help="Specify the path to the post model. Default is '../models/visdrone_small_640_640_3_post.onnx'.")
-    parser.add_argument('-s', '--save', action='store_true', help="Enable saving output to file. Output will be ./results.mp4  Default is False.")
-    parser.add_argument('-m', '--mirror', action='store_true', help="Mirror the video horizontally. Useful for webcam input.")
     parser.add_argument('-c', '--cam', action='store_true', help="Use the camera as input source (will use opencv camera #0).")
     parser.add_argument('-v', '--video', type=str, default="", help="Use a video file as input source, or a camera full path for non-index-0 cams (e.g., /dev/video2).")
+    parser.add_argument('-d', '--dfp', type=str, default="../../models/visdrone_small_640_640_3_onnx.dfp", help="Specify the path to the compiled DFP file. Default is '../../models/YOLO_v8_visdrone_small_640_640_3_onnx.dfp'.")
+    parser.add_argument('-post', '--post_model', type=str, default="../../models/visdrone_small_640_640_3_post.onnx", help="Specify the path to the post model. Default is '../../models/visdrone_small_640_640_3_post.onnx'.")
+    parser.add_argument('-s', '--save', action='store_true', help="Enable saving output to file. Output will be ./results.mp4  Default is False.")
     parser.add_argument('--no_show', action='store_false', help="Disable displaying output window. Useful when working with video files.")
-    parser.add_argument('-j', '--json', type=str, default="../region_json/sample-1.json" , help="Specify path to parking region files.")
+    parser.add_argument('-j', '--json', type=str, default="../../assets/sample_regions.json" , help="Specify path to parking region files.")
 
     args = parser.parse_args()
 
@@ -313,7 +312,7 @@ if __name__ == '__main__':
 
     # Connect to the camera and initialize the app
     app = App(cam, model_input_shape, output_path=output_path, 
-                mirror=args.mirror, src_is_cam=args.cam,
+                src_is_cam=args.cam,
                 save_output=args.save, show_output=args.no_show,
                 parking_json=args.json)
     dfp = args.dfp

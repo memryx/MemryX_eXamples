@@ -19,7 +19,7 @@ This guide includes setup instructions, model details, and essential code snippe
 | **Model Type**       | Object Detection                                                        |
 | **Framework**        | [ONNX](https://onnx.ai/)                                                   |
 | **Model Source**     | [Download from Ultralytics GitHub or docs](https://docs.ultralytics.com/models/yolov8/) |
-| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/model_explorer/2p0/visdrone_small_640_640_3_onnx.zip)                                          |
+| **Pre-compiled DFP** | [Download here](https://developer.memryx.com/example_files/2p0/visdrone_small_640_640_3_onnx.zip)                                          |
 | **Model Resolution** | 640x640                                                       |
 | **Output**           | Object bounding boxes |
 | **OS**               | Linux |
@@ -39,7 +39,7 @@ pip install opencv-python==4.11.0.86 ultralytics==8.3.161 supervision==0.27.0
 
 To download and unzip the precompiled DFPs, use the following commands:
 ```bash
-wget https://developer.memryx.com/model_explorer/2p0/visdrone_small_640_640_3_onnx.zip
+wget https://developer.memryx.com/example_files/2p0/visdrone_small_640_640_3_onnx.zip
 mkdir -p models
 unzip visdrone_small_640_640_3_onnx.zip -d models
 ```
@@ -52,7 +52,7 @@ Download the visdrone pretrained YOLOv8s model using the command mentioned below
 
 ```bash
 # Download visdrone-yolov8s.pt (YOLOv8 trained model on visdrone dataset)
-wget https://developer.memryx.com/model_explorer/2p0/visdrone-yolov8s.zip
+wget https://developer.memryx.com/example_files/2p0/visdrone-yolov8s.zip
 unzip visdrone-yolov8s.zip
 ```
 
@@ -90,37 +90,49 @@ Additional Notes:
 
 With the compiled model, you can now run real-time parking management. Below are the examples of how to do this using Python.
 
+
+#### Download the sample video (optional)
+
+The `assets/sample_regions.json` is built for [this sample video](https://developer.memryx.com/example_files/2p0/parking_sample.mp4). You can download it using the command below:
+
+```bash
+wget https://developer.memryx.com/example_files/2p0/parking_sample.mp4
+mv parking_sample.mp4 assets/
+```
+
+
 #### Python
 
 To run the Python example for real-time parking management using MX3, simply navigate to `src/python/` and run the script.
 
 ```bash
 cd src/python/
-python3 run_parking_management.py.py [--cam | --video VIDEO]
+python3 run_parking_management.py.py [--cam | --video VIDEO] [-j, --json REGIONS_JSON]
 ```
 
 Where you either use:
 
 * `--cam`: Use the camera as an input source (will use opencv camera #0).
-* `--video VIDEO`: Use a video file as an input source.
+* `--video VIDEO`: Use a video file as an input source. For example, `../../assets/parking_sample.mp4`
+
+
+And
+
+* `-j REGIONS_JSON`, `--json REGIONS_JSON`: Specify the parking regions json file. For example `../../assets/sample_regions.json`
 
 
 There are additional optional arguments you can use to customize the behavior of the program:
 
 ```bash
-python3 run_parking_management.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--mirror] [--no_show] [--no_boxes] [--j REGIONS_JSON]
+python3 run_parking_management.py [--cam | --video VIDEO] [--dfp DFP] [--post_model POST_MODEL] [--save] [--no_show] [-j REGIONS_JSON]
 ```
 
 Where the optional arguments are:
 
 * `--save`,`-s`: Enable saving output to file. Output will be ./results.mp4
-* `--mirror`,`-m`: Mirror the video horizontally. Useful for webcam input.
-* `--no_boxes`: Only blur the detected persons; do not draw bounding boxes.
 * `--no_show`: Disable displaying output window. Useful when working with video files.
-* `--dfp DFP`,`-d DFP`: Specify the path to the compiled DFP file. Default is '../../models/
-YOLO_v8_small_640_640_3_onnx.dfp'.
-* `--post_model POST_MODEL`,`-post POST_MODEL`: Specify the path to the post model. Default is '../../models/YOLO_v8_small_640_640_3_onnx_post.onnx'.
-* `--j`, `--json`: Specify the parking regions json file.
+* `--dfp DFP`,`-d DFP`: Specify the path to the compiled DFP file.
+* `--post_model POST_MODEL`,`-post POST_MODEL`: Specify the path to the post model.
 
 ## How to Generate a Parking Regions JSON File
 
