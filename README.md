@@ -376,6 +376,19 @@ Leverage MemryX accelerators for **real-time video processing** tasks. These app
       <img alt="Linux"  src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg"  width="20" height="20" />
     </td>
   </tr>
+   <!-- new row -->
+  <tr>
+    <td align="center" valign="top" width="25%">
+      <a href="video_inference/bakery_products_counting_yolo26/README.md"><b>Bakery items counting</b></a><br/>
+      <a href="video_inference/bakery_products_counting_yolo26/README.md">
+        <img src="video_inference/bakery_products_counting_yolo26/assets/nest-filled.gif" style="height:165px; object-fit:cover;" />
+      </a><br/>
+      <sub>Bakery items counting</sub><br/>
+      <sub>Models: YOLO26 &amp; ByteTrack</sub><br/>
+      <img alt="Python" src="https://img.shields.io/badge/Python-green" />
+      <img alt="Linux"  src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg"  width="20" height="20" />
+    </td>
+  </tr>
 </table>
 
 
