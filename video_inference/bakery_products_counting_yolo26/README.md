@@ -3,7 +3,7 @@
 The **Object Detection** example demonstrates real-time object detection on a single input stream using the pre-trained yolo26n model on MemryX accelerators. This guide provides setup instructions, model details, and necessary code snippets to help you quickly get started.
 
 <p align="center">
-  <img src="assets/objectDetection_yolo26n.png" alt="Object Detection Example" width="45%" />
+  <img src="assets/nest-filled.gif" alt="Nest filling counter" width="45%" />
 </p>
 
 ## Overview
