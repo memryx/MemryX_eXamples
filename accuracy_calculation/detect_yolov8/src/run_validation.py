@@ -187,7 +187,8 @@ if __name__ == "__main__":
     if device == "cpu":
         if torch.cuda.is_available():
             LOGGER.info("Found available GPU, using CUDA instead.")
-        model.val()
+        # Model.val() defaults to rect=True, unlike default.yaml; match the MXA branch
+        model.val(rect=False)
 
     # Exports and compiles the model if necessary
     if device == "mxa":
